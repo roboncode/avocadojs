@@ -11,20 +11,19 @@ class Arango {
       this._instances = {}
     }
     if (!this._instances[name]) {
-      this._instances[name] = new this()
-      definePrivateProperty(this._instances[name], '$instanceName', name)
+      this._instances[name] = new this(name)
     }
     return this._instances[name]
   }
 
-  constructor() {
+  constructor(name = 'default') {
     this.models = []
-    definePrivateProperty(this, '$instanceName', 'default')
+    definePrivateProperty(this, '$instanceName', name)
+    this.events = EventDispatcher.getInstance(name)
+    this.connection = Connection.getInstance(name)
   }
 
   async connect(url, db) {
-    this.events = EventDispatcher.getInstance(this.$instanceName)
-    this.connection = Connection.getInstance(this.$instanceName)
     await this.connection.connect(
       url,
       db

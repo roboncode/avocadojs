@@ -2,6 +2,5 @@
  * Arango API
  * @author Rob Taylor
  */
-const Arango = require('./Arango')
-const arango = new Arango()
+const arango = require('./Arango').getInstance()
 module.exports = arango

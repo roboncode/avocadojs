@@ -1,7 +1,7 @@
 const Database = require('arangojs').Database
 const EventDispatcher = require('../avocado/EventDispatcher')
 const definePrivateProperty = require('../avocado/helpers/definePrivateProperty')
-
+require('colors')
 
 class Connection {
   static getInstance(name = 'default') {
@@ -19,13 +19,17 @@ class Connection {
     this.connected = false
   }
 
-  async connect({ url = 'http://localhost:8529', name = '_system' }) {
+  async connect({
+    url = 'http://localhost:8529',
+    name = '_system'
+  }) {
     this.db = new Database(url)
+    const names = await this.db.listDatabases();
     this.url = url
     this.name = name
-    try {
-      await db.createDatabase(name)
-    } catch (e) {}
+    if (names.indexOf(name) === -1) {
+      await this.db.createDatabase(name)
+    }
     await this.db.useDatabase(name)
     this.connected = true
     EventDispatcher.getInstance(this.$instanceName).emit('connected')
