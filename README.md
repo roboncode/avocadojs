@@ -1,5 +1,7 @@
-# AvacadoJS
+# AvocadoJS
 Elegant ArangoDB object modeling for Node.js
+
+<img src="https://image.flaticon.com/icons/svg/835/835420.svg" width="150px">
 
 Built using [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.com/arangodb/arangojs)
 
@@ -15,7 +17,7 @@ docker-compose up -d
 
 ### Run Demo
 
-Runnin the demo will:
+Running the demo will:
 
 - Create a database named "demo"
 - Create several collections with the appropriate indexes
