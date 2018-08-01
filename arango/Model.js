@@ -1,6 +1,7 @@
 const AvocadoModel = require('../avocado/Model')
 const Builder = require('../avocado/Builder')
 const inc = require('./queries/inc')
+const filterProps = require('../avocado/helpers/filterProps')
 
 class ArangoModel extends AvocadoModel {
 
@@ -39,8 +40,11 @@ class ArangoModel extends AvocadoModel {
 
   static inc(id, propOrProps, val = 1) {
     return new Promise(async (resolve, reject) => {
+      let schemaKeys = this.schema.getSchemaKeys()
+      let props = [].concat(propOrProps)
       let collectionName = this.getCollectionName()
-      let result = await inc(collectionName, id, propOrProps, val)
+      let filteredProps = filterProps(schemaKeys, props)
+      let result = await inc(collectionName, id, filteredProps, val)
       return resolve(result)
     })
   }

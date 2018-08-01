@@ -1,14 +1,20 @@
 const Joi = require('joi')
+const getObjectKeys = require('./helpers/getObjectKeys')
 
 class Schema {
   constructor(jsonSchema, options = {}) {
     this._schema = jsonSchema
     this._options = options
     this._joiSchema = this._parse(jsonSchema)
+    this._schemaKeys = getObjectKeys(jsonSchema)
 
     this.statics = {}
     this.methods = {}
     this.computed = {}
+  }
+
+  getSchemaKeys() {
+    return this._schemaKeys
   }
 
   getJSON() {

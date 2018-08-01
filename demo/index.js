@@ -34,7 +34,7 @@ async function main() {
   const User = arango.model('User')
 
   await User.inc('rob', [
-    'stats.likes', // TODO: Should be filtered out
+    'stats.likes', // This will be filtered out because it is not in the schema
     'stats.friends',
     'stats.followers',
   ])
