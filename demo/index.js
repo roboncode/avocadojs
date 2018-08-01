@@ -32,9 +32,16 @@ async function main() {
   await importAllDocs()
 
   const User = arango.model('User')
+
+  await User.inc('rob', [
+    'stats.likes', // TODO: Should be filtered out
+    'stats.friends',
+    'stats.followers',
+  ])
+
   let user = await User
-    // .setConnection(conn)
     .findById('rob')
+
   console.log('#user', user)
 }
 

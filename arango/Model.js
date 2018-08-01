@@ -1,5 +1,6 @@
 const AvocadoModel = require('../avocado/Model')
 const Builder = require('../avocado/Builder')
+const inc = require('./queries/inc')
 
 class ArangoModel extends AvocadoModel {
 
@@ -37,8 +38,11 @@ class ArangoModel extends AvocadoModel {
   }
 
   static inc(id, propOrProps, val = 1) {
-    let collectionName = this.getCollectionName()
-    return inc(collectionName, id, propOrProps, val)
+    return new Promise(async (resolve, reject) => {
+      let collectionName = this.getCollectionName()
+      let result = await inc(collectionName, id, propOrProps, val)
+      return resolve(result)
+    })
   }
 
   static importDocs(docs, truncate = false) {
