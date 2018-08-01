@@ -1,9 +1,10 @@
 const Connection = require('./Connection')
 const Schema = require('./Schema')
 const EventDispatcher = require('../avocado/EventDispatcher')
+const asyncForEach = require('../avocado/helpers/asyncForEach')
 const factory = require('./factory')
 const definePrivateProperty = require('../avocado/helpers/definePrivateProperty')
-
+const CONSTS = require('./consts')
 
 class Arango {
   static getInstance(name = 'default') {
@@ -28,9 +29,14 @@ class Arango {
       url,
       db
     )
-    for (let name in this.models) {
-      this.models[name].setConnection(this.connection)
-    }
+    asyncForEach(this.models, async (model, name) => {
+      model.setConnection(this.connection)
+      let options = model.options
+      let collectionName = model.getCollectionName()
+
+      await this.createCollection(collectionName, options.indexes)
+    })
+
     return this.connection
   }
 
@@ -61,14 +67,9 @@ class Arango {
     return list
   }
 
-  async initDatabase(conn, models, truncate = false) {
-    for (let name in models) {
-      if (models.hasOwnProperty(name)) {
-        let options = models[name].options
-        let collectionName = models[name].getCollectionName()
-        await this.createCollection(conn.db, collectionName, truncate)
-        await this.createIndexes(conn.db, collectionName, options.indexes)
-      }
+  checkConnected() {
+    if (!this.connection.connected) {
+      throw new Error(CONSTS.ERRORS.NOT_CONNECTED)
     }
   }
 
@@ -77,18 +78,33 @@ class Arango {
   }
 
   model(name, schema, options = {}) {
+    let model = this.models[name]
     if (schema) {
-      this.models[name] = factory(name, schema, options)
-      this.models[name].setConnection(this.connection)
+      model = factory(name, schema, options)
+      model.setConnection(this.connection)
+
+      if(this.connection.connected) {
+        let options = model.options
+        let collectionName = model.getCollectionName()
+
+        this.createCollection(collectionName, options.indexes)
+      }
+
+      this.models[name] = model
     }
-    if (!this.models[name]) {
-      throw new Error('Model not found:' + name)
+    
+    if (!model) {
+      throw new Error(CONSTS.ERRORS.MODEL_NOT_FOUND + name)
     }
-    return this.models[name]
+    return model
   }
 
-  async createCollection(db, name, truncate = false) {
-    let collection = await db.collection(name)
+  async createCollection(name, indexes, truncate = false) {
+    this.checkConnected()
+    
+    let conn = this.connection
+    let collection = await conn.db.collection(name)
+    
     if (await collection.exists()) {
       if (truncate) {
         await collection.drop()
@@ -97,11 +113,22 @@ class Arango {
     } else {
       await collection.create()
     }
+
+    if(indexes) {
+      await this.ensureIndexes(name, indexes)
+    }
+
     return collection
   }
 
-  async createIndexes(db, colName, indexes = []) {
-    let collection = await this.createCollection(db, colName)
+  async ensureIndexes(collectionName, indexes = []) {
+    this.checkConnected()
+
+    let conn = this.connection
+    let collection = await conn.db.collection(collectionName)
+    if (!await collection.exists()) {
+      throw new Error(CONSTS.ERRORS.COLLECTION_NOT_FOUND +  collectionName)
+    }
     for (let n = 0; n < indexes.length; n++) {
       let item = indexes[n]
       switch (item.type) {

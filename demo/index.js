@@ -20,18 +20,16 @@ function readFiles(dir) {
 
 async function main() {
   // Initialize models
+  // Note: This can be done before or after the connection
   readFiles(path.join(__dirname, 'models'))
 
   // Create connection
-  const conn = await arango.connect({
+  await arango.connect({
     name: 'demo'
   })
 
-  // Initialize database
-  await arango.initDatabase(conn, arango.models)
-
   // Import migration docs
-  await importAllDocs(conn)
+  await importAllDocs()
 
   const User = arango.model('User')
   let user = await User
