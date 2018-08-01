@@ -1,13 +1,15 @@
 const snooze = require('./snooze')
 
-async function asyncForEach(array, cb) {
+async function asyncForEach(data, cb) {
   let result
-  for (let i = 0; i < array.length; i++) {
-    try {
-      await snooze()
-      result = await cb(array[i], i, array)
-    } catch (e) {
-      break
+  for (let i in data) {
+    if (data.hasOwnProperty(i)) {
+      try {
+        await snooze()
+        result = await cb(data[i], i, data)
+      } catch (e) {
+        break
+      }
     }
   }
   return result
