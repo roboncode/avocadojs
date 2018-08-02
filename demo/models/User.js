@@ -15,6 +15,8 @@ let schema = arango.createSchema({
   avatar: String, // URL to avatar image
   banner: String, // URL to background image
   theme: String, // #FF0000
+  // TODO: Fix arrays so it supports Model, or schema, or JSON
+  //devices: [Device], // Ids used to send push notifications to
   devices: [Device.schema.getJSON()], // Ids used to send push notifications to
   stats: {
     friends: { type: Number, default: 0 },
@@ -36,6 +38,8 @@ let schema = arango.createSchema({
   },
   createdAt: Date,
   updatedAt: { type: Date, default: Date.now }
+}, {
+  strict: true,
 })
 
 schema.computed.fullName = function() {

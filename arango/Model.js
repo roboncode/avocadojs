@@ -40,11 +40,17 @@ class ArangoModel extends AvocadoModel {
 
   static inc(id, propOrProps, val = 1) {
     return new Promise(async (resolve, reject) => {
-      let schemaKeys = this.schema.getSchemaKeys()
-      let props = [].concat(propOrProps)
       let collectionName = this.getCollectionName()
-      let filteredProps = filterProps(schemaKeys, props)
-      let result = await inc(collectionName, id, filteredProps, val)
+      let schemaOptions = this.schema.options
+      let result
+      if (schemaOptions.strict) {
+        let schemaKeys = this.schema.getSchemaKeys()
+        let props = [].concat(propOrProps)
+        let filteredProps = filterProps(schemaKeys, props)
+        result = await inc(collectionName, id, filteredProps, val)
+      } else {
+        result = await inc(collectionName, id, propOrProps, val)
+      }
       return resolve(result)
     })
   }
@@ -95,7 +101,11 @@ class ArangoModel extends AvocadoModel {
     return this
   }
 
-  async update() {}
+  async update() {
+    if (!this.isNew) {
+
+    }
+  }
 
   async remove() {
     if (!this.isNew) {

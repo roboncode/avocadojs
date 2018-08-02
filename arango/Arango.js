@@ -44,8 +44,8 @@ class Arango {
     return this.connection
   }
 
-  createSchema(jsonSchema) {
-    return new Schema(jsonSchema)
+  createSchema(jsonSchema, options = {}) {
+    return new Schema(jsonSchema, options)
   }
 
   addMethod(name, fn) {}

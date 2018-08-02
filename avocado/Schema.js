@@ -13,6 +13,10 @@ class Schema {
     this.computed = {}
   }
 
+  get options() {
+    return this._options
+  }
+
   getSchemaKeys() {
     return this._schemaKeys
   }

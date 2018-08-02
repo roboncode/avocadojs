@@ -1,7 +1,7 @@
 const avocado = require('../avocado')
 
 class ArangoSchema extends avocado.Schema {
-  constructor(jsonSchema, options) {
+  constructor(jsonSchema, options = {}) {
     jsonSchema._key = String
     super(jsonSchema, options)
   }
