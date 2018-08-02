@@ -21,13 +21,11 @@ class Schema {
     return this._schemaKeys
   }
 
-  // TODO: turn into getter
-  getJSON() {
+  get json() {
     return this._schema
   }
 
-  // TODO: turn into getter
-  getJoi() {
+  get joi() {
     return this._joiSchema
   }
 

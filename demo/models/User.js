@@ -17,7 +17,7 @@ let schema = arango.createSchema({
   theme: String, // #FF0000
   // TODO: Fix arrays so it supports Model, or schema, or JSON
   //devices: [Device], // Ids used to send push notifications to
-  devices: [Device.schema.getJSON()], // Ids used to send push notifications to
+  devices: [Device.schema.json], // Ids used to send push notifications to
   stats: {
     friends: { type: Number, default: 0 },
     invites: { type: Number, default: 0 },
