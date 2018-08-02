@@ -7,7 +7,6 @@ let schema = arango.Schema({
   screenName: String, // roboncode
   firstName: { type: String, regex: /^[A-Za-z\s']+$/, min: 3 },
   lastName: String,
-  test: { type: Number, min: 1, max: 10 },
   email: { type: String, email: {} },
   phone: String,
   location: String,
