@@ -1,3 +1,6 @@
+/**
+ * https: //gist.github.com/Yimiprod/7ee176597fef230d1451
+ */
 const {
   transform,
   isEqual,
