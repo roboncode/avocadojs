@@ -20,24 +20,26 @@ class Model {
 
     // assign computed properties to prototype
     for (let key in schema.computed) {
-      Object.defineProperty(this, key, { get: schema.computed[key] })
+      Object.defineProperty(this, key, {
+        get: schema.computed[key]
+      })
     }
 
     // assign schema methods
     for (let key in schema.methods) {
-      this[key] = function() {
+      definePrivateProperty(this, key, function () {
         return schema.methods[key].apply(this, arguments)
-      }
+      })
     }
 
     // assign event methods
     for (let i = 0; i < eventMethods.length; i++) {
       let eventMethod = eventMethods[i]
-      this[eventMethod] = function() {
+      definePrivateProperty(this, eventMethod, function () {
         let args = [].slice.call(arguments)
         args[0] = this.constructor.name + ':' + args[0]
         eventEmitter[eventMethod].apply(eventEmitter, args)
-      }
+      })
     }
   }
 
@@ -112,7 +114,7 @@ class Model {
 // setup static event methods
 for (let i = 0; i < eventMethods.length; i++) {
   let eventMethod = eventMethods[i]
-  Model[eventMethod] = function() {
+  Model[eventMethod] = function () {
     let args = [].slice.call(arguments)
     args[0] = this.name + ':' + args[0]
     eventEmitter[eventMethod].apply(eventEmitter, args)

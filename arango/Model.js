@@ -27,11 +27,13 @@ class ArangoModel extends AvocadoModel {
   static findById(id) {
     return new Promise(async (resolve, reject) => {
       let doc = await this.getCollection().document(id)
+      let schemaOptions = this.schema.options
       let result = await Builder.getInstance()
         .data(doc)
         .convertTo(this)
         .toObject({
-          noDefaults: false
+          noDefaults: false,
+          unknownProps: schemaOptions.strict ? 'strip' : 'allow'
         })
         .exec()
       return resolve(result)

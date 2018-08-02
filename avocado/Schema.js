@@ -17,14 +17,17 @@ class Schema {
     return this._options
   }
 
+  // TODO: turn into getter
   getSchemaKeys() {
     return this._schemaKeys
   }
 
+  // TODO: turn into getter
   getJSON() {
     return this._schema
   }
 
+  // TODO: turn into getter
   getJoi() {
     return this._joiSchema
   }

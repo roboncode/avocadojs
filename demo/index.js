@@ -32,7 +32,6 @@ async function main() {
   await importAllDocs()
 
   const User = arango.model('User')
-  //TODO: Create strict mode (default: true) - will remove props that are not defined in schema, otherwise it will ignore
   await User.inc('rob', [
     'stats.likes', // This will be filtered out because it is not in the schema
     'stats.friends',

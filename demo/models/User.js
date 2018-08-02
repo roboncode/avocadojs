@@ -39,7 +39,7 @@ let schema = arango.createSchema({
   createdAt: Date,
   updatedAt: { type: Date, default: Date.now }
 }, {
-  strict: true,
+  strict: false,
 })
 
 schema.computed.fullName = function() {
