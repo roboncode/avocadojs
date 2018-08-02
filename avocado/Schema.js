@@ -1,12 +1,15 @@
 const Joi = require('joi')
 const getObjectKeys = require('./helpers/getObjectKeys')
+const Model = require('./Model')
+require('colors')
 
 class Schema {
-  constructor(jsonSchema, options = {}) {
-    this._schema = jsonSchema
+  constructor(json, options = {}) {
+    this._json = json
     this._options = options
-    this._joiSchema = this._parse(jsonSchema)
-    this._schemaKeys = getObjectKeys(jsonSchema)
+    this._joi = this._parse(json)
+    this._schemaKeys = getObjectKeys(json)
+    this.isSchema = true
 
     this.statics = {}
     this.methods = {}
@@ -22,28 +25,42 @@ class Schema {
   }
 
   get json() {
-    return this._schema
+    return this._json
   }
 
   get joi() {
-    return this._joiSchema
+    return this._joi
   }
 
   validate(data, options) {
-    return this._joiSchema.validate(data, options)
+    return this._joi.validate(data, options)
   }
 
   _error(e) {
     console.error('Error', e.message)
   }
 
-  _parse(jsonSchema) {
+  _parse(json) {
+    if (json.schema) {
+      return json.schema.joi
+    }
+
     let joiSchema = {}
-    for (let prop in jsonSchema) {
-      if (jsonSchema.hasOwnProperty(prop)) {
-        let jsonSchemaItem = jsonSchema[prop]
+    for (let prop in json) {
+      if (json.hasOwnProperty(prop)) {
+        let jsonSchemaItem = json[prop]
         let type = this._parseType(jsonSchemaItem)
         let defaultObject
+
+        // if (type === 'model') {
+        //   console.log('WE GOTS MODEL'.bgGreen, prop, type, jsonSchemaItem.schema)
+        //   return jsonSchemaItem.schema
+        // }
+
+        if (type === 'joi') {
+          return jsonSchemaItem
+        }
+
         joiSchema[prop] = Joi[type]()
 
         if (type === 'object') {
@@ -70,6 +87,15 @@ class Schema {
   }
 
   _parseType(item) {
+
+    if (item.isSchema) {
+      return 'schema'
+    }
+
+    if (item.isJoi) {
+      return 'joi'
+    }
+
     let type = typeof item
     if (type.type) {
       type = type.type

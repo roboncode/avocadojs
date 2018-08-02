@@ -1,4 +1,4 @@
-const arango = require('../../arango/Arango').getInstance()
+const arango = require('../../arango')
 
 let schema = arango.createSchema({
   user: String,

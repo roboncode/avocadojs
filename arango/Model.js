@@ -103,9 +103,10 @@ class ArangoModel extends AvocadoModel {
     return this
   }
 
+  // TODO: update()
   async update() {
     if (!this.isNew) {
-
+      
     }
   }
 

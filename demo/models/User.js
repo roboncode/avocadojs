@@ -1,4 +1,4 @@
-const arango = require('../../arango/Arango').getInstance()
+const arango = require('../../arango')
 const Device = require('./Device')
 
 let schema = arango.createSchema({
@@ -15,9 +15,9 @@ let schema = arango.createSchema({
   avatar: String, // URL to avatar image
   banner: String, // URL to background image
   theme: String, // #FF0000
-  // TODO: Fix arrays so it supports Model, or schema, or JSON
-  //devices: [Device], // Ids used to send push notifications to
-  devices: [Device.schema.json], // Ids used to send push notifications to
+  devices: [ Device ], // Ids used to send push notifications to
+  // devices: [Device.schema], // Ids used to send push notifications to
+  // devices: [Device.schema.json], // Ids used to send push notifications to
   stats: {
     friends: { type: Number, default: 0 },
     invites: { type: Number, default: 0 },

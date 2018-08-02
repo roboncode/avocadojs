@@ -11,6 +11,7 @@ class Model {
    */
   constructor(data, schema = {}, options = {}) {
     // keep origin data source
+    definePrivateProperty(this, 'isModel', true)
     definePrivateProperty(this, '_dataSource', data)
     definePrivateProperty(this, '_schema', schema)
     definePrivateProperty(this, '_options', options)
