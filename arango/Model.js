@@ -46,7 +46,7 @@ class ArangoModel extends AvocadoModel {
       let schemaOptions = this.schema.options
       let result
       if (schemaOptions.strict) {
-        let schemaKeys = this.schema.getSchemaKeys()
+        let schemaKeys = this.schema.schemaKeys
         let props = [].concat(propOrProps)
         let filteredProps = filterProps(schemaKeys, props)
         result = await inc(collectionName, id, filteredProps, val)

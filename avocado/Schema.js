@@ -17,8 +17,7 @@ class Schema {
     return this._options
   }
 
-  // TODO: turn into getter
-  getSchemaKeys() {
+  get schemaKeys() {
     return this._schemaKeys
   }
 
