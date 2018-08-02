@@ -5,10 +5,6 @@ const filterProps = require('../avocado/helpers/filterProps')
 
 class ArangoModel extends AvocadoModel {
 
-  static getCollectionName() {
-    return this.options.name
-  }
-
   static setConnection(connection) {
     this.connection = connection
     return this
@@ -16,8 +12,7 @@ class ArangoModel extends AvocadoModel {
 
   static getCollection() {
     let db = this.connection.db
-    let collectionName = this.getCollectionName()
-    return db.collection(collectionName)
+    return db.collection(this.collectionName)
   }
 
   static find() {}
@@ -42,7 +37,7 @@ class ArangoModel extends AvocadoModel {
 
   static inc(id, propOrProps, val = 1) {
     return new Promise(async (resolve, reject) => {
-      let collectionName = this.getCollectionName()
+      let collectionName = this.collectionName
       let schemaOptions = this.schema.options
       let result
       if (schemaOptions.strict) {

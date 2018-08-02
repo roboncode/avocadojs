@@ -31,10 +31,8 @@ class Arango {
     )
     asyncForEach(this.models, async (model, name) => {
       model.setConnection(this.connection)
-      let options = model.options
-      let collectionName = model.getCollectionName()
-
-      await this.createCollection(collectionName, options.indexes)
+      console.log('#collectionName'.green, model.collectionName)
+      await this.createCollection(model.collectionName, model.schema.options.indexes)
     })
 
     return this.connection
@@ -77,17 +75,14 @@ class Arango {
     // User.importDocs(toArray(users), true)
   }
 
-  model(name, schema, options = {}) {
+  model(name, schema, collectionName = '') {
     let model = this.models[name]
     if (schema) {
-      model = factory(name, schema, options)
+      model = factory(name, schema, collectionName)
       model.setConnection(this.connection)
 
       if(this.connection.connected) {
-        let options = model.options
-        let collectionName = model.getCollectionName()
-
-        this.createCollection(collectionName, options.indexes)
+        this.createCollection(model.collectionName, schema.options.indexes)
       }
 
       this.models[name] = model

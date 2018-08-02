@@ -39,7 +39,32 @@ let schema = arango.Schema({
   createdAt: Date,
   updatedAt: { type: Date, default: Date.now }
 }, {
-  strict: true
+  strict: true,
+  indexes: [{
+      type: 'hash',
+      fields: ['authId']
+    },
+    {
+      type: 'hash',
+      fields: ['email']
+    },
+    {
+      type: 'hash',
+      fields: ['screenName']
+    },
+    {
+      type: 'skipList',
+      fields: ['screenName']
+    },
+    {
+      type: 'skipList',
+      fields: ['firstName']
+    },
+    {
+      type: 'skipList',
+      fields: ['lastName']
+    }
+  ]
 })
 
 schema.computed.fullName = function() {
@@ -54,14 +79,4 @@ schema.methods.sayHello = function(day) {
   this.emitter.emit('sayHello', day, this.firstName + ' ' + this.lastName)
 }
 
-module.exports = arango.model('User', schema, {
-  name: 'users',
-  indexes: [
-    { type: 'hash', fields: ['authId'] },
-    { type: 'hash', fields: ['email'] },
-    { type: 'hash', fields: ['screenName'] },
-    { type: 'skipList', fields: ['screenName'] },
-    { type: 'skipList', fields: ['firstName'] },
-    { type: 'skipList', fields: ['lastName'] }
-  ]
-})
+module.exports = arango.model('User', schema, 'users')
