@@ -1,6 +1,6 @@
 const arango = require('../../arango')
 
-let schema = arango.createSchema({
+let schema = arango.Schema({
   user: String,
   friend: String,
   tags: [String]

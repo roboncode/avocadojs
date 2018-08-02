@@ -1,6 +1,6 @@
 const arango = require('../../arango')
 
-let schema = arango.createSchema({
+let schema = arango.Schema({
   token: String,
   provider: String, // firebase, onesignal
   platform: { type: String, valid: ['android', 'ios', 'browser'] },

@@ -1,6 +1,6 @@
 const arango = require('../../arango')
 
-let schema = arango.createSchema({
+let schema = arango.Schema({
   version: { type: String, default: '1.0' },
   priority: { type: Number, default: 0 },
   label: String,

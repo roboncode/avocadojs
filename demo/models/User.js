@@ -1,7 +1,7 @@
 const arango = require('../../arango')
 const Device = require('./Device')
 
-let schema = arango.createSchema({
+let schema = arango.Schema({
   authId: String,
   role: { type: String, valid: ['admin', 'user'], default: 'user' },
   screenName: String, // roboncode
