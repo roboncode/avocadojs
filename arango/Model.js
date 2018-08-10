@@ -33,13 +33,18 @@ class ArangoModel extends AvocadoModel {
     return this
   }
 
-  static async updateById(id, data) {
-    return this.update({
+  static async findByIdAndUpdate(id, data, options = {}) {
+    return this.updateOne({
       _key: id
-    }, data)
+    }, data, options)
   }
 
-  static async update(criteria, data, options = {}) {
+  static async updateOne(criteria, data, options = {}) {
+    options.limit = 1
+    return this.updateMany(criteria, data, options)
+  }
+
+  static async updateMany(criteria, data, options = {}) {
     return new Promise(async (resolve, reject) => {
       const schemaOptions = this.schema.options
       const result = await Builder.getInstance()
@@ -55,7 +60,7 @@ class ArangoModel extends AvocadoModel {
         })
         .exec()
 
-      if(result instanceof Error) {
+      if (result instanceof Error) {
         return reject(result)
       }
 
@@ -64,25 +69,54 @@ class ArangoModel extends AvocadoModel {
       const DOC_VAR = 'doc'
       aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
       aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      if (options.limit) {
+        aqlSegments.push('\n   LIMIT 0,' + options.limit)
+      }
       aqlSegments.push('\n   UPDATE', DOC_VAR, '\n   WITH', JSON.stringify(result))
       aqlSegments.push('\n   IN', collectionName)
 
       const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + ".$1")
       if (options.printAQL) {
         console.log(query)
-      } 
+      }
       await this.connection.db.query(query)
 
-      resolve()
+      return resolve()
     })
   }
 
-  static async deleteById() {
-
+  static async findByIdAndDelete(id, options = {}) {
+    return this.deleteOne({
+      _key: id
+    }, options)
   }
 
-  static async delete() {
+  static async deleteOne(criteria, options = {}) {
+    options.limit = 1
+    return this.deleteMany(criteria, options)
+  }
 
+  static async deleteMany(criteria, options = {}) {
+    return new Promise(async (resolve, reject) => {
+      const collectionName = this.collectionName
+      const aqlSegments = []
+      const DOC_VAR = 'doc'
+      aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
+      aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      if (options.limit) {
+        aqlSegments.push('\n   LIMIT 0,' + options.limit)
+      }
+      aqlSegments.push('\n   REMOVE', DOC_VAR)
+      aqlSegments.push('\n   IN', collectionName)
+
+      const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + ".$1")
+      if (options.printAQL) {
+        console.log(query)
+      }
+      await this.connection.db.query(query)
+
+      return resolve()
+    })
   }
 
   static getCollection() {

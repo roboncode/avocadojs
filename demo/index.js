@@ -113,6 +113,19 @@ async function main_update_users() {
   */
 }
 
+async function main_delete_users() {
+  require('./models/User')
+
+  // Create connection
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  User.deleteOne({_key: 'jane'})
+}
+
 // main()
 // main_update_user()
-main_update_users()
+// main_update_users()
+main_delete_users()
