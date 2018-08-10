@@ -1,5 +1,4 @@
 const fs = require('fs')
-const qb = require('aqb')
 const path = require('path')
 const rootPath = path.join(__dirname, '..')
 const arango = require(path.join(rootPath, 'arango'))
@@ -70,14 +69,17 @@ async function main_update_users() {
 
   User.update({
     _key: 'rob',
-    role: 'admin'
+    // role: 'admin'
+    $or: [
+      {role: 'admin'}
+    ]
   }, {
     junk: 123,
     desc: 'Test #8',
     stats: {
-      // friends: '+1'
-      friends: 1
-      // friends: 'EXPR( stats.friends + 1 )'
+      // friends: '++1'
+      // friends: 1
+      friends: 'EXPR( stats.friends + 1 )'
     }
   })
   /*
