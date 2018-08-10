@@ -1,27 +1,29 @@
 const AvocadoModel = require('../avocado/Model')
 const Builder = require('../avocado/Builder')
+const asyncForEach = require('../avocado/helpers/asyncForEach')
 const inc = require('./queries/inc')
 const filterProps = require('../avocado/helpers/filterProps')
 const criteriaBuilder = require('./helpers/criteriaBuilder')
-const iterate = require('../avocado/helpers/iterate')
 const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
 
 require('colors')
 
-function iterateHandler(target, prop, val, path) {
-  switch (typeof target[prop]) {
+async function iterateHandler(val, prop, target, path) {
+  switch (typeof val) {
     case 'object':
       if (!(val instanceof Array)) {
         if (val.$inc != undefined) {
-          target[prop] = 'EXPR(' + path.join('.') + '+' + val.$inc + ')'
+          target[prop] = 'EXPR(' + path.join('.') + val.$inc + ')'
         } else {
-          iterate(val, iterateHandler, path)
+          await asyncForEach(val, iterateHandler, path)
         }
       }
+      break
     case 'string':
-      if (val.match(/\+{2}\d/gi)) {
-        target[prop] = 'EXPR(' + path.join('.') + '+' + val.substr(2) + ')'
+      if (val.match(/[+-=]{2}\s?\d/gi)) {
+        target[prop] = 'EXPR(' + path.join('.') + val[0] + val.substr(2) + ')'
       }
+      break
   }
 }
 class ArangoModel extends AvocadoModel {
@@ -37,14 +39,14 @@ class ArangoModel extends AvocadoModel {
     }, data)
   }
 
-  static async update(criteria, data) {
-    return new Promise(async resolve => {
+  static async update(criteria, data, options = {}) {
+    return new Promise(async (resolve, reject) => {
       const schemaOptions = this.schema.options
-      const doc = await Builder.getInstance()
+      const result = await Builder.getInstance()
         .data(data)
         .convertTo(this)
-        .intercept((data, index) => {
-          iterate(data, iterateHandler)
+        .intercept(async (data) => {
+          await asyncForEach(data, iterateHandler)
           return data
         })
         .toObject({
@@ -53,15 +55,22 @@ class ArangoModel extends AvocadoModel {
         })
         .exec()
 
+      if(result instanceof Error) {
+        return reject(result)
+      }
+
       const collectionName = this.collectionName
       const aqlSegments = []
       const DOC_VAR = 'doc'
       aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
       aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
-      aqlSegments.push('\n   UPDATE', DOC_VAR, '\n   WITH', JSON.stringify(doc))
+      aqlSegments.push('\n   UPDATE', DOC_VAR, '\n   WITH', JSON.stringify(result))
       aqlSegments.push('\n   IN', collectionName)
 
       const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + ".$1")
+      if (options.printAQL) {
+        console.log(query)
+      } 
       await this.connection.db.query(query)
 
       resolve()

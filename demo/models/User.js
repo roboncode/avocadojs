@@ -19,18 +19,48 @@ let schema = arango.Schema({
   // devices: [Device.schema], // Ids used to send push notifications to
   // devices: [Device.schema.json], // Ids used to send push notifications to
   stats: {
-    friends: { type: arango.Types.Any, default: 0 },
-    invites: { type: Number, default: 0 },
-    following: { type: Number, default: 0 },
-    followers: { type: Number, default: 0 },
-    messages: { type: Number, default: 0 },
-    posts: { type: Number, default: 0 }
+    friends: {
+      type: arango.Types.Any,
+      default: 0
+    },
+    invites: {
+      type: arango.Types.Any,
+      default: 0
+    },
+    following: {
+      type: arango.Types.Any,
+      default: 0
+    },
+    followers: {
+      type: arango.Types.Any,
+      default: 0
+    },
+    messages: {
+      type: arango.Types.Any,
+      default: 0
+    },
+    posts: {
+      type: arango.Types.Any,
+      default: 0
+    }
   },
   internalStats: {
-    reports: { type: Number, default: 0 }, // # of reports received
-    reported: { type: Number, default: 0 }, // # users reported
-    blocks: { type: Number, default: 0 }, // # mutes received
-    blocked: { type: Number, default: 0 } // # users muted
+    reports: {
+      type: arango.Types.Any,
+      default: 0
+    }, // # of reports received
+    reported: {
+      type: arango.Types.Any,
+      default: 0
+    }, // # users reported
+    blocks: {
+      type: arango.Types.Any,
+      default: 0
+    }, // # mutes received
+    blocked: {
+      type: arango.Types.Any,
+      default: 0
+    } // # users muted
   },
   settings: {
     lang: { type: String, default: 'en-us' },

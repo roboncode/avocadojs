@@ -1,16 +1,19 @@
 const snooze = require('./snooze')
 
-async function asyncForEach(data, cb) {
+async function asyncForEach(data, cb, path = []) {
   let result
-  for (let i in data) {
-    if (data.hasOwnProperty(i)) {
+  path = path.slice()
+  for (let prop in data) {
+    if (data.hasOwnProperty(prop)) {
       try {
         await snooze()
-        result = await cb(data[i], i, data)
+        path.push(prop)
+        result = await cb(data[prop], prop, data, path)
       } catch (e) {
         break
       }
     }
+    path.pop()
   }
   return result
 }

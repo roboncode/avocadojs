@@ -78,11 +78,16 @@ async function main_update_users() {
     desc: 'Test #8',
     stats: {
       friends: {
-        $inc: 1
-      }
-      // friends: '++1'
+        $inc: -1
+      },
+      // followers: {
+      //   $inc: 1
+      // },
+      followers: '-=2'
       // friends: 'EXPR( stats.friends + 1 )'
     }
+  }, {
+    printAQL: true
   })
   /*
   // console.log(qb.filter(qb.eq('_key', 'rob')).toAQL())
