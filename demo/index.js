@@ -1,4 +1,5 @@
 const fs = require('fs')
+const qb = require('aqb')
 const path = require('path')
 const rootPath = path.join(__dirname, '..')
 const arango = require(path.join(rootPath, 'arango'))
@@ -43,4 +44,66 @@ async function main() {
   console.log('#user', user)
 }
 
-main()
+async function main_update_user() {
+  require('./models/User')
+
+  // Create connection
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  User.updateById('rob', {
+    desc: "This is a test"
+  })
+}
+
+async function main_update_users() {
+  require('./models/User')
+
+  // Create connection
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+
+  User.update({
+    _key: 'rob',
+    role: 'admin'
+  }, {
+    junk: 123,
+    desc: 'Test #8',
+    stats: {
+      // friends: '+1'
+      friends: 1
+      // friends: 'EXPR( stats.friends + 1 )'
+    }
+  })
+  /*
+  // console.log(qb.filter(qb.eq('_key', 'rob')).toAQL())
+  console.log(qb.filter(qb.eq('a', qb.str('b'))).toAQL())
+  User.update([qb.eq('_key', 'rob').toAQL()], {
+    desc: "desc #5 update users"
+  })
+  */
+
+  // User.update(['_key == "rob"'], {
+  //   desc: "desc #5 update users"
+  // })
+
+  // User.update({
+  //   _key: 'rob',
+  //   $or: {}
+  // })
+
+  /*
+  FOR doc in {}
+    FILTER doc._key == 'rob'
+
+  */
+}
+
+// main()
+// main_update_user()
+main_update_users()

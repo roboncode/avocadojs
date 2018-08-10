@@ -2,6 +2,10 @@ const AvocadoModel = require('../avocado/Model')
 const Builder = require('../avocado/Builder')
 const inc = require('./queries/inc')
 const filterProps = require('../avocado/helpers/filterProps')
+const criteriaBuilder = require('./helpers/criteriaBuilder')
+const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
+
+require('colors')
 
 class ArangoModel extends AvocadoModel {
 
@@ -10,14 +14,62 @@ class ArangoModel extends AvocadoModel {
     return this
   }
 
+  static async updateById(id, data) {
+    return this.update({
+      _key: id
+    }, data)
+  }
+
+  static async update(criteria, data) {
+    return new Promise(async resolve => {
+      const schemaOptions = this.schema.options
+      const doc = await Builder.getInstance()
+        .data(data)
+        .convertTo(this)
+        .toObject({
+          noDefaults: true,
+          unknownProps: schemaOptions.strict ? 'strip' : 'allow'
+        })
+        .exec()
+
+
+      const collectionName = this.collectionName
+      const aqlSegments = []
+      const DOC_VAR = 'doc'
+      aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
+      aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      aqlSegments.push('\n   UPDATE', DOC_VAR, '\n   WITH', JSON.stringify(doc))
+      aqlSegments.push('\n   IN', collectionName)
+
+      const query = aqlSegments.join(' ')//.replace(EXPR, DOC_VAR + ".$1")
+
+      console.log(query)
+      // await this.connection.db.query(query)
+
+      resolve()
+    })
+  }
+
+  static async deleteById() {
+
+  }
+
+  static async delete() {
+
+  }
+
   static getCollection() {
     let db = this.connection.db
     return db.collection(this.collectionName)
   }
 
-  static find() {}
+  static find(conditions) {
+    let collection = this.getCollection()
+  }
 
-  static findOne() {}
+  static findOne(conditions) {
+    let collection = this.getCollection()
+  }
 
   static findById(id) {
     return new Promise(async (resolve, reject) => {
@@ -96,13 +148,6 @@ class ArangoModel extends AvocadoModel {
       this.emit('updated', this)
     }
     return this
-  }
-
-  // TODO: update()
-  async update() {
-    if (!this.isNew) {
-      
-    }
   }
 
   async remove() {

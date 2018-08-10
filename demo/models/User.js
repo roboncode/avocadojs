@@ -1,5 +1,7 @@
 const arango = require('../../arango')
+const Schema = require('../../avocado/Schema')
 const Device = require('./Device')
+const Joi = require('joi')
 
 let schema = arango.Schema({
   authId: String,
@@ -18,7 +20,11 @@ let schema = arango.Schema({
   // devices: [Device.schema], // Ids used to send push notifications to
   // devices: [Device.schema.json], // Ids used to send push notifications to
   stats: {
-    friends: { type: Number, default: 0 },
+    // friends: { type: Joi.alternatives().try(Joi.string(), Joi.number()), default: 0 },
+    friends: {
+      type: Number,
+      default: 0
+    },
     invites: { type: Number, default: 0 },
     following: { type: Number, default: 0 },
     followers: { type: Number, default: 0 },

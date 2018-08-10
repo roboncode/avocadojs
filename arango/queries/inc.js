@@ -20,8 +20,8 @@ async function inc(collection, id, prop, val = 1) {
     .join(id)
     .split('@queries')
     .join(queries)
-    
-  return await connection.db.query(aql)
+
+    return await connection.db.query(aql)
 }
 
 // Example
@@ -30,5 +30,8 @@ async function inc(collection, id, prop, val = 1) {
 //   'stats.likes',
 //   'stats.followers',
 // ])
+
+// RESULT:
+// LET doc = DOCUMENT('users/rob') UPDATE doc WITH {stats:{friends:doc.stats.friends + 1,followers:doc.stats.followers + 1}} IN users
 
 module.exports = inc
