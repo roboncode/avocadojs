@@ -18,6 +18,7 @@ class Arango {
   }
 
   constructor(name = 'default') {
+    this.Types = Schema.Types
     this.models = []
     definePrivateProperty(this, '$instanceName', name)
     this.events = EventDispatcher.getInstance(name)

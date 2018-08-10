@@ -1,6 +1,6 @@
 const Joi = require('joi')
 const getObjectKeys = require('./helpers/getObjectKeys')
-const Model = require('./Model')
+const JSONstringify = require('./helpers/jsonStringify')
 require('colors')
 
 class Schema {
@@ -53,7 +53,6 @@ class Schema {
         let defaultObject
 
         // if (type === 'model') {
-        //   console.log('WE GOTS MODEL'.bgGreen, prop, type, jsonSchemaItem.schema)
         //   return jsonSchemaItem.schema
         // }
 
@@ -64,7 +63,10 @@ class Schema {
         joiSchema[prop] = Joi[type]()
 
         if (type === 'object') {
-          if (JSON.stringify(jsonSchemaItem).match(/"default":/gi)) {
+          // if any children have a default property...
+          if (JSONstringify(jsonSchemaItem).match(/"default":/gi)) {
+          // console.log('#whois', jsonSchemaItem)
+          // if (jsonSchemaItem.default != undefined) {
             defaultObject = this._createDefaultObject(jsonSchemaItem)
             joiSchema[prop] = this._parse(jsonSchemaItem)
             joiSchema[prop] = joiSchema[prop].default(defaultObject)
@@ -191,8 +193,8 @@ Schema.Types = {
   Array,
   Date,
   RegExp,
-  Any: Object,
-  Mixed: Object
+  Any: Joi.any(),
+  Mixed: Joi.any()
 }
 
 module.exports = Schema

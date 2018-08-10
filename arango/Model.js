@@ -41,7 +41,7 @@ class ArangoModel extends AvocadoModel {
       aqlSegments.push('\n   UPDATE', DOC_VAR, '\n   WITH', JSON.stringify(doc))
       aqlSegments.push('\n   IN', collectionName)
 
-      const query = aqlSegments.join(' ')//.replace(EXPR, DOC_VAR + ".$1")
+      const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + ".$1")
 
       console.log(query)
       // await this.connection.db.query(query)
