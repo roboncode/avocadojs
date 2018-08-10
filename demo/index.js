@@ -70,16 +70,18 @@ async function main_update_users() {
   User.update({
     _key: 'rob',
     // role: 'admin'
-    $or: [
-      {role: 'admin'}
-    ]
+    $or: [{
+      role: 'admin'
+    }]
   }, {
     junk: 123,
     desc: 'Test #8',
     stats: {
+      friends: {
+        $inc: 1
+      }
       // friends: '++1'
-      // friends: 1
-      friends: 'EXPR( stats.friends + 1 )'
+      // friends: 'EXPR( stats.friends + 1 )'
     }
   })
   /*

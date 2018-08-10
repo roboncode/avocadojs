@@ -3,10 +3,27 @@ const Builder = require('../avocado/Builder')
 const inc = require('./queries/inc')
 const filterProps = require('../avocado/helpers/filterProps')
 const criteriaBuilder = require('./helpers/criteriaBuilder')
+const iterate = require('../avocado/helpers/iterate')
 const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
 
 require('colors')
 
+function iterateHandler(target, prop, val, path) {
+  switch (typeof target[prop]) {
+    case 'object':
+      if (!(val instanceof Array)) {
+        if (val.$inc != undefined) {
+          target[prop] = 'EXPR(' + path.join('.') + '+' + val.$inc + ')'
+        } else {
+          iterate(val, iterateHandler, path)
+        }
+      }
+    case 'string':
+      if (val.match(/\+{2}\d/gi)) {
+        target[prop] = 'EXPR(' + path.join('.') + '+' + val.substr(2) + ')'
+      }
+  }
+}
 class ArangoModel extends AvocadoModel {
 
   static setConnection(connection) {
@@ -26,12 +43,15 @@ class ArangoModel extends AvocadoModel {
       const doc = await Builder.getInstance()
         .data(data)
         .convertTo(this)
+        .intercept((data, index) => {
+          iterate(data, iterateHandler)
+          return data
+        })
         .toObject({
           noDefaults: true,
           unknownProps: schemaOptions.strict ? 'strip' : 'allow'
         })
         .exec()
-
 
       const collectionName = this.collectionName
       const aqlSegments = []
@@ -42,9 +62,7 @@ class ArangoModel extends AvocadoModel {
       aqlSegments.push('\n   IN', collectionName)
 
       const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + ".$1")
-
-      console.log(query)
-      // await this.connection.db.query(query)
+      await this.connection.db.query(query)
 
       resolve()
     })
