@@ -50,7 +50,17 @@ function criteriaBuilder(criteria) {
             aql.push(prop + ' ' + op + ' "' + val + '"')
             break
           case 'object':
-            aql.push(prop + criteriaBuilder(val, null, false))
+            if (val === null) {
+              aql.push(prop + ' ' + op + ' ' + val)
+            } else {
+              let criteriaResult = criteriaBuilder(val, null, false)
+              if (criteriaResult[0] !== ' ') {
+                aql.push(prop + '.' + criteriaResult)
+              } else {
+                aql.push(prop + criteriaResult)
+              }
+            }
+
             break
         }
       }
@@ -73,7 +83,14 @@ function criteriaBuilder(criteria) {
   }
 
   if (doc) {
-    str = str.replace(/(\w+)(\s[!=<>])/g, doc + ".`$1`$2")
+    // str = str.replace(/(\w+)(\s[!=<>])/g, doc + ".`$1`$2")
+    // console.log('before'.bgRed, str)
+    // a.b => doc.a.b
+    str = str.replace(/([\w.]+)(\.?)(\s[!=<>])/gi, doc + ".$1$3")
+    // doc.a.b. => doc.a.b
+    // str = str.replace(/\.(\s)/gi, "$1")
+    // doc.a.b => doc.a.`b`
+    str = str.replace(/(\.)(\w+)(\s)/gi, "$1`$2`$3")
   }
 
   return str
