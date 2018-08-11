@@ -117,7 +117,9 @@ async function main_delete_users() {
   })
 
   const User = arango.model('User')
-  User.deleteOne({_key: 'jane'})
+  User.deleteOne({
+    _key: 'jane'
+  })
 }
 
 async function main_find_users() {
@@ -150,9 +152,17 @@ async function main_find_user() {
   // let user = await User.findById('jane', {
   //   printAQL: true
   // })
-  const user = await User.find({role: {$ne: 'admin'}}, {
+  const user = await User.find({
+    firstName: 'Chase',
+    role: {
+      $ne: 'admin'
+    },
+    stats: {
+      friends: null
+    }
+  }, {
     printAQL: true,
-    offset: 2
+    limit: 2
   })
 
   console.log(user)
