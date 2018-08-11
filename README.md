@@ -8,6 +8,12 @@ Inspired by [Mongoose](http://mongoosejs.com/).
 Built using [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.com/arangodb/arangojs)
 
 # *** In Development ***
+## TODOs
+* select() - return selected properties back
+* populate() - populates a subdocument
+* cleanup
+* unit tests
+* more documentation
 
 ## Quick Start
 
@@ -91,7 +97,7 @@ module.exports = arango.model('User', schema)
 
 Slices extend Avocado in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
 
-#### Arango Slide
+#### Arango Slice
 
 **Arango Slice** is the library built on top of Avacado. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
 
