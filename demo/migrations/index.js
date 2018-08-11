@@ -13,7 +13,7 @@ async function importCategories(conn) {
     .toObject()
     .exec()
 
-  await Model.importDocs(docs, true)
+  await Model.importMany(docs, true)
 }
 
 async function importUsers() {
@@ -28,7 +28,7 @@ async function importUsers() {
     .toObject()
     .exec()
 
-  await Model.importDocs(docs, true)
+  await Model.importMany(docs, true)
 }
 
 async function importFriends() {
@@ -43,7 +43,7 @@ async function importFriends() {
     .toObject()
     .exec()
 
-  await Model.importDocs(docs, true)
+  await Model.importMany(docs, true)
 }
 
 async function importAllDocs() {

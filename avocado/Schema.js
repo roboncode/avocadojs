@@ -65,8 +65,6 @@ class Schema {
         if (type === 'object') {
           // if any children have a default property...
           if (JSONstringify(jsonSchemaItem).match(/"default":/gi)) {
-          // console.log('#whois', jsonSchemaItem)
-          // if (jsonSchemaItem.default != undefined) {
             defaultObject = this._createDefaultObject(jsonSchemaItem)
             joiSchema[prop] = this._parse(jsonSchemaItem)
             joiSchema[prop] = joiSchema[prop].default(defaultObject)

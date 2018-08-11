@@ -32,7 +32,6 @@ class Arango {
     )
     asyncForEach(this.models, async (model, name) => {
       model.setConnection(this.connection)
-      console.log('#collectionName'.green, model.collectionName)
       await this.createCollection(model.collectionName, model.schema.options.indexes)
     })
 
@@ -70,10 +69,6 @@ class Arango {
     if (!this.connection.connected) {
       throw new Error(CONSTS.ERRORS.NOT_CONNECTED)
     }
-  }
-
-  async importDocs(conn, ModelClass, docs, options = {}) {
-    // User.importDocs(toArray(users), true)
   }
 
   model(name, schema, collectionName = '') {

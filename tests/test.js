@@ -12,7 +12,7 @@ async function main() {
   )
 
   
-  // await migrations.importDocs()
+  // await migrations.importMany()
   const User = arango.model('User')
   let doc = await User.findById('262219')
   console.log('#doc', doc)

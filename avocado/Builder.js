@@ -97,8 +97,8 @@ class Builder {
     let startTotalTime = microtime.now()
     let startTime
     let items = this.items
-    let result = await asyncForEach(items, async (item, index) => {
-      return await asyncForEach(this.queue, async message => {
+    let item = await asyncForEach(items, async (item, index) => {
+      items[index] = await asyncForEach(this.queue, async message => {
         if (handler) {
           startTime = microtime.now()
         }
@@ -129,7 +129,7 @@ class Builder {
     if (this.isArray) {
       return this.items
     }
-    return result
+    return item
   }
 }
 

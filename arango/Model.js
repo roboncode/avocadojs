@@ -1,8 +1,6 @@
 const AvocadoModel = require('../avocado/Model')
 const Builder = require('../avocado/Builder')
 const asyncForEach = require('../avocado/helpers/asyncForEach')
-const inc = require('./queries/inc')
-const filterProps = require('../avocado/helpers/filterProps')
 const criteriaBuilder = require('./helpers/criteriaBuilder')
 const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
 
@@ -67,10 +65,12 @@ class ArangoModel extends AvocadoModel {
       const collectionName = this.collectionName
       const aqlSegments = []
       const DOC_VAR = 'doc'
+      const OFFSET = options.offset || 0
+      const LIMIT = options.limit || null
       aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
       aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
-      if (options.limit) {
-        aqlSegments.push('\n   LIMIT 0,' + options.limit)
+      if (OFFSET || LIMIT) {
+        aqlSegments.push(`\n   LIMIT ${OFFSET},${LIMIT}`)
       }
       aqlSegments.push('\n   UPDATE', DOC_VAR, '\n   WITH', JSON.stringify(result))
       aqlSegments.push('\n   IN', collectionName)
@@ -101,10 +101,12 @@ class ArangoModel extends AvocadoModel {
       const collectionName = this.collectionName
       const aqlSegments = []
       const DOC_VAR = 'doc'
+      const OFFSET = options.offset || 0
+      const LIMIT = options.limit || null
       aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
       aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
-      if (options.limit) {
-        aqlSegments.push('\n   LIMIT 0,' + options.limit)
+      if (OFFSET || LIMIT) {
+        aqlSegments.push(`\n   LIMIT ${OFFSET},${LIMIT}`)
       }
       aqlSegments.push('\n   REMOVE', DOC_VAR)
       aqlSegments.push('\n   IN', collectionName)
@@ -124,48 +126,58 @@ class ArangoModel extends AvocadoModel {
     return db.collection(this.collectionName)
   }
 
-  static find(conditions) {
-    let collection = this.getCollection()
+  static findById(id, options = {}) {
+    return this.findOne({
+      _key: id
+    }, options)
   }
 
-  static findOne(conditions) {
-    let collection = this.getCollection()
+  static findOne(criteria, options = {}) {
+    options.limit = 1
+    return this.find(criteria, options)
   }
 
-  static findById(id) {
+  static find(criteria, options = {}) {
+    return this.findMany(criteria, options)
+  }
+
+  static findMany(criteria, options = {}) {
     return new Promise(async (resolve, reject) => {
-      let doc = await this.getCollection().document(id)
-      let schemaOptions = this.schema.options
+      const schemaOptions = this.schema.options
+      const collectionName = this.collectionName
+      const aqlSegments = []
+      const DOC_VAR = 'doc'
+      const OFFSET = options.offset || 0
+      const LIMIT = options.limit || null
+      aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
+      aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      if (OFFSET || LIMIT) {
+        aqlSegments.push(`\n   LIMIT ${OFFSET},${LIMIT}`)
+      }
+      aqlSegments.push('\n   RETURN', DOC_VAR)
+
+      const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + ".$1")
+      if (options.printAQL) {
+        console.log(query)
+      }
+      let cursor = await this.connection.db.query(query)
+      let docs = await cursor.all()
       let result = await Builder.getInstance()
-        .data(doc)
+        .data(docs)
         .convertTo(this)
         .toObject({
           noDefaults: false,
           unknownProps: schemaOptions.strict ? 'strip' : 'allow'
         })
         .exec()
-      return resolve(result)
-    })
-  }
-
-  static inc(id, propOrProps, val = 1) {
-    return new Promise(async (resolve, reject) => {
-      let collectionName = this.collectionName
-      let schemaOptions = this.schema.options
-      let result
-      if (schemaOptions.strict) {
-        let schemaKeys = this.schema.schemaKeys
-        let props = [].concat(propOrProps)
-        let filteredProps = filterProps(schemaKeys, props)
-        result = await inc(collectionName, id, filteredProps, val)
-      } else {
-        result = await inc(collectionName, id, propOrProps, val)
+      if (LIMIT === 1 && result) {
+        return resolve(result[0])
       }
       return resolve(result)
     })
   }
 
-  static importDocs(docs, truncate = false) {
+  static importMany(docs, truncate = false) {
     return new Promise(async (resolve, reject) => {
       try {
         let collection = this.getCollection()

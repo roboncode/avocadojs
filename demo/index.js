@@ -32,11 +32,6 @@ async function main() {
   await importAllDocs()
 
   const User = arango.model('User')
-  await User.inc('rob', [
-    'stats.likes', // This will be filtered out because it is not in the schema
-    'stats.friends',
-    'stats.followers',
-  ])
 
   let user = await User.findById('rob')
 
@@ -125,7 +120,47 @@ async function main_delete_users() {
   User.deleteOne({_key: 'jane'})
 }
 
+async function main_find_users() {
+  require('./models/User')
+
+  // Create connection
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  let users = await User.find({
+    _key: 'jane'
+  }, {
+    printAQL: true
+  })
+
+  console.log(users)
+}
+
+async function main_find_user() {
+  require('./models/User')
+
+  // Create connection
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  // let user = await User.findById('jane', {
+  //   printAQL: true
+  // })
+  const user = await User.find({role: {$ne: 'admin'}}, {
+    printAQL: true,
+    offset: 2
+  })
+
+  console.log(user)
+}
+
 // main()
 // main_update_user()
 // main_update_users()
-main_delete_users()
+// main_delete_users()
+// main_find_users()
+main_find_user()
