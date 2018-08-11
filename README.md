@@ -96,18 +96,23 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 **Arango Slice** is the library built on top of Avacado. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
 
 * Central connectivity to ArangoDB
-* Automated database, collection and indexing
+* Automated creation of databases, collections and indexing
 * Ability to populate database with sample data
 * Common query functions for document retrieval and modification
   
   * findById
   * findOne
+  * findMany
   * find
-  * inc
   * save (create or update)
-  * update
-  * remove
+  * findByIdAndUpdate
+  * updateOne
+  * updateMany
+  * findByIdAndDelete
+  * deleteOne
+  * deleteMany
   * query
+  * importMany
 
 ## Miscellaneous
 
@@ -117,5 +122,5 @@ Nope.
 
 ### Will Avocado eventually do everything Mongoose does?
 
-Nope. Avocado is meant to be agile. You need something, add it to your project. If you feel others my benefit from it, fork this repo and issue a pull requrest. I didn't want to over engineer / architect this library. This reduces bugs, support and limiting how it can be used.
+Nope. Avocado is meant to be agile. You need something, add it to your project. If you feel others will benefit from something you have added, fork this repo and issue a pull requrest. I didn't want to over-engineer this library. This reduces bugs, support and limiting how it can be used.
 
