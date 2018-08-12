@@ -48,42 +48,45 @@ class Schema {
     let joiSchema = {}
     for (let prop in json) {
       if (json.hasOwnProperty(prop)) {
-        let jsonSchemaItem = json[prop]
-        let type = this._parseType(jsonSchemaItem)
-        let defaultObject
-
-        // if (type === 'model') {
-        //   return jsonSchemaItem.schema
-        // }
-
-        if (type === 'joi') {
-          return jsonSchemaItem
-        }
-
-        joiSchema[prop] = Joi[type]()
-
-        if (type === 'object') {
-          // if any children have a default property...
-          if (JSONstringify(jsonSchemaItem).match(/"default":/gi)) {
-            defaultObject = this._createDefaultObject(jsonSchemaItem)
-            joiSchema[prop] = this._parse(jsonSchemaItem)
-            joiSchema[prop] = joiSchema[prop].default(defaultObject)
-          }
-        } else if (type === 'array') {
-          joiSchema[prop] = Joi.array()
-          if (jsonSchemaItem.length) {
-            joiSchema[prop] = joiSchema[prop].items(
-              this._parse(jsonSchemaItem[0])
-            )
-          }
-        } else {
-          this._parseAttrs(prop, joiSchema, jsonSchemaItem, val => {
-            joiSchema[prop] = val
-          })
-        }
+        joiSchema[prop] = this._parseItem(prop, joiSchema, json[prop])
       }
     }
     return Joi.object(joiSchema)
+  }
+
+  _parseItem(prop, joiSchema, jsonSchemaItem) {
+    let type = this._parseType(jsonSchemaItem)
+    console.log('type2'.bgCyan, prop, type)
+    let defaultObject
+
+    if (type === 'joi') {
+      return jsonSchemaItem
+    }
+
+    let joiItem = Joi[type]()
+
+    if (type === 'object') {
+      // if any children have a default property...
+      if (JSONstringify(jsonSchemaItem).match(/"default":/gi)) {
+        defaultObject = this._createDefaultObject(jsonSchemaItem)
+        joiItem = this._parse(jsonSchemaItem)
+        joiItem = joiItem.default(defaultObject)
+      }
+    } else if (type === 'array') {
+      let joiSchemArray = {}
+      if (jsonSchemaItem.length > 1) {
+        throw new Error('Array cannot contain more than one schema')
+      } else if (jsonSchemaItem.length === 0) {
+        joiItem = Joi.array().items(Joi.any())
+      } else {
+        joiItem = Joi.array().items(this._parseItem(0, joiSchemArray, jsonSchemaItem[0]))
+      }
+    } else {
+      this._parseAttrs(prop, joiSchema, jsonSchemaItem, val => {
+        joiSchema[prop] = val
+      })
+    }
+    return joiItem
   }
 
   _parseType(item) {
@@ -174,6 +177,7 @@ class Schema {
         defaultObject[prop] = jsonSchemaItem[prop].default
       } else {
         let type = this._parseType(jsonSchemaItem[prop])
+        console.log('type'.bgBlue, type)
         if (type === 'object') {
           defaultObject[prop] = this._createDefaultObject(jsonSchemaItem[prop])
         }
@@ -191,6 +195,7 @@ Schema.Types = {
   Array,
   Date,
   RegExp,
+  Id: Joi.any(), // TODO: Do something here, not sure what
   Any: Joi.any(),
   Mixed: Joi.any()
 }
