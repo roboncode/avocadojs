@@ -9,6 +9,8 @@ Built using [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.c
 
 # *** In Development ***
 ## TODOs
+* sort
+    * SORT u.age DESC
 * select() - return selected properties back
 * populate() - populates a subdocument
 * cleanup
