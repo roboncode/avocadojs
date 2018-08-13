@@ -102,7 +102,7 @@ class Model {
     let json = await this.validate(options)
 
     if (computed) {
-      let virtualKeys = Object.keys(schema.computed)
+      let virtualKeys = Object.keys(this._schema.computed)
       for (let i = 0; i < virtualKeys.length; i++) {
         let prop = virtualKeys[i]
         json[prop] = this[prop]
