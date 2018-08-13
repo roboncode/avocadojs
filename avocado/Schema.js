@@ -79,7 +79,6 @@ class Schema {
     } else if (type === 'array') {
       // if the type is an array then create sub schema for children
       // currently only supports only 1 child schema
-      let schema = {}
       if (data.length > 1) {
         throw new Error('Array cannot contain more than one schema')
       } else if (data.length === 0) {
