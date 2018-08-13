@@ -62,10 +62,10 @@ async function importDevices() {
 }
 
 async function importAllDocs() {
-  // await importCategories()
+  await importCategories()
   await importUsers()
-  // await importFriends()
-  // await importDevices()
+  await importFriends()
+  await importDevices()
 }
 
 module.exports = {
