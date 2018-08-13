@@ -155,16 +155,18 @@ async function main_find_user() {
   // })
   const user = await User.find({
     firstName: 'Chase',
-    role: {
-      $ne: 'admin'
-    },
-    stats: {
-      friends: null
-    }
+    // role: {
+    //   $ne: 'admin'
+    // },
+    // stats: {
+    //   friends: null
+    // }
   }, {
     computed: true,
     printAQL: true,
-    limit: 2
+    limit: 2,
+    noDefaults: true,
+    return: 'firstName lastName'
   })
 
   console.log(user)
@@ -196,6 +198,6 @@ async function main_new_user() {
 // main_update_users()
 // main_delete_users()
 // main_find_users()
- main_find_users()
-// main_find_user()
+//  main_find_users()
+main_find_user()
 // main_new_user()
