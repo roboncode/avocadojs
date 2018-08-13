@@ -203,6 +203,23 @@ class ArangoModel extends AvocadoModel {
     })
   }
 
+  static findByQuery(query, options = {}) {
+    return new Promise(async (resolve, reject) => {
+      let cursor = await this.connection.db.query(query)
+      let docs = await cursor.all()
+      let result = await Builder.getInstance()
+        .data(docs)
+        .convertTo(this)
+        .toObject({
+          computed: true,
+          noDefaults: options.noDefaults || false,
+          unknownProps: options.strict ? 'strip' : 'allow'
+        })
+        .exec()
+      return resolve(result)
+    })
+  }
+
   static importMany(docs, truncate = false) {
     return new Promise(async (resolve, reject) => {
       try {
