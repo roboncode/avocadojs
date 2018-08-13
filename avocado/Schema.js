@@ -40,54 +40,61 @@ class Schema {
     console.error('Error', e.message)
   }
 
-  _parse(json) {
-    if (json.schema) {
-      return json.schema.joi
+  _parse(data) {
+    // check if there is a schema, if so this is a reference to a model
+    if (data.schema) {
+      return data.schema.joi
+    }
+    // get data type
+    let type = this._parseType(data)
+    // if it is already a joi schema then return it
+    if (type === 'joi') {
+      return data.type || data
     }
 
-    let joiSchema = {}
-    for (let prop in json) {
-      if (json.hasOwnProperty(prop)) {
-        let jsonSchemaItem = json[prop]
-        let type = this._parseType(jsonSchemaItem)
-        let defaultObject
+    // create a joi type schema
+    let joiType = Joi[type]()
 
-        // if (type === 'model') {
-        //   return jsonSchemaItem.schema
-        // }
-
-        if (type === 'joi') {
-          return jsonSchemaItem
-        }
-
-        joiSchema[prop] = Joi[type]()
-
-        if (type === 'object') {
-          // if any children have a default property...
-          if (JSONstringify(jsonSchemaItem).match(/"default":/gi)) {
-            defaultObject = this._createDefaultObject(jsonSchemaItem)
-            joiSchema[prop] = this._parse(jsonSchemaItem)
-            joiSchema[prop] = joiSchema[prop].default(defaultObject)
+    if (type === 'object') {
+      // if the type is an object then loop through and get child schemas
+      let schema = {}
+      for (let prop in data) {
+        if (data.hasOwnProperty(prop)) {
+          schema[prop] = this._parse(data[prop])
+          // do not parse array attributes
+          if (data[prop].type) {
+            this._parseAttrs(prop, schema[prop], data, val => {
+              schema[prop] = val
+            })
           }
-        } else if (type === 'array') {
-          joiSchema[prop] = Joi.array()
-          if (jsonSchemaItem.length) {
-            joiSchema[prop] = joiSchema[prop].items(
-              this._parse(jsonSchemaItem[0])
-            )
-          }
-        } else {
-          this._parseAttrs(prop, joiSchema, jsonSchemaItem, val => {
-            joiSchema[prop] = val
-          })
         }
       }
+      joiType = joiType.append(schema)
+      // check if any children have default values, if so we have to create
+      // a default object so it displays properly
+      if (JSONstringify(data).match(/"default":/gi)) {
+        const defaultObject = this._createDefaultObject(data)
+        joiType = joiType.default(defaultObject)
+      }
+    } else if (type === 'array') {
+      // if the type is an array then create sub schema for children
+      // currently only supports only 1 child schema
+      let schema = {}
+      if (data.length > 1) {
+        throw new Error('Array cannot contain more than one schema')
+      } else if (data.length === 0) {
+        joiType = Joi.array().items(Joi.any())
+      } else {
+        let child = data[0]
+        let childJoiType = child.isJoi ? child : this._parse(child)
+        joiType = Joi.array().items(childJoiType)
+      }
     }
-    return Joi.object(joiSchema)
+
+    return joiType
   }
 
   _parseType(item) {
-
     if (item.isSchema) {
       return 'schema'
     }
@@ -97,8 +104,9 @@ class Schema {
     }
 
     let type = typeof item
-    if (type.type) {
-      type = type.type
+    // if object has a type and it isn't a property called "type"
+    if (item.type && !item.type.type) {
+      type = this._parseType(item.type)
     }
     switch (type) {
       case 'object':
@@ -142,21 +150,18 @@ class Schema {
     }
   }
 
-  _parseAttrs(prop, joiSchema, jsonSchemaItem, callback) {
-    if (typeof jsonSchemaItem !== 'function') {
-      let item = jsonSchemaItem
+  _parseAttrs(prop, joiType, data, callback) {
+    let item = data[prop]
+    if (typeof item !== 'function') {
       for (let attr in item) {
+        // do not parse type
         if (attr !== 'type') {
-          // do not parse type
           let val = item[attr]
           try {
             if (typeof val === 'function') {
-              joiSchema[prop] = joiSchema[prop][attr](
-                val,
-                `default function() for ${prop}`
-              )
+              joiType = joiType[attr](val, `default function() for ${prop}`)
             } else {
-              joiSchema[prop] = joiSchema[prop][attr](val)
+              joiType = joiType[attr](val)
             }
           } catch (e) {
             this._error(e)
@@ -164,22 +169,22 @@ class Schema {
         }
       }
     }
-    callback(joiSchema[prop])
+    callback(joiType)
   }
 
-  _createDefaultObject(jsonSchemaItem) {
-    let defaultObject = {}
-    for (let prop in jsonSchemaItem) {
-      if (jsonSchemaItem[prop].hasOwnProperty('default')) {
-        defaultObject[prop] = jsonSchemaItem[prop].default
+  _createDefaultObject(data) {
+    let defaultValue = {}
+    for (let prop in data) {
+      if (data[prop].hasOwnProperty('default')) {
+        defaultValue[prop] = data[prop].default
       } else {
-        let type = this._parseType(jsonSchemaItem[prop])
+        let type = this._parseType(data[prop])
         if (type === 'object') {
-          defaultObject[prop] = this._createDefaultObject(jsonSchemaItem[prop])
+          defaultValue[prop] = this._createDefaultObject(data[prop])
         }
       }
     }
-    return defaultObject
+    return defaultValue
   }
 }
 
@@ -191,6 +196,7 @@ Schema.Types = {
   Array,
   Date,
   RegExp,
+  Id: Joi.any(), // TODO: Do something here, not sure what
   Any: Joi.any(),
   Mixed: Joi.any()
 }

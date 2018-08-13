@@ -27,8 +27,8 @@ async function importUsers() {
     .convertTo(Model)
     .toObject()
     .exec()
-
-  await Model.importMany(docs, true)
+  
+    await Model.importMany(docs, true)
 }
 
 async function importFriends() {
@@ -46,15 +46,32 @@ async function importFriends() {
   await Model.importMany(docs, true)
 }
 
+async function importDevices() {
+  const Model = arango.model('Device')
+
+  let items = require('./data/devices')
+  items = arango.toArray(items)
+
+  let docs = await Builder.getInstance()
+    .data(items)
+    .convertTo(Model)
+    .toObject()
+    .exec()
+
+  await Model.importMany(docs, true)
+}
+
 async function importAllDocs() {
   await importCategories()
   await importUsers()
   await importFriends()
+  await importDevices()
 }
 
 module.exports = {
   importAllDocs,
   importCategories,
   importUsers,
-  importFriends
+  importFriends,
+  importDevices
 }

@@ -20,58 +20,26 @@ class Builder {
   constructor() {
     this.methods = {}
 
-    this.addMethod('convertTo', function (data, Model) {
+    this.addMethod('convertTo', function (data, index, items, Model) {
       return new Model(data)
     })
 
-    this.addMethod('toObject', function (model, options) {
+    this.addMethod('toObject', function (model, index, items, options) {
       if (model.toObject) {
         return model.toObject(options)
       }
       throw new Error('toObject() requires first element to be of type Model')
     })
 
-    this.addMethod('inspect', function (target, note = 'Inspect', index) {
+    this.addMethod('inspect', function (target, index, items, note = 'Inspect') {
       console.log(note, `[${index}] =>`, target)
       return target
     })
 
-    this.addMethod('intercept', function (target, callback, index = 0) {
+    this.addMethod('intercept', function (target, index = 0, items, callback) {
       return callback(target, index)
     })
 
-    // let scope = this
-    // scope.isArray = data instanceof Array
-    // scope.items = [].concat(data)
-    // scope.queue = []
-
-    // let methods = Object.keys(avocado)
-    // for (let i = 0; i < methods.length; i++) {
-    //   let method = methods[i]
-    //   if (!method.match(/schema/gi)) {
-    //     scope[method] = function() {
-    //       scope.queue.push({
-    //         type: 'avocado',
-    //         method,
-    //         args: [].slice.call(arguments)
-    //       })
-    //       return scope
-    //     }
-    //   }
-    // }
-
-    // methods = Object.keys(registry)
-    // for (let i = 0; i < methods.length; i++) {
-    //   let method = methods[i]
-    //   scope[method] = function() {
-    //     scope.queue.push({
-    //       type: 'custom',
-    //       method,
-    //       args: [].slice.call(arguments)
-    //     })
-    //     return scope
-    //   }
-    // }
   }
 
   data(data) {
@@ -102,7 +70,7 @@ class Builder {
         if (handler) {
           startTime = microtime.now()
         }
-        let args = [].concat(item, message.args, index, [items])
+        let args = [].concat(item, index, [items], message.args)
         try {
           await snooze()
           item = await message.method.apply(this, args)

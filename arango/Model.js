@@ -3,6 +3,13 @@ const Builder = require('../avocado/Builder')
 const asyncForEach = require('../avocado/helpers/asyncForEach')
 const criteriaBuilder = require('./helpers/criteriaBuilder')
 const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
+// const builder = Builder.getInstance()
+// require('colors')
+
+// builder.addMethod('checkSubdoc', function (target, index = 0) {
+//   console.log('#checkSubdoc', arguments.length)
+//   return target
+// })
 
 require('colors')
 
@@ -211,6 +218,17 @@ class ArangoModel extends AvocadoModel {
     let data = await this.validate({
       noDefaults: true
     })
+    // console.log('#data', data)
+
+    // await asyncForEach(data, async (val, index, item, steps) => {
+    //   if (val instanceof Array) {
+    //     console.log('index'.bgGreen, index)
+    //     console.log('val'.bgRed, val)
+    //     console.log('item'.bgMagenta, item)
+    //     console.log('steps'.bgBlue, steps)
+    //     console.log('---------------------------------')
+    //   }
+    // })
     let doc = await collection.save(data, {
       returnNew: false
     })
