@@ -218,26 +218,26 @@ class ArangoModel extends AvocadoModel {
     let data = await this.validate({
       noDefaults: true
     })
-    console.log('#data', data)
+    // console.log('#data', data)
 
-    await asyncForEach(data, async (val, index, item, steps) => {
-      if (val instanceof Array) {
-        console.log('index'.bgGreen, index)
-        console.log('val'.bgRed, val)
-        console.log('item'.bgMagenta, item)
-        console.log('steps'.bgBlue, steps)
-        console.log('---------------------------------')
-      }
-    })
-    // let doc = await collection.save(data, {
-    //   returnNew: false
+    // await asyncForEach(data, async (val, index, item, steps) => {
+    //   if (val instanceof Array) {
+    //     console.log('index'.bgGreen, index)
+    //     console.log('val'.bgRed, val)
+    //     console.log('item'.bgMagenta, item)
+    //     console.log('steps'.bgBlue, steps)
+    //     console.log('---------------------------------')
+    //   }
     // })
-    // Object.assign(this, doc)
-    // if (isNew) {
-    //   this.emit('created', this)
-    // } else {
-    //   this.emit('updated', this)
-    // }
+    let doc = await collection.save(data, {
+      returnNew: false
+    })
+    Object.assign(this, doc)
+    if (isNew) {
+      this.emit('created', this)
+    } else {
+      this.emit('updated', this)
+    }
     return this
   }
 
