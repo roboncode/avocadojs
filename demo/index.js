@@ -21,8 +21,7 @@ function readFiles(dir) {
 async function main() {
   // Initialize models
   // Note: This can be done before or after the connection
-  // readFiles(path.join(__dirname, 'models'))
-  require('./models/User')
+  readFiles(path.join(__dirname, 'models'))
 
   // // Create connection
   await arango.connect({
