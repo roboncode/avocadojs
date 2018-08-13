@@ -8,7 +8,7 @@ Inspired by [Mongoose](http://mongoosejs.com/).
 Built using [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.com/arangodb/arangojs)
 
 # *** In Development ***
-## TODOs
+## Roadmap
 * select() - return selected properties back
 * populate() - populates a subdocument
 * cleanup
