@@ -1,6 +1,7 @@
 const AvocadoModel = require('../avocado/Model')
 const Builder = require('../avocado/Builder')
 const asyncForEach = require('../avocado/helpers/asyncForEach')
+const sortToAQL = require('./helpers/sortToAQL')
 const criteriaBuilder = require('./helpers/criteriaBuilder')
 const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
 // const builder = Builder.getInstance()
@@ -44,12 +45,12 @@ class ArangoModel extends AvocadoModel {
     }, data, options)
   }
 
-  static async updateOne(criteria, data, options = {}) {
+  static async updateOne(criteria = {}, data, options = {}) {
     options.limit = 1
     return this.updateMany(criteria, data, options)
   }
 
-  static async updateMany(criteria, data, options = {}) {
+  static async updateMany(criteria = {}, data, options = {}) {
     return new Promise(async (resolve, reject) => {
       const schemaOptions = this.schema.options
       const result = await Builder.getInstance()
@@ -74,10 +75,16 @@ class ArangoModel extends AvocadoModel {
       const DOC_VAR = 'doc'
       const OFFSET = options.offset || 0
       const LIMIT = options.limit || null
+      const SORT = options.sort || null
       aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
-      aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      if (Object.keys(criteria).length) {
+        aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      }
       if (OFFSET || LIMIT) {
         aqlSegments.push(`\n   LIMIT ${OFFSET},${LIMIT}`)
+      }
+      if (SORT) {
+        aqlSegments.push('\n   SORT ' + sortToAQL(options.sort, DOC_VAR))
       }
       aqlSegments.push('\n   UPDATE', DOC_VAR, '\n   WITH', JSON.stringify(result))
       aqlSegments.push('\n   IN', collectionName)
@@ -98,22 +105,28 @@ class ArangoModel extends AvocadoModel {
     }, options)
   }
 
-  static async deleteOne(criteria, options = {}) {
+  static async deleteOne(criteria = {}, options = {}) {
     options.limit = 1
     return this.deleteMany(criteria, options)
   }
 
-  static async deleteMany(criteria, options = {}) {
+  static async deleteMany(criteria = {}, options = {}) {
     return new Promise(async (resolve, reject) => {
       const collectionName = this.collectionName
       const aqlSegments = []
       const DOC_VAR = 'doc'
       const OFFSET = options.offset || 0
       const LIMIT = options.limit || null
+      const SORT = options.sort || null
       aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
-      aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      if (Object.keys(criteria).length) {
+        aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      }
       if (OFFSET || LIMIT) {
         aqlSegments.push(`\n   LIMIT ${OFFSET},${LIMIT}`)
+      }
+      if (SORT) {
+        aqlSegments.push('\n   SORT ' + sortToAQL(options.sort, DOC_VAR))
       }
       aqlSegments.push('\n   REMOVE', DOC_VAR)
       aqlSegments.push('\n   IN', collectionName)
@@ -139,16 +152,16 @@ class ArangoModel extends AvocadoModel {
     }, options)
   }
 
-  static findOne(criteria, options = {}) {
+  static findOne(criteria = {}, options = {}) {
     options.limit = 1
     return this.find(criteria, options)
   }
 
-  static find(criteria, options = {}) {
+  static find(criteria = {}, options = {}) {
     return this.findMany(criteria, options)
   }
 
-  static findMany(criteria, options = {}) {
+  static findMany(criteria = {}, options = {}) {
     return new Promise(async (resolve, reject) => {
       const schemaOptions = this.schema.options
       const collectionName = this.collectionName
@@ -156,10 +169,16 @@ class ArangoModel extends AvocadoModel {
       const DOC_VAR = 'doc'
       const OFFSET = options.offset || 0
       const LIMIT = options.limit || null
+      const SORT = options.sort || null
       aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
-      aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      if (Object.keys(criteria).length) {
+        aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
+      }
       if (OFFSET || LIMIT) {
         aqlSegments.push(`\n   LIMIT ${OFFSET},${LIMIT}`)
+      }
+      if (SORT) {
+        aqlSegments.push('\n   SORT ' + sortToAQL(options.sort, DOC_VAR))
       }
       aqlSegments.push('\n   RETURN', DOC_VAR)
 

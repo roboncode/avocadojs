@@ -132,9 +132,10 @@ async function main_find_users() {
 
   const User = arango.model('User')
   let users = await User.find({
-    _key: 'jane'
+    // _key: 'jane'
   }, {
-    printAQL: true
+    printAQL: true,
+    sort: '-lastName firstName'
   })
 
   console.log(users)
@@ -190,10 +191,11 @@ async function main_new_user() {
   await user.save()
 }
 
-main()
+// main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
 // main_find_users()
+ main_find_users()
 // main_find_user()
 // main_new_user()
