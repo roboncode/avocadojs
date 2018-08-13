@@ -9,8 +9,6 @@ Built using [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.c
 
 # *** In Development ***
 ## TODOs
-* sort
-    * SORT u.age DESC
 * select() - return selected properties back
 * populate() - populates a subdocument
 * cleanup
@@ -123,6 +121,9 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
   * importMany
 
 ## Miscellaneous
+
+Supports
+  * sorting
 
 ### Does Avocado do everything Mongoose does?
 
