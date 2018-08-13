@@ -21,20 +21,21 @@ function readFiles(dir) {
 async function main() {
   // Initialize models
   // Note: This can be done before or after the connection
-  readFiles(path.join(__dirname, 'models'))
+  // readFiles(path.join(__dirname, 'models'))
+  require('./models/User')
 
-  // Create connection
+  // // Create connection
   await arango.connect({
     name: 'demo'
   })
 
-  // Import migration docs
+  // // Import migration docs
   await importAllDocs()
 
   const User = arango.model('User')
-
-  let user = await User.findById('rob')
-
+  let user = await User.findById('rob', {
+    noDefaults: false
+  })
   console.log('#user', user)
 }
 
@@ -161,6 +162,7 @@ async function main_find_user() {
       friends: null
     }
   }, {
+    computed: true,
     printAQL: true,
     limit: 2
   })
@@ -168,9 +170,31 @@ async function main_find_user() {
   console.log(user)
 }
 
-// main()
+async function main_new_user() {
+  require('./models/User')
+
+  // Create connection
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+
+  let user = new User({
+    firstName: 'Lori',
+    lastName: "Taylor",
+    devices: [{
+      _key: 'chrome',
+      token: 'abc'
+    }]
+  })
+  await user.save()
+}
+
+main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
 // main_find_users()
-main_find_user()
+// main_find_user()
+// main_new_user()

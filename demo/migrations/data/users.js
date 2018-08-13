@@ -7,7 +7,8 @@ const users = {
     firstName: 'Rob',
     lastName: 'Taylor',
     location: 'Miami, FL',
-    avatar: 'http://facetheforce.today/yoda/200'
+    avatar: 'http://facetheforce.today/yoda/200',
+    devices: [{name: 'chrome', bogus: true, kind: 'yesiam'}]
   },
   chase: {
     screenName: 'chasec',

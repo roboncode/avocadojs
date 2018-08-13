@@ -44,53 +44,41 @@ class Schema {
     if (data.schema) {
       return data.schema.joi
     }
-    let type = this._parseType(data)
-    if (type === 'joi') {
-      return data.type || data
-    }
 
-    let joiType = Joi[type]()
-    if (type === 'object') {
-      let schema = {}
-      for (let prop in data) {
-        if (data.hasOwnProperty(prop)) {
-          schema[prop] = this._parse(data[prop])
-          this._parseAttrs(prop, joiType, data, val => {
-            schema[prop] = val
+    let joiSchema = {}
+    for (let prop in data) {
+      if (data.hasOwnProperty(prop)) {
+        let item = data[prop]
+        let type = this._parseType(item)
+
+        if (type === 'joi') {
+          return item
+        }
+
+        joiSchema[prop] = Joi[type]()
+
+        if (type === 'object') {
+          // if any children have a default property...
+          if (JSONstringify(item).match(/"default":/gi)) {
+            let defaultObject = this._createDefaultObject(item)
+            joiSchema[prop] = this._parse(item)
+            joiSchema[prop] = joiSchema[prop].default(defaultObject)
+          }
+        } else if (type === 'array') {
+          joiSchema[prop] = Joi.array()
+          if (item.length) {
+            joiSchema[prop] = joiSchema[prop].items(
+              this._parse(item[0])
+            )
+          }
+        } else {
+          this._parseAttrs(prop, joiSchema, item, val => {
+            joiSchema[prop] = val
           })
         }
       }
-
-      // if any children have a default property...
-      // if (JSONstringify(data).match(/"default":/gi)) {
-      //   let defaultObject = this._createDefaultObject(data)
-      //   joiType = joiType.default(defaultObject)
-      // }
-      joiType.append(schema)
-    } else if (type === 'array') {
-      // let joiSchemArray = {}
-      // if (jsonItem.length > 1) {
-      //   throw new Error('Array cannot contain more than one schema')
-      // } else if (jsonItem.length === 0) {
-      //   joiType = Joi.array().items(Joi.any())
-      // } else {
-      //   let firstChild = jsonItem[0]
-      //   console.log('firstChild'.bgGreen, firstChild)
-      //   if (firstChild.isJoi) {
-      //     debugger
-      //   }
-      //   let arrItem = this._parse(0, joiSchemArray, jsonItem[0])
-      //   joiType = Joi.array().items(arrItem)
-      // }
-
-      // for (let prop in data) {
-      //   if (data.hasOwnProperty(prop)) {
-      //     joiSchema[prop] = this._parse(data[prop])
-      //   }
-      // }
     }
-
-    return joiType
+    return Joi.object(joiSchema)
   }
 
   _parseType(item) {
@@ -104,8 +92,8 @@ class Schema {
     }
 
     let type = typeof item
-    if (item.type) {
-      type = this._parseType(item.type)
+    if (type.type) {
+      type = type.type
     }
     switch (type) {
       case 'object':
@@ -149,19 +137,21 @@ class Schema {
     }
   }
 
-  _parseAttrs(prop, joiType, data, callback) {
-    let item = data[prop]
-    if (typeof item !== 'function') {
+  _parseAttrs(prop, joiSchema, jsonSchemaItem, callback) {
+    if (typeof jsonSchemaItem !== 'function') {
+      let item = jsonSchemaItem
       for (let attr in item) {
-        // do not parse type
         if (attr !== 'type') {
+          // do not parse type
           let val = item[attr]
           try {
             if (typeof val === 'function') {
-              joiType = joiType[attr](val, `default function() for ${prop}`)
+              joiSchema[prop] = joiSchema[prop][attr](
+                val,
+                `default function() for ${prop}`
+              )
             } else {
-              console.log('attr'.bgRed, attr, val)
-              joiType = joiType[attr](val)
+              joiSchema[prop] = joiSchema[prop][attr](val)
             }
           } catch (e) {
             this._error(e)
@@ -169,7 +159,7 @@ class Schema {
         }
       }
     }
-    callback(joiType)
+    callback(joiSchema[prop])
   }
 
   _createDefaultObject(jsonSchemaItem) {
@@ -196,7 +186,6 @@ Schema.Types = {
   Array,
   Date,
   RegExp,
-  Id: Joi.any(), // TODO: Do something here, not sure what
   Any: Joi.any(),
   Mixed: Joi.any()
 }
