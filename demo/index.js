@@ -193,11 +193,31 @@ async function main_new_user() {
   await user.save()
 }
 
+async function main_query() {
+  require('./models/User')
+  // Create connection
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  let result = await User.findByQuery(
+    `FOR d IN devices
+        FILTER d._key == 'chrome'
+          FOR u IN users
+            FILTER d.user == u._key
+      RETURN {firstName: u.firstName, lastName:u.lastName}`, {
+      noDefaults: true
+    })
+  console.log(result)
+}
+
 // main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
 // main_find_users()
 //  main_find_users()
-main_find_user()
+// main_find_user()
 // main_new_user()
+main_query()
