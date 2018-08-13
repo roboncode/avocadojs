@@ -2,6 +2,7 @@ const AvocadoModel = require('../avocado/Model')
 const Builder = require('../avocado/Builder')
 const asyncForEach = require('../avocado/helpers/asyncForEach')
 const sortToAQL = require('./helpers/sortToAQL')
+const returnToAQL = require('./helpers/returnToAQL')
 const criteriaBuilder = require('./helpers/criteriaBuilder')
 const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
 // const builder = Builder.getInstance()
@@ -170,6 +171,7 @@ class ArangoModel extends AvocadoModel {
       const OFFSET = options.offset || 0
       const LIMIT = options.limit || null
       const SORT = options.sort || null
+      const RETURN = options.return ? returnToAQL(options.return, DOC_VAR) : DOC_VAR
       aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
       if (Object.keys(criteria).length) {
         aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
@@ -180,7 +182,7 @@ class ArangoModel extends AvocadoModel {
       if (SORT) {
         aqlSegments.push('\n   SORT ' + sortToAQL(options.sort, DOC_VAR))
       }
-      aqlSegments.push('\n   RETURN', DOC_VAR)
+      aqlSegments.push('\n   RETURN', RETURN)
 
       const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + ".$1")
       if (options.printAQL) {
@@ -192,7 +194,8 @@ class ArangoModel extends AvocadoModel {
         .data(docs)
         .convertTo(this)
         .toObject({
-          noDefaults: false,
+          computed: options.computed,
+          noDefaults: options.noDefaults || false,
           unknownProps: schemaOptions.strict ? 'strip' : 'allow'
         })
         .exec()

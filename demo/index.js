@@ -155,16 +155,18 @@ async function main_find_user() {
   // })
   const user = await User.find({
     firstName: 'Chase',
-    role: {
-      $ne: 'admin'
-    },
-    stats: {
-      friends: null
-    }
+    // role: {
+    //   $ne: 'admin'
+    // },
+    // stats: {
+    //   friends: null
+    // }
   }, {
     computed: true,
     printAQL: true,
-    limit: 2
+    limit: 2,
+    noDefaults: true,
+    return: 'firstName lastName'
   })
 
   console.log(user)
