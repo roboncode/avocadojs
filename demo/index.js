@@ -2,6 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const rootPath = path.join(__dirname, '..')
 const arango = require(path.join(rootPath, 'arango'))
+const Builder = require('../avocado/Builder')
+
 const {
   importAllDocs
 } = require(path.join(__dirname, 'migrations'))
@@ -47,9 +49,9 @@ async function main_update_user() {
   })
 
   const User = arango.model('User')
-  User.updateById('rob', {
-    desc: "This is a test"
-  })
+  User.findByIdAndUpdate('rob', {
+    desc: "This is another test"
+  }).exec()
 }
 
 async function main_update_users() {
@@ -117,9 +119,11 @@ async function main_delete_users() {
   })
 
   const User = arango.model('User')
-  User.deleteOne({
+  let result = await User.deleteOne({
     _key: 'jane'
-  })
+  }).exec()
+
+  console.log('result'.bgRed, result)
 }
 
 async function main_find_users() {
@@ -153,23 +157,36 @@ async function main_find_user() {
   // let user = await User.findById('jane', {
   //   printAQL: true
   // })
-  const user = await User.find({
-    firstName: 'Chase',
-    // role: {
-    //   $ne: 'admin'
-    // },
-    // stats: {
-    //   friends: null
-    // }
-  }, {
-    computed: true,
-    printAQL: true,
-    limit: 2,
-    noDefaults: true,
-    return: 'firstName lastName'
-  })
+  // const user = await User.find({
+  //   firstName: 'Chase',
+  //   // role: {
+  //   //   $ne: 'admin'
+  //   // },
+  //   // stats: {
+  //   //   friends: null
+  //   // }
+  // }, {
+  //   computed: true,
+  //   printAQL: true,
+  //   limit: 2,
+  //   noDefaults: true,
+  //   return: 'firstName lastName'
+  // })
 
-  console.log(user)
+  const user2 = await User.find({
+      firstName: 'Chase'
+    })
+    .computed(true)
+    .options({
+      printAQL: true,
+      noDefaults: true
+    })
+    .limit(2)
+    .select('firstName lastName')
+    .exec()
+
+
+  console.log(user2)
 }
 
 async function main_new_user() {
@@ -212,12 +229,40 @@ async function main_query() {
   console.log(result)
 }
 
+async function main_builder() {
+  require('./models/User')
+  const User = arango.model('User')
+  let data = {
+    bogus: true,
+    desc: 'Hello, world!',
+    stats: {
+      friends: '++1'
+    }
+  }
+  const result = await Builder.getInstance()
+    .data(data)
+    .convertTo(User)
+    // .intercept(async (data, index, items, args) => {
+    //   console.log('intercept'.cyan, data, index, items, args)
+    //   await asyncForEach(data, iterateHandler)
+    //   return data
+    // })
+    .toObject({
+      noDefaults: true,
+      // noDefaults: this._options.noDefaults || false,
+      unknownProps: 'strip'
+    })
+    .exec()
+
+  console.log(result)
+}
+
 // main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
 // main_find_users()
-//  main_find_users()
 // main_find_user()
 // main_new_user()
-main_query()
+// main_query()
+main_builder()
