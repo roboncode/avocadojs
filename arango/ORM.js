@@ -155,7 +155,8 @@ class ORM {
           return data
         })
         .toObject({
-          noDefaults: this._options.noDefaults || false,
+          noDefaults: true,
+          // noDefaults: this._options.noDefaults || false,
           unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
         })
         .exec()

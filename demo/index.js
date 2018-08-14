@@ -2,6 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const rootPath = path.join(__dirname, '..')
 const arango = require(path.join(rootPath, 'arango'))
+const Builder = require('../avocado/Builder')
+
 const {
   importAllDocs
 } = require(path.join(__dirname, 'migrations'))
@@ -227,8 +229,32 @@ async function main_query() {
   console.log(result)
 }
 
+async function main_builder() {
+  require('./models/User')
+  const User = arango.model('User')
+  let data = {
+    desc: 'Hello, world!'
+  }
+  const result = await Builder.getInstance()
+  .data(data)
+  // .convertTo(User)
+  // .intercept(async data => {
+  //   console.log('intercept'.cyan, data)
+  //   await asyncForEach(data, iterateHandler)
+  //   return data
+  // })
+  // .toObject({
+  //   noDefaults: true,
+  //   // noDefaults: this._options.noDefaults || false,
+  //   unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
+  // })
+  .exec()
+
+  console.log('result'.bgRed, result)
+}
+
 // main()
-main_update_user()
+// main_update_user()
 // main_update_users()
 // main_delete_users()
 // main_find_users()
@@ -236,3 +262,4 @@ main_update_user()
 // main_find_user()
 // main_new_user()
 // main_query()
+main_builder()
