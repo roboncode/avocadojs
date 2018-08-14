@@ -5,6 +5,9 @@ require('colors')
 
 class Schema {
   constructor(json, options = {}) {
+    if (!json || typeof json !== 'object' && !Object.keys(json).length) {
+      throw new Error('Schema expects object with at least one key/value pair')
+    }
     this._json = json
     this._options = options
     this._joi = this._parse(json)
@@ -117,7 +120,7 @@ class Schema {
           return 'number'
         }
         if (type === Boolean) {
-          return 'number'
+          return 'boolean'
         }
         if (type === Date) {
           return 'date'
@@ -137,13 +140,21 @@ class Schema {
           return 'number'
         }
         if (item === Boolean) {
-          return 'number'
+          return 'boolean'
         }
         if (item === Date) {
           return 'date'
         }
+        if (item === Array) {
+          throw new Error('Use [] to define array')
+        }
+        if (item === Object) {
+          throw new Error('Use {} to define object')
+        }
+        if (item === Function) {
+          throw new Error('Use () => {} to define function')
+        }
         return 'func'
-        break
       default:
         return type
     }
