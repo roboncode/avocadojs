@@ -44,7 +44,7 @@ class ArangoModel extends AvocadoModel {
     return this
   }
 
-  static async findByIdAndUpdate(id, data, options = {}) {
+  static findByIdAndUpdate(id, data, options = {}) {
     return this.updateOne(
       {
         _key: id
@@ -54,65 +54,26 @@ class ArangoModel extends AvocadoModel {
     )
   }
 
-  static async updateOne(criteria = {}, data, options = {}) {
+  static updateOne(criteria = {}, data, options = {}) {
     options.limit = 1
     return this.updateMany(criteria, data, options)
   }
 
-  static async updateMany(criteria = {}, data, options = {}) {
-    return new Promise(async (resolve, reject) => {
-      const schemaOptions = this.schema.options
-      const result = await Builder.getInstance()
-        .data(data)
-        .convertTo(this)
-        .intercept(async data => {
-          await asyncForEach(data, iterateHandler)
-          return data
-        })
-        .toObject({
-          noDefaults: true,
-          unknownProps: schemaOptions.strict ? 'strip' : 'allow'
-        })
-        .exec()
-
-      if (result instanceof Error) {
-        return reject(result)
-      }
-
-      const collectionName = this.collectionName
-      const aqlSegments = []
-      const OFFSET = options.offset || 0
-      const LIMIT = options.limit || null
-      const SORT = options.sort || null
-      aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
-      if (Object.keys(criteria).length) {
-        aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
-      }
-      if (OFFSET || LIMIT) {
-        aqlSegments.push(`\n   LIMIT ${OFFSET},${LIMIT}`)
-      }
-      if (SORT) {
-        aqlSegments.push('\n   SORT ' + sortToAQL(options.sort, DOC_VAR))
-      }
-      aqlSegments.push(
-        '\n   UPDATE',
-        DOC_VAR,
-        '\n   WITH',
-        JSON.stringify(result)
-      )
-      aqlSegments.push('\n   IN', collectionName)
-
-      const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + '.$1')
-      if (options.printAQL) {
-        console.log(query)
-      }
-      await this.connection.db.query(query)
-
-      return resolve()
-    })
+  static updateMany(criteria = {}, data, options = {}) {
+    let collection = this.getCollection()
+    let orm = new ORM()
+    orm.action('update')
+    orm.model(this)
+    orm.criteria(criteria)
+    orm.data(data)
+    orm.collection(collection)
+    orm.options(options)
+    orm.connection(this.connection)
+    orm.schemaOptions(this.schema.options)
+    return orm
   }
 
-  static async findByIdAndDelete(id, options = {}) {
+  static findByIdAndDelete(id, options = {}) {
     return this.deleteOne(
       {
         _key: id
@@ -121,39 +82,22 @@ class ArangoModel extends AvocadoModel {
     )
   }
 
-  static async deleteOne(criteria = {}, options = {}) {
+  static deleteOne(criteria = {}, options = {}) {
     options.limit = 1
     return this.deleteMany(criteria, options)
   }
 
-  static async deleteMany(criteria = {}, options = {}) {
-    return new Promise(async (resolve, reject) => {
-      const collectionName = this.collectionName
-      const aqlSegments = []
-      const OFFSET = options.offset || 0
-      const LIMIT = options.limit || null
-      const SORT = options.sort || null
-      aqlSegments.push('FOR', DOC_VAR, 'IN', collectionName)
-      if (Object.keys(criteria).length) {
-        aqlSegments.push('\n   FILTER', criteriaBuilder(criteria, DOC_VAR))
-      }
-      if (OFFSET || LIMIT) {
-        aqlSegments.push(`\n   LIMIT ${OFFSET},${LIMIT}`)
-      }
-      if (SORT) {
-        aqlSegments.push('\n   SORT ' + sortToAQL(options.sort, DOC_VAR))
-      }
-      aqlSegments.push('\n   REMOVE', DOC_VAR)
-      aqlSegments.push('\n   IN', collectionName)
-
-      const query = aqlSegments.join(' ').replace(EXPR, DOC_VAR + '.$1')
-      if (options.printAQL) {
-        console.log(query)
-      }
-      await this.connection.db.query(query)
-
-      return resolve()
-    })
+  static deleteMany(criteria = {}, options = {}) {
+    let collection = this.getCollection()
+    let orm = new ORM()
+    orm.action('delete')
+    orm.model(this)
+    orm.criteria(criteria)
+    orm.collection(collection)
+    orm.options(options)
+    orm.connection(this.connection)
+    orm.schemaOptions(this.schema.options)
+    return orm
   }
 
   static getCollection() {
