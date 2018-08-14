@@ -145,12 +145,10 @@ class ORM {
 
   _createAQLUpdate() {
     return new Promise(async resolve => {
-      console.log('data'.bgRed, this._data)
       const result = await Builder.getInstance()
         .data(this._data)
         .convertTo(this._model)
         .intercept(async data => {
-          console.log('intercept'.cyan, data)
           await asyncForEach(data, iterateHandler)
           return data
         })
@@ -228,9 +226,9 @@ class ORM {
 
       const query = this._createAQLQuery()
       console.log(query)
-      // await this.connection.db.query(query)
+      await this._connection.db.query(query)
 
-      // return resolve()
+      return resolve()
     })
   }
 
@@ -248,28 +246,9 @@ class ORM {
         console.log(query)
       }
 
-      // await this._connection.db.query(query)
-
-      // return resolve()
-
       let cursor = await this._connection.db.query(query)
       let docs = await cursor.all()
       return resolve(docs)
-      // let result = await Builder.getInstance()
-      //   .data(docs)
-      //   .convertTo(this._model)
-      //   .toObject({
-      //     computed: this._computed,
-      //     noDefaults: this._options.noDefaults || false,
-      //     unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
-      //   })
-      //   .exec()
-
-      // if (this._limit === 1 && result) {
-      //   return resolve(result[0])
-      // }
-
-      // return resolve(result)
     })
   }
 }

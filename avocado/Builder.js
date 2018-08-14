@@ -1,4 +1,3 @@
-const avocado = require('./index')
 const asyncForEach = require('./helpers/asyncForEach')
 const microtime = require('microtime')
 const snooze = require('./helpers/snooze')
@@ -66,25 +65,32 @@ class Builder {
     let startTime
     let items = this.items
     let item = await asyncForEach(items, async (item, index) => {
-      items[index] = await asyncForEach(this.queue, async message => {
-        if (handler) {
-          startTime = microtime.now()
-        }
-        let args = [].concat(item, index, [items], message.args)
-        try {
-          await snooze()
-          item = await message.method.apply(this, args)
+      if (this.queue.length) {
+        items[index] = await asyncForEach(this.queue, async message => {
           if (handler) {
-            report.push(
-              ('item[' + index + '].' + message.method + ': ').padEnd(padding) +
-              (microtime.now() - startTime) * 0.001
-            )
+            startTime = microtime.now()
           }
-          return item
-        } catch (e) {
-          return e
-        }
-      })
+          let args = [].concat(item, index, [items], message.args)
+          try {
+            await snooze()
+            item = await message.method.apply(this, args)
+            if (handler) {
+              report.push(
+                ('item[' + index + '].' + message.method + ': ').padEnd(padding) +
+                (microtime.now() - startTime) * 0.001
+              )
+            }
+            return item
+          } catch (e) {
+            return e
+          }
+        })
+        return items[index]
+      } else {
+        // TODO: see if we need snooze here
+        await snooze()
+        return item
+      }
     })
     if (handler) {
       report.push(
