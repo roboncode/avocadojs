@@ -5,7 +5,7 @@ require('colors')
 
 class Schema {
   constructor(json, options = {}) {
-    if (!json || typeof json !== 'object' && !Object.keys(json).length) {
+    if (!json || (typeof json !== 'object' && !Object.keys(json).length)) {
       throw new Error('Schema expects object with at least one key/value pair')
     }
     this._json = json
@@ -56,7 +56,13 @@ class Schema {
     }
 
     // create a joi type schema
-    let joiType = Joi[type]()
+    let joiType
+    try {
+      joiType = Joi[type]()
+    } catch(e) {
+      let t = JSON.stringify(type)
+      throw new Error(`Joi does not support the type ${t}`)
+    }
 
     if (type === 'object') {
       // if the type is an object then loop through and get child schemas
@@ -113,6 +119,12 @@ class Schema {
     switch (type) {
       case 'object':
         type = item.type
+        if (item instanceof Date) {
+          return 'date'
+        }
+        if (item instanceof Array) {
+          return 'array'
+        }
         if (type === String) {
           return 'string'
         }
@@ -125,8 +137,14 @@ class Schema {
         if (type === Date) {
           return 'date'
         }
-        if (item instanceof Array) {
+        if (type === Array) {
           return 'array'
+        }
+        if (type === Object) {
+          return 'object'
+        }
+        if (item === Function) {
+          return 'function'
         }
         if (item instanceof Object) {
           return 'object'
@@ -146,16 +164,22 @@ class Schema {
           return 'date'
         }
         if (item === Array) {
-          throw new Error('Use [] to define array')
+          return 'array'
         }
         if (item === Object) {
-          throw new Error('Use {} to define object')
+          return 'object'
         }
         if (item === Function) {
-          throw new Error('Use () => {} to define function')
+          return 'func'
         }
         return 'func'
       default:
+        if (item instanceof Date) {
+          return 'date'
+        }
+        if (item instanceof Array) {
+          return 'array'
+        }
         return type
     }
   }
