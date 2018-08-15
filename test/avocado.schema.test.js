@@ -2,7 +2,7 @@ const expect = require('chai').expect
 const Schema = require('../avocado/Schema')
 const Joi = require('joi')
 
-xdescribe('avocado schema', () => {
+describe('avocado schema', () => {
   describe('empty schema', () => {
     it('throw an error', () => {
       let emptySchema = function() {
@@ -212,9 +212,9 @@ xdescribe('avocado schema', () => {
       expect(schema.joi.isJoi).to.be.true
     })
 
-    it('to have schema key "name"', () => {
-      expect(schema.schemaKeys).to.have.all.members(['name'])
-    })
+    // it('to have schema key "name"', () => {
+    //   expect(schema.schemaKeys).to.have.all.members(['name'])
+    // })
 
     it('to have options with key "noDefaults"', () => {
       expect(schema.options).to.have.all.keys('noDefaults')
