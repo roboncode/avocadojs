@@ -102,7 +102,7 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 * Central connectivity to ArangoDB
 * Automated creation of databases, collections and indexing
 * Ability to populate database with sample data
-* Common query functions for document retrieval and modification
+* ORM for common query functions for document retrieval and modification
   
   * findById
   * findOne
