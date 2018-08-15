@@ -1,5 +1,6 @@
 const expect = require('chai').expect
 const Schema = require('../avocado/Schema')
+const Joi = require('joi')
 
 describe('avocado schema', () => {
   describe('empty schema', () => {
@@ -69,7 +70,7 @@ describe('avocado schema', () => {
       })
     })
 
-    describe('"prop.type" types', () => {
+    describe('"type" types', () => {
       let dataTypes = {
         str: { type: String },
         num: { type: Number },
@@ -77,7 +78,8 @@ describe('avocado schema', () => {
         date: { type: Date },
         arr: { type: Array },
         obj: { type: Object },
-        fn: { type: Function }
+        fn: { type: Function },
+        any: { type: Proxy }
       }
       let schema = new Schema({
         test: true
@@ -122,6 +124,12 @@ describe('avocado schema', () => {
       describe('Function', () => {
         it('to be type "func"', () => {
           expect(schema._parseType(dataTypes.fn)).to.equal('func')
+        })
+      })
+
+      describe('any unrecognized type', () => {
+        it('to be type "object"', () => {
+          expect(schema._parseType(dataTypes.any)).to.equal('object')
         })
       })
     })
@@ -210,6 +218,238 @@ describe('avocado schema', () => {
 
     it('to have options with key "noDefaults"', () => {
       expect(schema.options).to.have.all.keys('noDefaults')
+    })
+  })
+
+  describe('parser', () => {
+    let schema = new Schema({
+      test: true
+    })
+
+    describe('function String', () => {
+      let result = schema._parse({ val: String })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('function Number', () => {
+      let result = schema._parse({ val: Number })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('function Date', () => {
+      let result = schema._parse({ val: Date })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('function Array', () => {
+      let result = schema._parse({ val: Array })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('function Object', () => {
+      let result = schema._parse({ val: Object })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('function Function', () => {
+      let result = schema._parse({ val: Function })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('literal String', () => {
+      let result = schema._parse({ val: '' })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('literal Number', () => {
+      let result = schema._parse({ val: 0 })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('literal Date', () => {
+      let result = schema._parse({ val: new Date() })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('literal Array', () => {
+      let result = schema._parse({ val: [] })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('literal Object', () => {
+      let result = schema._parse({ val: {} })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('literal Function', () => {
+      let result = schema._parse({ val: () => {} })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('typed String', () => {
+      let result = schema._parse({ val: { type: String } })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('typed Number', () => {
+      let result = schema._parse({ val: { type: Number } })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('typed Date', () => {
+      let result = schema._parse({ val: { type: Date } })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('typed Array', () => {
+      let result = schema._parse({ val: { type: Array } })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('typed Object', () => {
+      let result = schema._parse({ val: { type: Object } })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+
+    describe('typed Function', () => {
+      let result = schema._parse({ val: { type: Function } })
+      it('create a Joi schema', () => {
+        expect(result.isJoi).to.be.true
+      })
+    })
+  })
+
+  describe('attribute parser', () => {
+    let schema = new Schema({
+      test: true
+    })
+
+    describe('invalid attribute', () => {
+      it('throw an error', () => {
+        let fn = function() {
+          schema._parseAttrs(
+            'name',
+            Joi.number(),
+            {
+              name: {
+                type: String,
+                bogus: true
+              }
+            },
+            () => {}
+          )
+        }
+        expect(fn).to.throw('Invalid attribute')
+      })
+    })
+
+    describe('valid attribute', () => {
+      it('not throw error', () => {
+        let fn = function() {
+          schema._parseAttrs(
+            'name',
+            Joi.number(),
+            {
+              name: {
+                type: String,
+                default: ''
+              }
+            },
+            () => {}
+          )
+        }
+        expect(fn).to.not.throw('Invalid attribute')
+      })
+    })
+  })
+
+  describe('default attribute', () => {
+    let schema = new Schema({
+      test: true
+    })
+
+    it('create a default property', () => {
+      let result = schema._createDefaultObject({
+        name: {
+          type: String,
+          default: 'hi'
+        }
+      })
+      expect(result).to.has.property('name')
+    })
+
+    it('have a default value', () => {
+      let result = schema._createDefaultObject({
+        name: {
+          type: String,
+          default: 'hi'
+        }
+      })
+      expect(result.name).to.equal('hi')
+    })
+  })
+
+  describe('validation', () => {
+    let schema = new Schema({
+      name: String
+    })
+
+    describe('valid data', () => {
+      it('should pass', async () => {
+        let result = await schema.validate({
+          name: 'Rob'
+        })
+        expect(result).to.deep.equal({ name: 'Rob' })
+      })
+    })
+
+    describe('invalid data', () => {
+      it('should fail', () => {
+        let result
+        schema.validate(
+          {
+            name: 0
+          },
+          data => {
+            result = data
+          }
+        )
+        expect(result).to.be.an.instanceof(Error)
+      })
     })
   })
 })

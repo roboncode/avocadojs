@@ -1,42 +1,8 @@
 const AvocadoModel = require('../avocado/Model')
 const Builder = require('../avocado/Builder')
 const ORM = require('./ORM')
-const asyncForEach = require('../avocado/helpers/asyncForEach')
-const sortToAQL = require('./helpers/sortToAQL')
-const returnToAQL = require('./helpers/returnToAQL')
-const criteriaBuilder = require('./helpers/criteriaBuilder')
-const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
-const DOC_VAR = 'doc'
-// const builder = Builder.getInstance()
-// require('colors')
-
-// builder.addMethod('checkSubdoc', function (target, index = 0) {
-//   console.log('#checkSubdoc', arguments.length)
-//   return target
-// })
 
 require('colors')
-
-async function iterateHandler(val, prop, target, path) {
-  switch (typeof val) {
-    case 'object':
-      if (!(val instanceof Array)) {
-        if (val.$inc != undefined) {
-          target[prop] = 'EXPR(' + path.join('.') + val.$inc + ')'
-        } else {
-          await asyncForEach(val, iterateHandler, path)
-        }
-      }
-      break
-    case 'string':
-      if (val.match(/[+-=]{2}\s?\d/gi)) {
-        target[prop] = 'EXPR(' + path.join('.') + val[0] + val.substr(2) + ')'
-      }
-      break
-  }
-}
-
-
 
 class ArangoModel extends AvocadoModel {
   static setConnection(connection) {
@@ -187,17 +153,7 @@ class ArangoModel extends AvocadoModel {
     let data = await this.validate({
       noDefaults: true
     })
-    // console.log('#data', data)
 
-    // await asyncForEach(data, async (val, index, item, steps) => {
-    //   if (val instanceof Array) {
-    //     console.log('index'.bgGreen, index)
-    //     console.log('val'.bgRed, val)
-    //     console.log('item'.bgMagenta, item)
-    //     console.log('steps'.bgBlue, steps)
-    //     console.log('---------------------------------')
-    //   }
-    // })
     let doc = await collection.save(data, {
       returnNew: false
     })

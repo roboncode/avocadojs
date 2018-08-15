@@ -81,7 +81,7 @@ class Schema {
       joiType = joiType.append(schema)
       // check if any children have default values, if so we have to create
       // a default object so it displays properly
-      if (JSONstringify(data).match(/"default":/gi)) {
+      if (Object.keys(data).length && JSONstringify(data).match(/"default":/gi)) {
         const defaultObject = this._createDefaultObject(data)
         joiType = joiType.default(defaultObject)
       }
@@ -94,8 +94,14 @@ class Schema {
         joiType = Joi.array().items(Joi.any())
       } else {
         let child = data[0]
-        let childJoiType = child.isJoi ? child : this._parse(child)
-        joiType = Joi.array().items(childJoiType)
+        // if data was defined as Array and not [], there will be no child
+        if(child) {
+          let childJoiType = child.isJoi ? child : this._parse(child)
+          joiType = Joi.array().items(childJoiType)
+        } else {
+          joiType = Joi.array().items(Joi.any())
+        }
+        
       }
     }
 
@@ -172,7 +178,10 @@ class Schema {
         if (item === Function) {
           return 'func'
         }
-        return 'func'
+        if(item.toString().indexOf('[native code]') === -1) {
+          return 'func'
+        }
+        return 'object'
       default:
         if (item instanceof Date) {
           return 'date'
@@ -198,7 +207,7 @@ class Schema {
               joiType = joiType[attr](val)
             }
           } catch (e) {
-            this._error(e)
+            throw new Error(`Invalid attribute "${prop}"`)
           }
         }
       }
