@@ -1,5 +1,5 @@
 const Joi = require('joi')
-const getObjectKeys = require('./helpers/getObjectKeys')
+// const getObjectKeys = require('./helpers/getObjectKeys')
 const JSONstringify = require('./helpers/jsonStringify')
 require('colors')
 
@@ -11,7 +11,7 @@ class Schema {
     this._json = json
     this._options = options
     this._joi = this._parse(json)
-    this._schemaKeys = getObjectKeys(json)
+    // this._schemaKeys = getObjectKeys(json)
     this.isSchema = true
 
     this.statics = {}
@@ -23,9 +23,9 @@ class Schema {
     return this._options
   }
 
-  get schemaKeys() {
-    return this._schemaKeys
-  }
+  // get schemaKeys() {
+  //   return this._schemaKeys
+  // }
 
   get json() {
     return this._json
