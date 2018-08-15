@@ -9,9 +9,8 @@ Built using [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.c
 
 # *** In Development ***
 ## Roadmap
-* populate() - populates a subdocument
+* unit tests (in progress)
 * cleanup
-* unit tests
 * more documentation
 
 ## Quick Start
