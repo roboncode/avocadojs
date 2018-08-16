@@ -3,7 +3,6 @@ const microtime = require('microtime')
 const snooze = require('./helpers/snooze')
 const padding = 35
 
-
 class Builder {
 
   static getInstance(name = 'default') {
