@@ -4,13 +4,12 @@ const snooze = require('./helpers/snooze')
 const padding = 35
 
 class Builder {
-
   static getInstance(name = 'default') {
     if (!this._instances) {
       this._instances = {}
     }
     if (!this._instances[name]) {
-      this._instances[name] = new this
+      this._instances[name] = new this()
     }
     return this._instances[name]
   }
@@ -18,26 +17,25 @@ class Builder {
   constructor() {
     this.methods = {}
 
-    this.addMethod('convertTo', function (data, index, items, Model) {
+    this.addMethod('convertTo', function(data, index, items, Model) {
       return new Model(data)
     })
 
-    this.addMethod('toObject', function (model, index, items, options) {
+    this.addMethod('toObject', function(model, index, items, options) {
       if (model.toObject) {
         return model.toObject(options)
       }
       throw new Error('toObject() requires first element to be of type Model')
     })
 
-    this.addMethod('inspect', function (target, index, items, note = 'Inspect') {
+    this.addMethod('inspect', function(target, index, items, note = 'Inspect') {
       console.log(note, `[${index}] =>`, target)
       return target
     })
 
-    this.addMethod('intercept', function (target, index = 0, items, callback) {
+    this.addMethod('intercept', function(target, index = 0, items, callback) {
       return callback(target, index)
     })
-
   }
 
   data(data) {
@@ -48,7 +46,7 @@ class Builder {
   }
 
   addMethod(name, method) {
-    this[name] = function () {
+    this[name] = function() {
       let args = [].slice.call(arguments)
       this.queue.push({
         method,
@@ -75,8 +73,10 @@ class Builder {
             item = await message.method.apply(this, args)
             if (handler) {
               report.push(
-                ('item[' + index + '].' + message.method + ': ').padEnd(padding) +
-                (microtime.now() - startTime) * 0.001
+                ('item[' + index + '].' + message.method + ': ').padEnd(
+                  padding
+                ) +
+                  (microtime.now() - startTime) * 0.001
               )
             }
             return item
@@ -85,17 +85,14 @@ class Builder {
           }
         })
         return items[index]
-      } else {
-        // TODO: see if we need snooze here
-        await snooze()
-        return item
       }
+      return item
     })
     if (handler) {
       report.push(
         'totalTime:'.padEnd(padding) +
-        (microtime.now() - startTotalTime) * 0.001 +
-        ' ms'
+          (microtime.now() - startTotalTime) * 0.001 +
+          ' ms'
       )
       handler(report.join('\n'))
     }

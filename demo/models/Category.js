@@ -1,4 +1,4 @@
-const arango = require('../../arango')
+wconst arango = require('../../arango')
 
 let schema = arango.Schema({
   version: { type: String, default: '1.0' },

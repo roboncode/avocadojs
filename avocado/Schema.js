@@ -39,10 +39,6 @@ class Schema {
     return this._joi.validate(data, options)
   }
 
-  _error(e) {
-    console.error('Error', e.message)
-  }
-
   _parse(data) {
     // check if there is a schema, if so this is a reference to a model
     if (data.schema) {
@@ -59,8 +55,8 @@ class Schema {
     let joiType
     try {
       joiType = Joi[type]()
-    } catch(e) {
-      let t = JSON.stringify(type)
+    } catch (e) {
+      let t = JSONstringify(type)
       throw new Error(`Joi does not support the type ${t}`)
     }
 
@@ -81,7 +77,10 @@ class Schema {
       joiType = joiType.append(schema)
       // check if any children have default values, if so we have to create
       // a default object so it displays properly
-      if (Object.keys(data).length && JSONstringify(data).match(/"default":/gi)) {
+      if (
+        Object.keys(data).length &&
+        JSONstringify(data).match(/"default":/gi)
+      ) {
         const defaultObject = this._createDefaultObject(data)
         joiType = joiType.default(defaultObject)
       }
@@ -95,67 +94,46 @@ class Schema {
       } else {
         let child = data[0]
         // if data was defined as Array and not [], there will be no child
-        if(child) {
+        if (child) {
           let childJoiType = child.isJoi ? child : this._parse(child)
           joiType = Joi.array().items(childJoiType)
         } else {
           joiType = Joi.array().items(Joi.any())
         }
-        
       }
     }
 
     return joiType
   }
 
-  _parseType(item) {
-    if (item.isSchema) {
-      return 'schema'
+  _parseType(item, prop = '') {
+    if (item === null || item === undefined) {
+      throw new Error(`Property "${prop}" cannot be null or undefined`)
     }
-
-    if (item.isJoi) {
-      return 'joi'
-    }
-
     let type = typeof item
     // if object has a type and it isn't a property called "type"
     if (item.type && !item.type.type) {
-      type = this._parseType(item.type)
+      type = this._parseType(item.type, 'type')
     }
     switch (type) {
       case 'object':
         type = item.type
+        if (item.isSchema) {
+          return 'schema'
+        }
+        if (item.isJoi) {
+          return 'joi'
+        }
         if (item instanceof Date) {
           return 'date'
         }
         if (item instanceof Array) {
           return 'array'
         }
-        if (type === String) {
-          return 'string'
-        }
-        if (type === Number) {
-          return 'number'
-        }
-        if (type === Boolean) {
-          return 'boolean'
-        }
-        if (type === Date) {
-          return 'date'
-        }
-        if (type === Array) {
-          return 'array'
-        }
         if (type === Object) {
           return 'object'
         }
-        if (item === Function) {
-          return 'function'
-        }
-        if (item instanceof Object) {
-          return 'object'
-        }
-        break
+        return 'object'
       case 'function':
         if (item === String) {
           return 'string'
@@ -178,17 +156,11 @@ class Schema {
         if (item === Function) {
           return 'func'
         }
-        if(item.toString().indexOf('[native code]') === -1) {
+        if (item.toString().indexOf('[native code]') === -1) {
           return 'func'
         }
         return 'object'
       default:
-        if (item instanceof Date) {
-          return 'date'
-        }
-        if (item instanceof Array) {
-          return 'array'
-        }
         return type
     }
   }
@@ -221,7 +193,7 @@ class Schema {
       if (data[prop].hasOwnProperty('default')) {
         defaultValue[prop] = data[prop].default
       } else {
-        let type = this._parseType(data[prop])
+        let type = this._parseType(data[prop], prop)
         if (type === 'object') {
           defaultValue[prop] = this._createDefaultObject(data[prop])
         }
