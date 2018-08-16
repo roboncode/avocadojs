@@ -1,6 +1,6 @@
-const expect = require('chai').expect
-const Schema = require('../avocado/Schema')
-const Joi = require('joi')
+let expect = require('chai').expect
+let Schema = require('../avocado/Schema')
+let Joi = require('joi')
 
 describe('avocado schema', () => {
   describe('empty schema', () => {
@@ -14,6 +14,10 @@ describe('avocado schema', () => {
 
   describe('schema type parser', () => {
     describe('function types', () => {
+      let schema = new Schema({
+        test: true
+      })
+
       let dataTypes = {
         str: String,
         num: Number,
@@ -21,11 +25,10 @@ describe('avocado schema', () => {
         date: Date,
         arr: Array,
         obj: Object,
-        fn: Function
+        fn: Function,
+        joi: Joi.any(),
+        schema: new Schema({ name: 'test' })
       }
-      let schema = new Schema({
-        test: true
-      })
 
       describe('String', () => {
         it('to be type "string"', () => {
@@ -66,6 +69,27 @@ describe('avocado schema', () => {
       describe('Function', () => {
         it('to be type "func"', () => {
           expect(schema._parseType(dataTypes.fn)).to.equal('func')
+        })
+      })
+
+      describe('Joi', () => {
+        it('to be type "joi"', () => {
+          expect(schema._parseType(dataTypes.joi)).to.equal('joi')
+        })
+      })
+
+      describe('Schema', () => {
+        it('to be type "schema"', () => {
+          expect(schema._parseType(dataTypes.schema)).to.equal('schema')
+        })
+      })
+
+      describe('undefined', () => {
+        it('to be type "undefined"', () => {
+          let fn = () => {
+            schema._parseType()
+          }
+          expect(fn).to.throw('cannot')
         })
       })
     })

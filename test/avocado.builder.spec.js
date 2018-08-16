@@ -11,6 +11,9 @@ class Model {
   }
 }
 
+class Bogus {
+}
+
 describe('avocado builder', () => {
   describe('create two "default" singletons', () => {
     let builder1 = Builder.getInstance()
@@ -28,6 +31,15 @@ describe('avocado builder', () => {
     })
   })
 
+  describe('intercept', () => {
+    it('should call intercept', async () => {
+      let builder = Builder.getInstance()
+      builder.data({ name: 'John Smith' })
+      let result = await builder.exec()
+      expect(result).to.deep.equal({ name: 'John Smith' })
+    })
+  })
+
   describe('convertTo', () => {
     it('should convert data to Model', async () => {
       let builder = Builder.getInstance()
@@ -38,12 +50,34 @@ describe('avocado builder', () => {
     })
   })
 
+  describe('convertTo with array of items', () => {
+    it('should convert data to Model', async () => {
+      let builder = Builder.getInstance()
+      builder.data([{ name: 'John Smith' }])
+      builder.convertTo(Model)
+      let result = await builder.exec()
+      expect(result[0]).to.instanceof(Model)
+    })
+  })
+
   describe('toObject', () => {
     it('should invoke Model.toObject', async () => {
       let builder = Builder.getInstance()
         .data({ name: 'John Smith' })
+        .convertTo(Bogus)
+        .toObject()
+      let result = await builder.exec()
+      expect(result).to.be.an('error')
+    })
+  })
+
+  describe('inspect', () => {
+    it('should inspect data\'s current state', async () => {
+      let builder = Builder.getInstance()
+      builder.data({ name: 'John Smith' })
         .convertTo(Model)
         .toObject()
+        .inspect()
       let result = await builder.exec()
       expect(result).to.deep.equal({ name: 'John Smith' })
     })
@@ -79,6 +113,20 @@ describe('avocado builder', () => {
         })
       await builder.exec()
       expect(interceptCalled).to.be.true
+    })
+  })
+
+  describe('exec with handler for testing speed', () => {
+    it('should provide report for exec', async () => {
+      let builder = Builder.getInstance()
+      let execReport
+      builder.data({ name: 'John Smith' })
+        .convertTo(Model)
+        .toObject()
+      await builder.exec((report) => {
+        execReport = report
+      })
+      expect(execReport).to.be.not.be.empty
     })
   })
 })
