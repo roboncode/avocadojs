@@ -369,7 +369,12 @@ class ORM {
   }
 
   _print(query) {
+    // https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
+    // https://misc.flogisoft.com/bash/tip_colors_and_formatting
     if (this._options.printAQL) {
+      if (this._options.printAQL === 'color') {
+        query = query.replace(/\b([A-Z]+)\b/g, '\x1b[36m$1\x1b[0m')
+      }
       console.log('\n' + query + '\n')
     }
   }

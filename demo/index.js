@@ -330,7 +330,8 @@ async function main_model_edge_inbound() {
     },
     {
       noDefaults: true,
-      printAQL: true
+      // printAQL: true
+      printAQL: 'color'
     }
   ).exec()
   console.log(posts)
