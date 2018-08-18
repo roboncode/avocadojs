@@ -69,9 +69,8 @@ class ORM {
     return this
   }
 
-  action(val, options = {}) {
+  action(val) {
     this._action = val
-    this._actionOptions = options
     return this
   }
 
@@ -113,7 +112,7 @@ class ORM {
     }
 
     if (this._action === 'findEdge') {
-      return this._createOutboundQuery()
+      return this._createEdgeQuery()
     }
 
     if (this._action === 'update') {
@@ -158,20 +157,20 @@ class ORM {
     this.aqlSegments.push(query)
   }
 
-  _createAQLForInOutbound() {
+  _createAQLForInBound() {
     this.aqlSegments.push(
       'FOR',
       DOC_VAR,
-      'IN OUTBOUND',
-      `"${this._actionOptions.id}"`,
-      this._actionOptions.edgeCollectionName
+      'IN',
+      this._criteria.inbound ? 'INBOUND' : 'OUTBOUND',
+      `"${this._criteria.id}"`,
+      this._criteria.collection
     )
   }
 
   _createAQLFilter() {
     if (Object.keys(this._criteria).length) {
       this.aqlSegments.push(
-        
         this._separator + 'FILTER',
         criteriaBuilder(this._criteria, DOC_VAR)
       )
@@ -247,7 +246,7 @@ class ORM {
   _createFindQuery() {
     if (this._query) {
       this._createAQLCustom()
-    } else if (this._criteria) {
+    } else {
       this._createAQLForIn()
       this._createAQLFilter()
     }
@@ -290,8 +289,8 @@ class ORM {
     })
   }
 
-  async _createOutboundQuery() {
-    this._createAQLForInOutbound()
+  async _createEdgeQuery() {
+    this._createAQLForInBound()
     this._createAQLReturn(true)
 
     return this._createAQLQuery()
@@ -299,7 +298,7 @@ class ORM {
 
   _findEdgebound() {
     return new Promise(async resolve => {
-      const query = await this._createOutboundQuery()
+      const query = await this._createEdgeQuery()
 
       if (this._options.printAQL) {
         console.log(query)

@@ -92,9 +92,10 @@ class ArangoModel extends AvocadoModel {
     return this.findMany(criteria, options)
   }
 
-  static findByEdgeId(id, edgeCollectionName, options = {}) {
+  static findByEdge(criteria, options = {}) {
     let orm = new ORM()
-    orm.action('findEdge', { edgeCollectionName, id })
+    orm.action('findEdge')
+    orm.criteria(criteria)
     orm.model(this)
     orm.options(options)
     orm.connection(this.connection)

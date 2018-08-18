@@ -293,7 +293,11 @@ async function main_model_edge_outbound() {
   })
 
   const User = arango.model('User')
-  let user = await User.findByEdgeId('posts/first', 'likes', {
+  let user = await User.findByEdge({
+    id: 'posts/first', 
+    collection: 'likes',
+    inbound: true
+  }, {
     noDefaults: true
   })
     .computed(true)
@@ -303,20 +307,27 @@ async function main_model_edge_outbound() {
       printAQL: true
     })
   console.log(user)
+}
 
-  // const user = await User.find({
-  //   firstName: 'Chase'
-  // })
-  //   .computed(true)
-  //   .options({
-  //     // printAQL: true,
-  //     noDefaults: true
-  //   })
-  //   .limit(2)
-  //   .select('firstName lastName')
-  //   .toQuery(true)
+async function main_model_edge_inbound() {
+  readFiles(path.join(__dirname, 'models'))
 
-  // console.log(user)
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const Post = arango.model('Post')
+  let posts = await Post.findByEdge({
+    id: 'users/rob', 
+    collection: 'likes',
+    inbound: true
+  }, {
+    noDefaults: true
+  })
+    .exec({
+      printAQL: true
+    })
+  console.log(posts)
 }
 
 // main()
@@ -329,4 +340,5 @@ async function main_model_edge_outbound() {
 // main_query()
 // main_builder()
 // main_model_method()
-main_model_edge_outbound()
+// main_model_edge_outbound()
+main_model_edge_inbound()
