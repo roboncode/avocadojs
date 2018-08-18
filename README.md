@@ -7,8 +7,11 @@ ArangoDB is a JavaScript object modeling for web browsers and Node.js. No matter
 Inspired by [Mongoose](http://mongoosejs.com/). 
 Built using [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.com/arangodb/arangojs)
 
-# *** In Development ***
+# *** In Development (do not use yet) ***
 ## Roadmap
+* edge collections
+* subdoc queries
+* edge queiries
 * unit tests (in progress)
 * cleanup
 * more documentation
