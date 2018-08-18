@@ -36,7 +36,7 @@ class ArangoModel extends AvocadoModel {
     orm.options(options)
     orm.connection(this.connection)
     orm.schemaOptions(this.schema.options)
-    return orm.exec()
+    return orm
   }
 
   static findByIdAndDelete(id, options = {}) {
@@ -63,7 +63,7 @@ class ArangoModel extends AvocadoModel {
     orm.options(options)
     orm.connection(this.connection)
     orm.schemaOptions(this.schema.options)
-    return orm.exec()
+    return orm
   }
 
   static getCollection() {
@@ -92,6 +92,19 @@ class ArangoModel extends AvocadoModel {
     return this.findMany(criteria, options)
   }
 
+  static findOut(edgeCollectionName, id, options = {}) {
+    let collection = this.getCollection()
+    let orm = new ORM()
+    orm.action('findOut', { edgeCollectionName, id })
+    orm.model(this)
+    // orm.criteria(criteria)
+    // orm.collection(collection)
+    orm.options(options)
+    orm.connection(this.connection)
+    orm.schemaOptions(this.schema.options)
+    return orm
+  }
+
   static findMany(criteria = {}, options = {}) {
     let collection = this.getCollection()
     let orm = new ORM()
@@ -102,7 +115,7 @@ class ArangoModel extends AvocadoModel {
     orm.options(options)
     orm.connection(this.connection)
     orm.schemaOptions(this.schema.options)
-    return orm.exec()
+    return orm
   }
 
   static findByQuery(query, options = {}) {

@@ -4,9 +4,7 @@ const rootPath = path.join(__dirname, '..')
 const arango = require(path.join(rootPath, 'arango'))
 const Builder = require('../avocado/Builder')
 
-const {
-  importAllDocs
-} = require(path.join(__dirname, 'migrations'))
+const { importAllDocs } = require(path.join(__dirname, 'migrations'))
 require('colors')
 
 arango.events.on('connected', () => {
@@ -50,7 +48,7 @@ async function main_update_user() {
 
   const User = arango.model('User')
   User.findByIdAndUpdate('rob', {
-    desc: "This is another test"
+    desc: 'This is another test'
   }).exec()
 }
 
@@ -64,28 +62,34 @@ async function main_update_users() {
 
   const User = arango.model('User')
 
-  User.update({
-    _key: 'rob',
-    // role: 'admin'
-    $or: [{
-      role: 'admin'
-    }]
-  }, {
-    junk: 123,
-    desc: 'Test #8',
-    stats: {
-      friends: {
-        $inc: -1
-      },
-      // followers: {
-      //   $inc: 1
-      // },
-      followers: '-=2'
-      // friends: 'EXPR( stats.friends + 1 )'
+  User.update(
+    {
+      _key: 'rob',
+      // role: 'admin'
+      $or: [
+        {
+          role: 'admin'
+        }
+      ]
+    },
+    {
+      junk: 123,
+      desc: 'Test #8',
+      stats: {
+        friends: {
+          $inc: -1
+        },
+        // followers: {
+        //   $inc: 1
+        // },
+        followers: '-=2'
+        // friends: 'EXPR( stats.friends + 1 )'
+      }
+    },
+    {
+      printAQL: true
     }
-  }, {
-    printAQL: true
-  })
+  )
   /*
   // console.log(qb.filter(qb.eq('_key', 'rob')).toAQL())
   console.log(qb.filter(qb.eq('a', qb.str('b'))).toAQL())
@@ -135,12 +139,15 @@ async function main_find_users() {
   })
 
   const User = arango.model('User')
-  let users = await User.find({
-    // _key: 'jane'
-  }, {
-    printAQL: true,
-    sort: '-lastName firstName'
-  })
+  let users = await User.find(
+    {
+      // _key: 'jane'
+    },
+    {
+      printAQL: true,
+      sort: '-lastName firstName'
+    }
+  )
 
   console.log(users)
 }
@@ -174,8 +181,8 @@ async function main_find_user() {
   // })
 
   const user2 = await User.find({
-      firstName: 'Chase'
-    })
+    firstName: 'Chase'
+  })
     .computed(true)
     .options({
       printAQL: true,
@@ -184,7 +191,6 @@ async function main_find_user() {
     .limit(2)
     .select('firstName lastName')
     .exec()
-
 
   console.log(user2)
 }
@@ -201,11 +207,13 @@ async function main_new_user() {
 
   let user = new User({
     firstName: 'Lori',
-    lastName: "Taylor",
-    devices: [{
-      _key: 'chrome',
-      token: 'abc'
-    }]
+    lastName: 'Taylor',
+    devices: [
+      {
+        _key: 'chrome',
+        token: 'abc'
+      }
+    ]
   })
   await user.save()
 }
@@ -223,9 +231,11 @@ async function main_query() {
         FILTER d._key == 'chrome'
           FOR u IN users
             FILTER d.user == u._key
-      RETURN {firstName: u.firstName, lastName:u.lastName}`, {
+      RETURN {firstName: u.firstName, lastName:u.lastName}`,
+    {
       noDefaults: true
-    })
+    }
+  )
   console.log(result)
 }
 
@@ -265,13 +275,47 @@ async function main_model_method() {
   })
 
   const User = arango.model('User')
-  let user = await User.getUserDevices('rob', {string: true})
+  let user = await User.getUserDevices('rob', { string: true })
   console.log(user.fullName.cyan)
   console.log(user.devices)
   console.log(JSON.stringify(user))
 }
 
-main()
+async function main_model_edge_outbound() {
+  readFiles(path.join(__dirname, 'models'))
+
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  let user = await User.findOut('likes', 'posts/first', {
+    noDefaults: true
+  })
+  .computed(true)
+  .select('firstName lastName')
+  // .toQuery(true)
+  .exec({
+    printAQL: true
+  })
+  console.log(user)
+
+  // const user = await User.find({
+  //   firstName: 'Chase'
+  // })
+  //   .computed(true)
+  //   .options({
+  //     // printAQL: true,
+  //     noDefaults: true
+  //   })
+  //   .limit(2)
+  //   .select('firstName lastName')
+  //   .toQuery(true)
+
+  // console.log(user)
+}
+
+// main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
@@ -281,3 +325,4 @@ main()
 // main_query()
 // main_builder()
 // main_model_method()
+main_model_edge_outbound()

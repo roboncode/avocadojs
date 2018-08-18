@@ -1,6 +1,8 @@
 function returnToAQL(returnVals, doc) {
   let returnList = returnVals.split(' ')
+  returnList.unshift('_key')
   let returnObj = {}
+
   for (let i = 0; i < returnList.length; i++) {
     let prop = returnList[i]
     returnObj[prop] = `${doc}.${prop}`

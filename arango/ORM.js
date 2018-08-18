@@ -64,8 +64,9 @@ class ORM {
     return this
   }
 
-  action(val) {
+  action(val, options = {}) {
     this._action = val
+    this._actionOptions = options
     return this
   }
 
@@ -106,6 +107,10 @@ class ORM {
       return this._createFindQuery()
     }
 
+    if (this._action === 'findOut') {
+      return this._createOutboundQuery()
+    }
+
     if (this._action === 'update') {
       return this._createUpdateQuery()
     }
@@ -122,6 +127,10 @@ class ORM {
       return this._find()
     }
 
+    if (this._action === 'findOut') {
+      return this._findOutbound()
+    }
+
     if (this._action === 'update') {
       return this._update()
     }
@@ -133,6 +142,16 @@ class ORM {
 
   _createAQLForIn() {
     this.aqlSegments.push('FOR', DOC_VAR, 'IN', this._collection.name)
+  }
+
+  _createAQLForInOutbound() {
+    this.aqlSegments.push(
+      'FOR',
+      DOC_VAR,
+      'IN OUTBOUND',
+      `"${this._actionOptions.id}"`,
+      this._actionOptions.edgeCollectionName
+    )
   }
 
   _createAQLFilter() {
@@ -160,11 +179,15 @@ class ORM {
     }
   }
 
-  _createAQLReturn() {
+  _createAQLReturn(distinct = false) {
     const returnItems = this._select
       ? returnToAQL(this._select, DOC_VAR)
       : DOC_VAR
-    this.aqlSegments.push(this._separator + 'RETURN', returnItems)
+    this.aqlSegments.push(
+      this._separator + 'RETURN',
+      distinct ? 'DISTINCT' : '',
+      returnItems
+    )
   }
 
   _createAQLUpdate() {
@@ -182,7 +205,7 @@ class ORM {
           unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
         })
         .exec()
-      console.log('result'.bgMagenta, result)
+
       if (result instanceof Error) {
         return reject(result)
       }
@@ -233,6 +256,46 @@ class ORM {
           computed: this._computed,
           noDefaults: this._options.noDefaults || false,
           unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
+        })
+        .exec()
+
+      if (this._limit === 1 && result) {
+        return resolve(result[0])
+      }
+
+      return resolve(result)
+    })
+  }
+
+  async _createOutboundQuery() {
+    this._createAQLForInOutbound()
+    this._createAQLReturn(true)
+
+    return this._createAQLQuery()
+  }
+
+  _findOutbound() {
+    return new Promise(async resolve => {
+      const query = await this._createOutboundQuery()
+
+      if (this._options.printAQL) {
+        console.log(query)
+      }
+
+      // perform query
+      let cursor = await this._connection.db.query(query)
+      let docs = await cursor.all()
+      let result = await Builder.getInstance()
+        .data(docs)
+        .convertTo(this._model)
+        .toObject({
+          computed: this._computed,
+          noDefaults: this._options.noDefaults || false,
+          unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
+        })
+        .intercept(target => {
+          delete target._key
+          return target
         })
         .exec()
 
