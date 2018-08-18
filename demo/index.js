@@ -271,7 +271,7 @@ async function main_model_method() {
   console.log(JSON.stringify(user))
 }
 
-// main()
+main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
@@ -280,4 +280,4 @@ async function main_model_method() {
 // main_new_user()
 // main_query()
 // main_builder()
-main_model_method()
+// main_model_method()

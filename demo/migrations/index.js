@@ -27,8 +27,8 @@ async function importUsers() {
     .convertTo(Model)
     .toObject()
     .exec()
-  
-    await Model.importMany(docs, true)
+
+  await Model.importMany(docs, true)
 }
 
 async function importFriends() {
@@ -61,11 +61,43 @@ async function importDevices() {
   await Model.importMany(docs, true)
 }
 
+async function importPosts() {
+  const Model = arango.model('Post')
+
+  let items = require('./data/posts')
+  items = arango.toArray(items)
+
+  let docs = await Builder.getInstance()
+    .data(items)
+    .convertTo(Model)
+    .toObject()
+    .exec()
+
+  await Model.importMany(docs, true)
+}
+
+async function importLikes() {
+  const Model = arango.model('Like')
+
+  let items = require('./data/likes')
+  items = arango.toArray(items)
+
+  let docs = await Builder.getInstance()
+    .data(items)
+    .convertTo(Model)
+    .toObject()
+    .exec()
+
+  await Model.importMany(docs, true)
+}
+
 async function importAllDocs() {
-  await importCategories()
-  await importUsers()
-  await importFriends()
-  await importDevices()
+  // await importCategories()
+  // await importUsers()
+  // await importFriends()
+  // await importDevices()
+  // await importPosts()
+  await importLikes()
 }
 
 module.exports = {
@@ -73,5 +105,7 @@ module.exports = {
   importCategories,
   importUsers,
   importFriends,
-  importDevices
+  importDevices,
+  importPosts,
+  importLikes
 }
