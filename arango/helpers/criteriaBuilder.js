@@ -89,6 +89,8 @@ function criteriaBuilder(criteria, documentName = '', group = true) {
     str = str.replace(/(\.)(\w+)(\s)/gi, "$1`$2`$3")
   }
 
+  // replace instances of "id" with "_key"
+  str = str.split('`id`').join('`_key`')
   return str
 }
 

@@ -181,13 +181,13 @@ async function main_find_user() {
   // })
 
   const user2 = await User.find({
-    firstName: 'Chase'
+    id: 'colby'
+    // firstName: 'Chase'
+  }, {
+    printAQL: true,
+    noDefaults: true
   })
     .computed(true)
-    .options({
-      printAQL: true,
-      noDefaults: true
-    })
     .limit(2)
     .select('firstName lastName')
     .exec()
@@ -232,13 +232,14 @@ async function main_query() {
           FOR @@doc IN @@collection
             FILTER device.user == @@doc._key`,
     {
+      printAQL: true,
       noDefaults: true
     }
   )
     .computed(true)
     .select('firstName lastName')
     // .toQuery()
-    .exec()
+    .exec({ printAQL: true })
   console.log(result)
 }
 
@@ -292,7 +293,7 @@ async function main_model_edge_outbound() {
   })
 
   const User = arango.model('User')
-  let user = await User.findOut('likes', 'posts/first', {
+  let user = await User.findByEdgeId('posts/first', 'likes', {
     noDefaults: true
   })
     .computed(true)
@@ -325,7 +326,7 @@ async function main_model_edge_outbound() {
 // main_find_users()
 // main_find_user()
 // main_new_user()
-main_query()
+// main_query()
 // main_builder()
 // main_model_method()
-// main_model_edge_outbound()
+main_model_edge_outbound()

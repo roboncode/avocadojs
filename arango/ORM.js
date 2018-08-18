@@ -112,7 +112,7 @@ class ORM {
       return this._createFindQuery()
     }
 
-    if (this._action === 'findOut') {
+    if (this._action === 'findEdge') {
       return this._createOutboundQuery()
     }
 
@@ -132,8 +132,8 @@ class ORM {
       return this._find()
     }
 
-    if (this._action === 'findOut') {
-      return this._findOutbound()
+    if (this._action === 'findEdge') {
+      return this._findEdgebound()
     }
 
     if (this._action === 'update') {
@@ -171,6 +171,7 @@ class ORM {
   _createAQLFilter() {
     if (Object.keys(this._criteria).length) {
       this.aqlSegments.push(
+        
         this._separator + 'FILTER',
         criteriaBuilder(this._criteria, DOC_VAR)
       )
@@ -275,6 +276,10 @@ class ORM {
           noDefaults: this._options.noDefaults || false,
           unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
         })
+        .intercept(target => {
+          delete target._key
+          return target
+        })
         .exec()
 
       if (this._limit === 1 && result) {
@@ -292,7 +297,7 @@ class ORM {
     return this._createAQLQuery()
   }
 
-  _findOutbound() {
+  _findEdgebound() {
     return new Promise(async resolve => {
       const query = await this._createOutboundQuery()
 
