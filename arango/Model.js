@@ -114,8 +114,12 @@ class ArangoModel extends AvocadoModel {
           noDefaults: options.noDefaults || false,
           unknownProps: options.strict ? 'strip' : 'allow'
         })
+        .intercept((target) => {
+          delete target._key
+          return target
+        })
         .exec()
-      return resolve(result)
+      return resolve(result.length ? result[0] : null)
     })
   }
 

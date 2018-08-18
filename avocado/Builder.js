@@ -33,8 +33,8 @@ class Builder {
       return target
     })
 
-    this.addMethod('intercept', function(target, index = 0, items, callback) {
-      return callback(target, index)
+    this.addMethod('intercept', function(target, index, items, callback) {
+      return callback(target, index || 0)
     })
   }
 

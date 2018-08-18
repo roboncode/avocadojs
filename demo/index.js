@@ -257,6 +257,20 @@ async function main_builder() {
   console.log(result)
 }
 
+async function main_model_method() {
+  require('./models/User')
+
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  let user = await User.getUserDevices('rob', {string: true})
+  console.log(user.fullName.cyan)
+  console.log(user.devices)
+  console.log(JSON.stringify(user))
+}
+
 // main()
 // main_update_user()
 // main_update_users()
@@ -265,4 +279,5 @@ async function main_builder() {
 // main_find_user()
 // main_new_user()
 // main_query()
-main_builder()
+// main_builder()
+main_model_method()
