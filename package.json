@@ -8,11 +8,9 @@
     "demo": "node demo"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "aqb": "^2.1.0",
     "arangojs": "^6.4.0",
-    "clone": "^2.1.1",
     "joi": "^13.4.0",
     "lodash": "^4.17.10",
     "microtime": "^2.1.8",
