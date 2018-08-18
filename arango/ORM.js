@@ -30,6 +30,8 @@ class ORM {
   constructor() {
     this.aqlSegments = []
     this._offset = 0
+    this._criteria = {}
+    this._separator = ''
   }
 
   model(val) {
@@ -97,7 +99,25 @@ class ORM {
     return this
   }
 
+  toQuery(pretty = false) {
+    this._separator = pretty ? '\n   ' : ''
+
+    if (this._action === 'find') {
+      return this._createFindQuery()
+    }
+
+    if (this._action === 'update') {
+      return this._createUpdateQuery()
+    }
+
+    if (this._action === 'delete') {
+      return this._createDeleteQuery()
+    }
+  }
+
   exec() {
+    this._separator = '\n   '
+
     if (this._action === 'find') {
       return this._find()
     }
@@ -118,7 +138,7 @@ class ORM {
   _createAQLFilter() {
     if (Object.keys(this._criteria).length) {
       this.aqlSegments.push(
-        '\n   FILTER',
+        this._separator + 'FILTER',
         criteriaBuilder(this._criteria, DOC_VAR)
       )
     }
@@ -126,13 +146,17 @@ class ORM {
 
   _createAQLLimit() {
     if (this._offset || this._limit) {
-      this.aqlSegments.push('\n   LIMIT ' + this._offset + ',' + this._limit)
+      this.aqlSegments.push(
+        this._separator + 'LIMIT ' + this._offset + ',' + this._limit
+      )
     }
   }
 
   _createAQLSort() {
     if (this._sort) {
-      this.aqlSegments.push('\n   SORT ' + sortToAQL(this._sort, DOC_VAR))
+      this.aqlSegments.push(
+        this._separator + 'SORT ' + sortToAQL(this._sort, DOC_VAR)
+      )
     }
   }
 
@@ -140,7 +164,7 @@ class ORM {
     const returnItems = this._select
       ? returnToAQL(this._select, DOC_VAR)
       : DOC_VAR
-    this.aqlSegments.push('\n   RETURN', returnItems)
+    this.aqlSegments.push(this._separator + 'RETURN', returnItems)
   }
 
   _createAQLUpdate() {
@@ -163,34 +187,38 @@ class ORM {
         return reject(result)
       }
       this.aqlSegments.push(
-        '\n   UPDATE',
+        this._separator + 'UPDATE',
         DOC_VAR,
-        '\n   WITH',
+        this._separator + 'WITH',
         JSON.stringify(result)
       )
-      this.aqlSegments.push('\n   IN', this._collection.name)
+      this.aqlSegments.push(this._separator + 'IN', this._collection.name)
       resolve()
     })
   }
 
   _createAQLRemove() {
-    this.aqlSegments.push('\n   REMOVE', DOC_VAR)
-    this.aqlSegments.push('\n   IN', this._collection.name)
+    this.aqlSegments.push(this._separator + 'REMOVE', DOC_VAR)
+    this.aqlSegments.push(this._separator + 'IN', this._collection.name)
   }
 
   _createAQLQuery() {
     return this.aqlSegments.join(' ').replace(EXPR, DOC_VAR + '.$1')
   }
 
+  _createFindQuery() {
+    this._createAQLForIn()
+    this._createAQLFilter()
+    this._createAQLLimit()
+    this._createAQLSort()
+    this._createAQLReturn()
+
+    return this._createAQLQuery()
+  }
+
   _find() {
     return new Promise(async resolve => {
-      this._createAQLForIn()
-      this._createAQLFilter()
-      this._createAQLLimit()
-      this._createAQLSort()
-      this._createAQLReturn()
-
-      const query = this._createAQLQuery()
+      const query = this._createFindQuery()
       if (this._options.printAQL) {
         console.log(query)
       }
@@ -216,32 +244,42 @@ class ORM {
     })
   }
 
+  async _createUpdateQuery() {
+    this._createAQLForIn()
+    this._createAQLFilter()
+    this._createAQLLimit()
+    this._createAQLSort()
+    return await this._createAQLUpdate()
+  }
+
   _update() {
     return new Promise(async resolve => {
-      this._createAQLForIn()
-      this._createAQLFilter()
-      this._createAQLLimit()
-      this._createAQLSort()
-      await this._createAQLUpdate()
+      const query = await this._createUpdateQuery()
 
-      const query = this._createAQLQuery()
-      console.log(query)
+      if (this._options.printAQL) {
+        console.log(query)
+      }
+
       await this._connection.db.query(query)
 
       return resolve()
     })
   }
 
+  _createDeleteQuery() {
+    this._createAQLForIn()
+    this._createAQLFilter()
+    this._createAQLLimit()
+    this._createAQLSort()
+    this._createAQLRemove()
+
+    return this._createAQLQuery()
+  }
+
   _delete() {
     return new Promise(async resolve => {
-      this._createAQLForIn()
-      this._createAQLFilter()
-      this._createAQLLimit()
-      this._createAQLSort()
-      this._createAQLRemove()
+      const query = this._createDeleteQuery()
 
-      const query = this._createAQLQuery()
-      console.log('#delete', query)
       if (this._options.printAQL) {
         console.log(query)
       }
