@@ -180,13 +180,16 @@ async function main_find_user() {
   //   return: 'firstName lastName'
   // })
 
-  const user2 = await User.find({
-    id: 'colby'
-    // firstName: 'Chase'
-  }, {
-    printAQL: true,
-    noDefaults: true
-  })
+  const user2 = await User.find(
+    {
+      id: 'colby'
+      // firstName: 'Chase'
+    },
+    {
+      printAQL: true,
+      noDefaults: true
+    }
+  )
     .computed(true)
     .limit(2)
     .select('firstName lastName')
@@ -238,8 +241,8 @@ async function main_query() {
   )
     .computed(true)
     .select('firstName lastName')
-    // .toQuery()
-    .exec({ printAQL: true })
+    // .toAQL()
+    .exec()
   console.log(result)
 }
 
@@ -293,19 +296,21 @@ async function main_model_edge_outbound() {
   })
 
   const User = arango.model('User')
-  let user = await User.findByEdge({
-    id: 'posts/first', 
-    collection: 'likes',
-    inbound: true
-  }, {
-    noDefaults: true
-  })
+  let user = await User.findByEdge(
+    {
+      id: 'posts/first',
+      collection: 'likes',
+      inbound: true
+    },
+    {
+      noDefaults: true,
+      printAQL: true
+    }
+  )
     .computed(true)
     .select('firstName lastName')
-    // .toQuery(true)
-    .exec({
-      printAQL: true
-    })
+    // .toAQL(true)
+    .exec()
   console.log(user)
 }
 
@@ -317,16 +322,17 @@ async function main_model_edge_inbound() {
   })
 
   const Post = arango.model('Post')
-  let posts = await Post.findByEdge({
-    id: 'users/rob', 
-    collection: 'likes',
-    inbound: true
-  }, {
-    noDefaults: true
-  })
-    .exec({
+  let posts = await Post.findByEdge(
+    {
+      id: 'users/rob',
+      collection: 'likes',
+      inbound: true
+    },
+    {
+      noDefaults: true,
       printAQL: true
-    })
+    }
+  ).exec()
   console.log(posts)
 }
 

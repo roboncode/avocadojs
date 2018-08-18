@@ -104,7 +104,7 @@ class ORM {
     return this
   }
 
-  toQuery(pretty = false) {
+  toAQL(pretty = false) {
     this._separator = pretty ? '\n   ' : ''
 
     if (this._action === 'find') {

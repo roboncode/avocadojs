@@ -7,7 +7,7 @@ describe('arango.orm', () => {
     orm.action('find')
     orm.collection({ name: 'users' })
     
-    const query = orm.toQuery()
+    const query = orm.toAQL()
 
     it('should do something', () => {
       expect(query).to.contain('FOR doc IN users RETURN doc')
@@ -22,7 +22,7 @@ describe('arango.orm', () => {
       name: 'rob'
     })
     
-    const query = orm.toQuery()
+    const query = orm.toAQL()
 
     it('should do something', () => {
       expect(query).to.contain('FOR doc IN users FILTER (doc.`name` == "rob") RETURN doc')
@@ -40,7 +40,7 @@ describe('arango.orm', () => {
       ]
     })
     
-    const query = orm.toQuery()
+    const query = orm.toAQL()
 
     it('should do something', () => {
       expect(query).to.contain('FOR doc IN users FILTER ((doc.`name` == "rob") OR (doc.`name` == "john")) RETURN doc')
