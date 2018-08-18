@@ -15,10 +15,7 @@ const logicalOperators = {
   OR: ' OR '
 }
 
-function criteriaBuilder(criteria) {
-  const doc = arguments[1]
-  const group = arguments[2] !== undefined ? arguments[2] : true
-
+function criteriaBuilder(criteria, documentName = '', group = true) {
   let aql = []
   let aqlOr = []
   let returnOrStr = ''
@@ -60,7 +57,6 @@ function criteriaBuilder(criteria) {
                 aql.push(prop + criteriaResult)
               }
             }
-
             break
         }
       }
@@ -82,17 +78,19 @@ function criteriaBuilder(criteria) {
     str += returnOrStr
   }
 
-  if (doc) {
+  if (documentName) {
     // str = str.replace(/(\w+)(\s[!=<>])/g, doc + ".`$1`$2")
     // console.log('before'.bgRed, str)
     // a.b => doc.a.b
-    str = str.replace(/([\w.]+)(\.?)(\s[!=<>])/gi, doc + ".$1$3")
+    str = str.replace(/([\w.]+)(\.?)(\s[!=<>])/gi, documentName + ".$1$3")
     // doc.a.b. => doc.a.b
     // str = str.replace(/\.(\s)/gi, "$1")
     // doc.a.b => doc.a.`b`
     str = str.replace(/(\.)(\w+)(\s)/gi, "$1`$2`$3")
   }
 
+  // replace instances of "id" with "_key"
+  str = str.split('`id`').join('`_key`')
   return str
 }
 

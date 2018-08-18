@@ -1,20 +1,16 @@
 # AvocadoJS
 
-ArangoDB is a JavaScript object modeling for web browsers and Node.js. No matter how you slice it, its all good!
+### *** In Development ***
 
-<img src="https://image.flaticon.com/icons/svg/835/835420.svg" width="150px">
+ArangoSlice is a JavaScript Object Modeler for Node.js. 
 
 Inspired by [Mongoose](http://mongoosejs.com/). 
-Built using [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.com/arangodb/arangojs)
+Built using [Avocado](https://github.com/roboncode/avocadojs), [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.com/arangodb/arangojs)
 
-# *** In Development (do not use yet) ***
-## Roadmap
-* edge collections
-* subdoc queries
-* edge queiries
-* unit tests (in progress)
-* cleanup
-* more documentation
+I really like [Mongoose](http://mongoosejs.com/) for [MongoDB](https://www.mongodb.com/) and I wanted something similar to it for [ArangoDB](https://www.arangodb.com/).
+
+
+<!-- <img src="https://image.flaticon.com/icons/svg/835/835420.svg" width="150px"> -->
 
 ## Quick Start
 
@@ -38,8 +34,6 @@ node demo
 ```
 
 ### What is Avocado?
-
-I really like [Mongoose](http://mongoosejs.com/) for MongoDB and I wanted something similar to it for ArangoDB. If you haven't tried out ArangoDB, I suggest you check it out! https://www.arangodb.com
 
 Avocado provides a these specific features:
 
@@ -104,34 +98,54 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 
 * Central connectivity to ArangoDB
 * Automated creation of databases, collections and indexing
-* Ability to populate database with sample data
-* ORM for common query functions for document retrieval and modification
+* Ability to pre-populate database with data
+
+### Model has many built-in query methods
+
+	* findMany
+	* updateOne
+	* deleteOne
+	* find
+	* findByEdge
+	* findById
+	* findByIdAndDelete
+	* findByIdAndUpdate
+	* findByQuery
+	* deleteMany
+	* findOne
+	* deleteMany
+	* findOne
+	* getCollection
+	* importMany
+	* updateMany
+	* remove
+	* save
+	* setConnection
+	
+### ORM for common query functions for document retrieval and modification
+
+	* toAQL: returns the AQL string version of query
+	* action(find | findEdge | update | delete)
+	* collection
+	* computed
+	* connection
+	* criteria
+	* data
+	* exec
+	* limit
+	* model
+	* offset
+	* options
+	* query
+	* schemaOptions
+	* select
+	* sort
+
+### Schema using Avocado - Build schema with JSON structure and/or Joi
   
-  * findById
-  * findOne
-  * findMany
-  * find
-  * save (create or update)
-  * findByIdAndUpdate
-  * updateOne
-  * updateMany
-  * findByIdAndDelete
-  * deleteOne
-  * deleteMany
-  * query
-  * importMany
 
-## Miscellaneous
-
-Supports
-  * sorting() - return docs in sorting order and direction
-  * select() - return selected properties back
-
-### Does Avocado do everything Mongoose does?
-
-Nope.
-
-### Will Avocado eventually do everything Mongoose does?
-
-Nope. Avocado is meant to be agile. You need something, add it to your project. If you feel others will benefit from something you have added, fork this repo and issue a pull requrest. I didn't want to over-engineer this library. This reduces bugs, support and limiting how it can be used.
-
+## Roadmap
+* unit tests (in progress)
+* cleanup
+* more documentation
+* web browser compatible

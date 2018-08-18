@@ -30,6 +30,8 @@ class ORM {
   constructor() {
     this.aqlSegments = []
     this._offset = 0
+    this._criteria = {}
+    this._separator = ''
   }
 
   model(val) {
@@ -49,6 +51,11 @@ class ORM {
 
   criteria(val) {
     this._criteria = val
+    return this
+  }
+
+  query(val) {
+    this._query = val
     return this
   }
 
@@ -97,9 +104,35 @@ class ORM {
     return this
   }
 
+  toAQL(pretty = false) {
+    this._separator = pretty ? '\n   ' : ''
+
+    if (this._action === 'find') {
+      return this._createFindQuery()
+    }
+
+    if (this._action === 'findEdge') {
+      return this._createEdgeQuery()
+    }
+
+    if (this._action === 'update') {
+      return this._createUpdateQuery()
+    }
+
+    if (this._action === 'delete') {
+      return this._createDeleteQuery()
+    }
+  }
+
   exec() {
+    this._separator = '\n   '
+
     if (this._action === 'find') {
       return this._find()
+    }
+
+    if (this._action === 'findEdge') {
+      return this._findEdgebound()
     }
 
     if (this._action === 'update') {
@@ -115,10 +148,30 @@ class ORM {
     this.aqlSegments.push('FOR', DOC_VAR, 'IN', this._collection.name)
   }
 
+  _createAQLCustom() {
+    let query = this._query
+      .split('@@doc')
+      .join(DOC_VAR)
+      .split('@@collection')
+      .join(this._collection.name)
+    this.aqlSegments.push(query)
+  }
+
+  _createAQLForInBound() {
+    this.aqlSegments.push(
+      'FOR',
+      DOC_VAR,
+      'IN',
+      this._criteria.inbound ? 'INBOUND' : 'OUTBOUND',
+      `"${this._criteria.id}"`,
+      this._criteria.collection
+    )
+  }
+
   _createAQLFilter() {
     if (Object.keys(this._criteria).length) {
       this.aqlSegments.push(
-        '\n   FILTER',
+        this._separator + 'FILTER',
         criteriaBuilder(this._criteria, DOC_VAR)
       )
     }
@@ -126,21 +179,29 @@ class ORM {
 
   _createAQLLimit() {
     if (this._offset || this._limit) {
-      this.aqlSegments.push('\n   LIMIT ' + this._offset + ',' + this._limit)
+      this.aqlSegments.push(
+        this._separator + 'LIMIT ' + this._offset + ',' + this._limit
+      )
     }
   }
 
   _createAQLSort() {
     if (this._sort) {
-      this.aqlSegments.push('\n   SORT ' + sortToAQL(this._sort, DOC_VAR))
+      this.aqlSegments.push(
+        this._separator + 'SORT ' + sortToAQL(this._sort, DOC_VAR)
+      )
     }
   }
 
-  _createAQLReturn() {
+  _createAQLReturn(distinct = false) {
     const returnItems = this._select
       ? returnToAQL(this._select, DOC_VAR)
       : DOC_VAR
-    this.aqlSegments.push('\n   RETURN', returnItems)
+    this.aqlSegments.push(
+      this._separator + 'RETURN',
+      distinct ? 'DISTINCT' : '',
+      returnItems
+    )
   }
 
   _createAQLUpdate() {
@@ -158,42 +219,49 @@ class ORM {
           unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
         })
         .exec()
-      console.log('result'.bgMagenta, result)
+
       if (result instanceof Error) {
         return reject(result)
       }
       this.aqlSegments.push(
-        '\n   UPDATE',
+        this._separator + 'UPDATE',
         DOC_VAR,
-        '\n   WITH',
+        this._separator + 'WITH',
         JSON.stringify(result)
       )
-      this.aqlSegments.push('\n   IN', this._collection.name)
+      this.aqlSegments.push(this._separator + 'IN', this._collection.name)
       resolve()
     })
   }
 
   _createAQLRemove() {
-    this.aqlSegments.push('\n   REMOVE', DOC_VAR)
-    this.aqlSegments.push('\n   IN', this._collection.name)
+    this.aqlSegments.push(this._separator + 'REMOVE', DOC_VAR)
+    this.aqlSegments.push(this._separator + 'IN', this._collection.name)
   }
 
   _createAQLQuery() {
     return this.aqlSegments.join(' ').replace(EXPR, DOC_VAR + '.$1')
   }
 
-  _find() {
-    return new Promise(async resolve => {
+  _createFindQuery() {
+    if (this._query) {
+      this._createAQLCustom()
+    } else {
       this._createAQLForIn()
       this._createAQLFilter()
-      this._createAQLLimit()
-      this._createAQLSort()
-      this._createAQLReturn()
+    }
+    this._createAQLLimit()
+    this._createAQLSort()
+    this._createAQLReturn()
 
-      const query = this._createAQLQuery()
-      if (this._options.printAQL) {
-        console.log(query)
-      }
+    return this._createAQLQuery()
+  }
+
+  _find() {
+    return new Promise(async resolve => {
+      const query = this._createFindQuery()
+
+      this._print(query)
 
       // perform query
       let cursor = await this._connection.db.query(query)
@@ -206,6 +274,10 @@ class ORM {
           noDefaults: this._options.noDefaults || false,
           unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
         })
+        .intercept(target => {
+          delete target._key
+          return target
+        })
         .exec()
 
       if (this._limit === 1 && result) {
@@ -216,40 +288,95 @@ class ORM {
     })
   }
 
+  async _createEdgeQuery() {
+    this._createAQLForInBound()
+    this._createAQLReturn(true)
+
+    return this._createAQLQuery()
+  }
+
+  _findEdgebound() {
+    return new Promise(async resolve => {
+      const query = await this._createEdgeQuery()
+
+      this._print(query)
+
+      // perform query
+      let cursor = await this._connection.db.query(query)
+      let docs = await cursor.all()
+      let result = await Builder.getInstance()
+        .data(docs)
+        .convertTo(this._model)
+        .toObject({
+          computed: this._computed,
+          noDefaults: this._options.noDefaults || false,
+          unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
+        })
+        .intercept(target => {
+          delete target._key
+          return target
+        })
+        .exec()
+
+      if (this._limit === 1 && result) {
+        return resolve(result[0])
+      }
+
+      return resolve(result)
+    })
+  }
+
+  async _createUpdateQuery() {
+    this._createAQLForIn()
+    this._createAQLFilter()
+    this._createAQLLimit()
+    this._createAQLSort()
+    return await this._createAQLUpdate()
+  }
+
   _update() {
     return new Promise(async resolve => {
-      this._createAQLForIn()
-      this._createAQLFilter()
-      this._createAQLLimit()
-      this._createAQLSort()
-      await this._createAQLUpdate()
+      const query = await this._createUpdateQuery()
 
-      const query = this._createAQLQuery()
-      console.log(query)
+      this._print(query)
+
       await this._connection.db.query(query)
 
       return resolve()
     })
   }
 
+  _createDeleteQuery() {
+    this._createAQLForIn()
+    this._createAQLFilter()
+    this._createAQLLimit()
+    this._createAQLSort()
+    this._createAQLRemove()
+
+    return this._createAQLQuery()
+  }
+
   _delete() {
     return new Promise(async resolve => {
-      this._createAQLForIn()
-      this._createAQLFilter()
-      this._createAQLLimit()
-      this._createAQLSort()
-      this._createAQLRemove()
+      const query = this._createDeleteQuery()
 
-      const query = this._createAQLQuery()
-      console.log('#delete', query)
-      if (this._options.printAQL) {
-        console.log(query)
-      }
+      this._print(query)
 
       let cursor = await this._connection.db.query(query)
       let docs = await cursor.all()
       return resolve(docs)
     })
+  }
+
+  _print(query) {
+    // https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color
+    // https://misc.flogisoft.com/bash/tip_colors_and_formatting
+    if (this._options.printAQL) {
+      if (this._options.printAQL === 'color') {
+        query = query.replace(/\b([A-Z]+)\b/g, '\x1b[36m$1\x1b[0m')
+      }
+      console.log('\n' + query + '\n')
+    }
   }
 }
 

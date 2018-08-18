@@ -4,9 +4,7 @@ const rootPath = path.join(__dirname, '..')
 const arango = require(path.join(rootPath, 'arango'))
 const Builder = require('../avocado/Builder')
 
-const {
-  importAllDocs
-} = require(path.join(__dirname, 'migrations'))
+const { importAllDocs } = require(path.join(__dirname, 'migrations'))
 require('colors')
 
 arango.events.on('connected', () => {
@@ -50,7 +48,7 @@ async function main_update_user() {
 
   const User = arango.model('User')
   User.findByIdAndUpdate('rob', {
-    desc: "This is another test"
+    desc: 'This is another test'
   }).exec()
 }
 
@@ -64,28 +62,34 @@ async function main_update_users() {
 
   const User = arango.model('User')
 
-  User.update({
-    _key: 'rob',
-    // role: 'admin'
-    $or: [{
-      role: 'admin'
-    }]
-  }, {
-    junk: 123,
-    desc: 'Test #8',
-    stats: {
-      friends: {
-        $inc: -1
-      },
-      // followers: {
-      //   $inc: 1
-      // },
-      followers: '-=2'
-      // friends: 'EXPR( stats.friends + 1 )'
+  User.update(
+    {
+      _key: 'rob',
+      // role: 'admin'
+      $or: [
+        {
+          role: 'admin'
+        }
+      ]
+    },
+    {
+      junk: 123,
+      desc: 'Test #8',
+      stats: {
+        friends: {
+          $inc: -1
+        },
+        // followers: {
+        //   $inc: 1
+        // },
+        followers: '-=2'
+        // friends: 'EXPR( stats.friends + 1 )'
+      }
+    },
+    {
+      printAQL: true
     }
-  }, {
-    printAQL: true
-  })
+  )
   /*
   // console.log(qb.filter(qb.eq('_key', 'rob')).toAQL())
   console.log(qb.filter(qb.eq('a', qb.str('b'))).toAQL())
@@ -135,12 +139,15 @@ async function main_find_users() {
   })
 
   const User = arango.model('User')
-  let users = await User.find({
-    // _key: 'jane'
-  }, {
-    printAQL: true,
-    sort: '-lastName firstName'
-  })
+  let users = await User.find(
+    {
+      // _key: 'jane'
+    },
+    {
+      printAQL: true,
+      sort: '-lastName firstName'
+    }
+  )
 
   console.log(users)
 }
@@ -173,18 +180,20 @@ async function main_find_user() {
   //   return: 'firstName lastName'
   // })
 
-  const user2 = await User.find({
-      firstName: 'Chase'
-    })
-    .computed(true)
-    .options({
+  const user2 = await User.find(
+    {
+      id: 'colby'
+      // firstName: 'Chase'
+    },
+    {
       printAQL: true,
       noDefaults: true
-    })
+    }
+  )
+    .computed(true)
     .limit(2)
     .select('firstName lastName')
     .exec()
-
 
   console.log(user2)
 }
@@ -201,11 +210,13 @@ async function main_new_user() {
 
   let user = new User({
     firstName: 'Lori',
-    lastName: "Taylor",
-    devices: [{
-      _key: 'chrome',
-      token: 'abc'
-    }]
+    lastName: 'Taylor',
+    devices: [
+      {
+        _key: 'chrome',
+        token: 'abc'
+      }
+    ]
   })
   await user.save()
 }
@@ -219,13 +230,19 @@ async function main_query() {
 
   const User = arango.model('User')
   let result = await User.findByQuery(
-    `FOR d IN devices
-        FILTER d._key == 'chrome'
-          FOR u IN users
-            FILTER d.user == u._key
-      RETURN {firstName: u.firstName, lastName:u.lastName}`, {
+    `FOR device IN devices
+        FILTER device._key == 'chrome'
+          FOR @@doc IN @@collection
+            FILTER device.user == @@doc._key`,
+    {
+      printAQL: true,
       noDefaults: true
-    })
+    }
+  )
+    .computed(true)
+    .select('firstName lastName')
+    // .toAQL()
+    .exec()
   console.log(result)
 }
 
@@ -257,6 +274,69 @@ async function main_builder() {
   console.log(result)
 }
 
+async function main_model_method() {
+  require('./models/User')
+
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  let user = await User.getUserDevices('rob', { string: true })
+  console.log(user.fullName.cyan)
+  console.log(user.devices)
+  console.log(JSON.stringify(user))
+}
+
+async function main_model_edge_outbound() {
+  readFiles(path.join(__dirname, 'models'))
+
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const User = arango.model('User')
+  let user = await User.findByEdge(
+    {
+      id: 'posts/first',
+      collection: 'likes',
+      inbound: true
+    },
+    {
+      noDefaults: true,
+      printAQL: true
+    }
+  )
+    .computed(true)
+    .select('firstName lastName')
+    // .toAQL(true)
+    .exec()
+  console.log(user)
+}
+
+async function main_model_edge_inbound() {
+  readFiles(path.join(__dirname, 'models'))
+
+  await arango.connect({
+    name: 'demo'
+  })
+
+  const Post = arango.model('Post')
+  let posts = await Post.findByEdge(
+    {
+      id: 'users/rob',
+      collection: 'likes',
+      inbound: true
+    },
+    {
+      noDefaults: true,
+      // printAQL: true
+      printAQL: 'color'
+    }
+  ).exec()
+  console.log(posts)
+}
+
 // main()
 // main_update_user()
 // main_update_users()
@@ -265,4 +345,7 @@ async function main_builder() {
 // main_find_user()
 // main_new_user()
 // main_query()
-main_builder()
+// main_builder()
+// main_model_method()
+// main_model_edge_outbound()
+main_model_edge_inbound()

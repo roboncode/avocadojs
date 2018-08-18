@@ -18,7 +18,7 @@ let schema = arango.Schema(
     theme: String, // #FF0000
     // devices: [String], // Ids used to send push notifications to
     // // devices: [], // Ids used to send push notifications to
-    devices: [{ name: String, kind: { type: String, default: 'junk' } }], // Ids used to send push notifications to
+    devices: [{ name: String }], // Ids used to send push notifications to
     // // devices: [ Device ], // Ids used to send push notifications to
     // // devices: [Device.schema], // Ids used to send push notifications to
     // // devices: [Device.schema.json], // Ids used to send push notifications to
@@ -108,8 +108,27 @@ schema.computed.fullName = function() {
   return this.firstName + ' ' + this.lastName
 }
 
+schema.computed.id = function() {
+  return this._key
+}
+
 schema.statics.sayGoodbye = function() {
   this.emitter.emit('sayGoodbye')
+}
+
+schema.statics.getUserDevices = async function(id) {
+  let aql = `FOR user IN users
+    FILTER (user._key == "${id}")
+        LET devices = (
+            FOR device IN devices 
+            FILTER device.user == user._key 
+            RETURN device)
+    RETURN MERGE(user, {devices})`
+  return await this.findByQuery(aql, {
+    computed: true,
+    noDefaults: false,
+    strict: true
+  })
 }
 
 schema.methods.sayHello = function(day) {
