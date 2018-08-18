@@ -260,9 +260,8 @@ class ORM {
   _find() {
     return new Promise(async resolve => {
       const query = this._createFindQuery()
-      if (this._options.printAQL) {
-        console.log(query)
-      }
+
+      this._print(query)
 
       // perform query
       let cursor = await this._connection.db.query(query)
@@ -300,9 +299,7 @@ class ORM {
     return new Promise(async resolve => {
       const query = await this._createEdgeQuery()
 
-      if (this._options.printAQL) {
-        console.log(query)
-      }
+      this._print(query)
 
       // perform query
       let cursor = await this._connection.db.query(query)
@@ -341,9 +338,7 @@ class ORM {
     return new Promise(async resolve => {
       const query = await this._createUpdateQuery()
 
-      if (this._options.printAQL) {
-        console.log(query)
-      }
+      this._print(query)
 
       await this._connection.db.query(query)
 
@@ -365,14 +360,18 @@ class ORM {
     return new Promise(async resolve => {
       const query = this._createDeleteQuery()
 
-      if (this._options.printAQL) {
-        console.log(query)
-      }
+      this._print(query)
 
       let cursor = await this._connection.db.query(query)
       let docs = await cursor.all()
       return resolve(docs)
     })
+  }
+
+  _print(query) {
+    if (this._options.printAQL) {
+      console.log('\n' + query + '\n')
+    }
   }
 }
 
