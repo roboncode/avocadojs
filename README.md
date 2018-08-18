@@ -12,7 +12,6 @@ I really like [Mongoose](http://mongoosejs.com/) for [MongoDB](https://www.mongo
 
 <!-- <img src="https://image.flaticon.com/icons/svg/835/835420.svg" width="150px"> -->
 
-
 ## Quick Start
 
 ### Run Docker ArangoDB
@@ -144,7 +143,6 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 
 ### Schema using Avocado - Build schema with JSON structure and/or Joi
   
-
 
 ## Roadmap
 * unit tests (in progress)
