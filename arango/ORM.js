@@ -54,6 +54,11 @@ class ORM {
     return this
   }
 
+  query(val) {
+    this._query = val
+    return this
+  }
+
   schemaOptions(val) {
     this._schemaOptions = val
     return this
@@ -144,6 +149,15 @@ class ORM {
     this.aqlSegments.push('FOR', DOC_VAR, 'IN', this._collection.name)
   }
 
+  _createAQLCustom() {
+    let query = this._query
+      .split('@@doc')
+      .join(DOC_VAR)
+      .split('@@collection')
+      .join(this._collection.name)
+    this.aqlSegments.push(query)
+  }
+
   _createAQLForInOutbound() {
     this.aqlSegments.push(
       'FOR',
@@ -230,8 +244,12 @@ class ORM {
   }
 
   _createFindQuery() {
-    this._createAQLForIn()
-    this._createAQLFilter()
+    if (this._query) {
+      this._createAQLCustom()
+    } else if (this._criteria) {
+      this._createAQLForIn()
+      this._createAQLFilter()
+    }
     this._createAQLLimit()
     this._createAQLSort()
     this._createAQLReturn()

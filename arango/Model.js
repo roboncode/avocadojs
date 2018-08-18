@@ -119,24 +119,16 @@ class ArangoModel extends AvocadoModel {
   }
 
   static findByQuery(query, options = {}) {
-    return new Promise(async (resolve, reject) => {
-      let cursor = await this.connection.db.query(query)
-      let docs = await cursor.all()
-      let result = await Builder.getInstance()
-        .data(docs)
-        .convertTo(this)
-        .toObject({
-          computed: true,
-          noDefaults: options.noDefaults || false,
-          unknownProps: options.strict ? 'strip' : 'allow'
-        })
-        .intercept(target => {
-          delete target._key
-          return target
-        })
-        .exec()
-      return resolve(result.length ? result[0] : null)
-    })
+    let collection = this.getCollection()
+    let orm = new ORM()
+    orm.action('find')
+    orm.model(this)
+    orm.query(query)
+    orm.collection(collection)
+    orm.options(options)
+    orm.connection(this.connection)
+    orm.schemaOptions(this.schema.options)
+    return orm
   }
 
   static importMany(docs, truncate = false) {
