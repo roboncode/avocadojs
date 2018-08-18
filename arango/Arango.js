@@ -32,7 +32,14 @@ class Arango {
     )
     asyncForEach(this.models, async (model, name) => {
       model.setConnection(this.connection)
-      await this.createCollection(model.collectionName, model.schema.options.indexes)
+      if (model.schema.options.edge) {
+        await this.createEdgeCollection(model.collectionName)
+      } else {
+        await this.createCollection(
+          model.collectionName,
+          model.schema.options.indexes
+        )
+      }
     })
 
     return this.connection
@@ -77,13 +84,17 @@ class Arango {
       model = factory(name, schema, collectionName)
       model.setConnection(this.connection)
 
-      if(this.connection.connected) {
-        this.createCollection(model.collectionName, schema.options.indexes)
+      if (this.connection.connected) {
+        if (schema.options.edge) {
+          this.createEdgeCollection(model.collectionName)
+        } else {
+          this.createCollection(model.collectionName, schema.options.indexes)
+        }
       }
 
       this.models[name] = model
     }
-    
+
     if (!model) {
       throw new Error(CONSTS.ERRORS.MODEL_NOT_FOUND + name)
     }
@@ -92,10 +103,10 @@ class Arango {
 
   async createCollection(name, indexes, truncate = false) {
     this.checkConnected()
-    
+
     let conn = this.connection
     let collection = await conn.db.collection(name)
-    
+
     if (await collection.exists()) {
       if (truncate) {
         await collection.drop()
@@ -105,8 +116,26 @@ class Arango {
       await collection.create()
     }
 
-    if(indexes) {
+    if (indexes) {
       await this.ensureIndexes(name, indexes)
+    }
+
+    return collection
+  }
+
+  async createEdgeCollection(name, truncate) {
+    this.checkConnected()
+
+    let conn = this.connection
+    let collection = await conn.db.edgeCollection(name)
+
+    if (await collection.exists()) {
+      if (truncate) {
+        await collection.drop()
+        await collection.create()
+      }
+    } else {
+      await collection.create()
     }
 
     return collection
@@ -117,8 +146,8 @@ class Arango {
 
     let conn = this.connection
     let collection = await conn.db.collection(collectionName)
-    if (!await collection.exists()) {
-      throw new Error(CONSTS.ERRORS.COLLECTION_NOT_FOUND +  collectionName)
+    if (!(await collection.exists())) {
+      throw new Error(CONSTS.ERRORS.COLLECTION_NOT_FOUND + collectionName)
     }
     for (let n = 0; n < indexes.length; n++) {
       let item = indexes[n]
