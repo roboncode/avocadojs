@@ -124,13 +124,13 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 	
 ### Supports additional cool features like:
 
-* Supports "$or" statements in query conditions
+* Conditional "$or" statements in query
 * Automatic removal of default values
 * Strict schemas which automatically strips unknown properties
 * Simple incrementation of values using "++/--" or "$inc"
 * Simple sorting using using strings
 * Simple return value filtering
-* Ability to print AQL during execution (with support to prettyfiy and colorize)
+* Ability to print AQL during execution (with support to prettify and colorize)
 * Performance measurments on data conversion
 * and more...
 
