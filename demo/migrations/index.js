@@ -10,7 +10,7 @@ async function importCategories(conn) {
   let docs = await Builder.getInstance()
     .data(items)
     .convertTo(Model)
-    .toObject()
+    .toObject({ noDefaults: true })
     .exec()
 
   await Model.importMany(docs, true)
@@ -25,7 +25,7 @@ async function importUsers() {
   let docs = await Builder.getInstance()
     .data(items)
     .convertTo(Model)
-    .toObject()
+    .toObject({ noDefaults: true })
     .exec()
 
   await Model.importMany(docs, true)
@@ -40,7 +40,7 @@ async function importFriends() {
   let docs = await Builder.getInstance()
     .data(items)
     .convertTo(Model)
-    .toObject()
+    .toObject({ noDefaults: true })
     .exec()
 
   await Model.importMany(docs, true)
@@ -55,7 +55,7 @@ async function importDevices() {
   let docs = await Builder.getInstance()
     .data(items)
     .convertTo(Model)
-    .toObject()
+    .toObject({ noDefaults: true })
     .exec()
 
   await Model.importMany(docs, true)
@@ -70,7 +70,7 @@ async function importPosts() {
   let docs = await Builder.getInstance()
     .data(items)
     .convertTo(Model)
-    .toObject()
+    .toObject({ noDefaults: true })
     .exec()
 
   await Model.importMany(docs, true)
@@ -85,18 +85,18 @@ async function importLikes() {
   let docs = await Builder.getInstance()
     .data(items)
     .convertTo(Model)
-    .toObject()
+    .toObject({ noDefaults: true })
     .exec()
 
   await Model.importMany(docs, true)
 }
 
 async function importAllDocs() {
-  // await importCategories()
-  // await importUsers()
-  // await importFriends()
-  // await importDevices()
-  // await importPosts()
+  await importCategories()
+  await importUsers()
+  await importFriends()
+  await importDevices()
+  await importPosts()
   await importLikes()
 }
 
