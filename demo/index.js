@@ -337,7 +337,7 @@ async function main_model_edge_inbound() {
   console.log(posts)
 }
 
-// main()
+main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
@@ -348,4 +348,4 @@ async function main_model_edge_inbound() {
 // main_builder()
 // main_model_method()
 // main_model_edge_outbound()
-main_model_edge_inbound()
+// main_model_edge_inbound()
