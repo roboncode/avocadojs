@@ -47,9 +47,16 @@ async function main_update_user() {
   })
 
   const User = arango.model('User')
-  User.findByIdAndUpdate('rob', {
-    desc: 'This is another test'
-  }).exec()
+  User.findByIdAndUpdate(
+    'rob',
+    {
+      // desc: 'This is another test'
+      role: 'user'
+    },
+    {
+      printAQL: true
+    }
+  ).exec()
 }
 
 async function main_update_users() {
@@ -337,8 +344,8 @@ async function main_model_edge_inbound() {
   console.log(posts)
 }
 
-main()
-// main_update_user()
+// main()
+main_update_user()
 // main_update_users()
 // main_delete_users()
 // main_find_users()
