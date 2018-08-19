@@ -1,7 +1,8 @@
 module.exports = function () {
   return {
     files: [
-      'avocado/**/*.js'
+      'avocado/**/*.js',
+      'arango/**/*.js',
     ],
 
     tests: [
