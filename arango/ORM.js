@@ -3,6 +3,7 @@ const sortToAQL = require('./helpers/sortToAQL')
 const returnToAQL = require('./helpers/returnToAQL')
 const criteriaBuilder = require('./helpers/criteriaBuilder')
 const asyncForEach = require('../avocado/helpers/asyncForEach')
+const setDefaultsToNull = require('./helpers/setDefaultsToNull')
 const DOC_VAR = 'doc'
 const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
 require('colors')
@@ -117,7 +118,8 @@ class ORM {
     }
 
     if (this._action === 'update') {
-      return await this._createUpdateQuery()
+      await this._createUpdateQuery()
+      return this._createAQLQuery()
     }
 
     if (this._action === 'delete') {
@@ -194,6 +196,18 @@ class ORM {
     }
   }
 
+  _createAQLOptions() {
+    let opts = {}
+    let hasOptions = false
+    if (this._schemaOptions.hasOwnProperty('keepNull')) {
+      opts.keepNull = false
+      hasOptions = true
+    }
+    if (hasOptions) {
+      this.aqlSegments.push('OPTIONS', JSON.stringify(opts))
+    }
+  }
+
   _createAQLReturn(distinct = false) {
     const returnItems = this._select
       ? returnToAQL(this._select, DOC_VAR)
@@ -205,18 +219,26 @@ class ORM {
   }
 
   _createAQLUpdate() {
-    return new Promise(async resolve => {
+    const keepNull = this._schemaOptions.hasOwnProperty('keepNull')
+    return new Promise(async (resolve, reject) => {
       const result = await Builder.getInstance()
         .data(this._data)
         .convertTo(this._model)
-        .intercept(async data => {
-          await asyncForEach(data, iterateHandler)
-          return data
-        })
         .toObject({
           noDefaults: true,
           // noDefaults: this._options.noDefaults || false,
           unknownProps: this._schemaOptions.strict ? 'strip' : 'allow'
+        })
+        .intercept(async data => {
+          await asyncForEach(data, iterateHandler)
+          return data
+        })
+        .intercept(async data => {
+          if (keepNull) {
+            const defaultValues = this._model.schema.defaultValues
+            data = await setDefaultsToNull(data, defaultValues)
+          }
+          return data
         })
         .exec()
 
@@ -230,8 +252,9 @@ class ORM {
         JSON.stringify(result)
       )
       this.aqlSegments.push(this._separator + 'IN', this._collection.name)
-      let query = this._createAQLQuery()
-      resolve(query)
+      // let query = this._createAQLQuery()
+      // resolve(query)
+      resolve()
     })
   }
 
@@ -332,7 +355,9 @@ class ORM {
     this._createAQLFilter()
     this._createAQLLimit()
     this._createAQLSort()
-    return await this._createAQLUpdate()
+    await this._createAQLUpdate()
+    this._createAQLOptions()
+    return this._createAQLQuery()
   }
 
   _update() {

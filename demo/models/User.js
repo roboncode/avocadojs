@@ -75,6 +75,7 @@ let schema = arango.Schema(
   },
   {
     strict: true,
+    keepNull: false,
     indexes: [
       {
         type: 'hash',

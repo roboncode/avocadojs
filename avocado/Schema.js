@@ -5,14 +5,26 @@ require('colors')
 
 class Schema {
   constructor(json, options = {}) {
+    this.isSchema = true
+
     if (!json || (typeof json !== 'object' && !Object.keys(json).length)) {
       throw new Error('Schema expects object with at least one key/value pair')
     }
     this._json = json
     this._options = options
     this._joi = this._parse(json)
+    this._joi.validate(
+      {},
+      {
+        skipFunctions: true,
+        presence: 'optional',
+        noDefaults: false
+      },
+      (err, value) => {
+        this._defaultValues = value
+      }
+    )
     // this._schemaKeys = getObjectKeys(json)
-    this.isSchema = true
 
     this.statics = {}
     this.methods = {}
@@ -33,6 +45,10 @@ class Schema {
 
   get joi() {
     return this._joi
+  }
+ 
+  get defaultValues() {
+    return this._defaultValues
   }
 
   validate(data, options) {
