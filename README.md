@@ -1,4 +1,4 @@
-# AvocadoJS
+# ArangoSlice &amp; AvocadoJS
 
 ### *** In Development ***
 
@@ -122,24 +122,38 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 * remove
 * save
 	
+### Supports additional cool features like:
+
+* Supports "$or" statements in query conditions
+* Automatic removal of default values
+* Strict schemas which automatically strips unknown properties
+* Simple incrementation of values using "++/--" or "$inc"
+* Simple sorting using using strings
+* Simple return value filtering
+* Ability to print AQL during execution (with support to prettyfiy and colorize)
+* Performance measurments on data conversion
+* and more...
+
+
+
 ### ORM for common query functions for document retrieval and modification
 
-	* toAQL: returns the AQL string version of query
-	* action(find | findEdge | update | delete)
-	* collection
-	* computed
-	* connection
-	* criteria
-	* data
-	* exec
-	* limit
-	* model
-	* offset
-	* options
-	* query
-	* schemaOptions
-	* select
-	* sort
+* toAQL: returns the AQL string version of query
+* action(find | findEdge | update | delete)
+* collection
+* computed
+* connection
+* criteria
+* data
+* exec
+* limit
+* model
+* offset
+* options
+* query
+* schemaOptions
+* select
+* sort
 
 ### Schema using Avocado - Build schema with JSON structure and/or Joi
   
