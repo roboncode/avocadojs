@@ -102,25 +102,25 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 
 ### Model has many built-in query methods
 
-	* findMany
-	* updateOne
-	* deleteOne
-	* find
-	* findByEdge
-	* findById
-	* findByIdAndDelete
-	* findByIdAndUpdate
-	* findByQuery
-	* deleteMany
-	* findOne
-	* deleteMany
-	* findOne
-	* getCollection
-	* importMany
-	* updateMany
-	* remove
-	* save
-	* setConnection
+* setConnection
+* find
+* findByEdge
+* findById
+* findByIdAndDelete
+* findByIdAndUpdate
+* findByQuery
+* findMany
+* updateOne
+* deleteOne
+* deleteMany
+* findOne
+* deleteMany
+* findOne
+* getCollection
+* importMany
+* updateMany
+* remove
+* save
 	
 ### ORM for common query functions for document retrieval and modification
 
@@ -145,6 +145,8 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
   
 
 ## Roadmap
+* Stick with ArangoSlice or call it something else?
+* Break out ArangoSlice from Avocado
 * unit tests (in progress)
 * cleanup
 * more documentation
