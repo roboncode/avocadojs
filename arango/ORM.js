@@ -12,7 +12,7 @@ async function iterateHandler(val, prop, target, path) {
     case 'object':
       if (!(val instanceof Array)) {
         if (val.$inc != undefined) {
-          target[prop] = 'EXPR(' + path.join('.') + val.$inc + ')'
+          target[prop] = 'EXPR(' + path.join('.') + '+' + val.$inc + ')'
         } else {
           await asyncForEach(val, iterateHandler, path)
         }
@@ -32,6 +32,7 @@ class ORM {
     this._offset = 0
     this._criteria = {}
     this._separator = ''
+    this._schemaOptions = {}
   }
 
   model(val) {
@@ -104,7 +105,7 @@ class ORM {
     return this
   }
 
-  toAQL(pretty = false) {
+  async toAQL(pretty = false) {
     this._separator = pretty ? '\n   ' : ''
 
     if (this._action === 'find') {
@@ -116,7 +117,7 @@ class ORM {
     }
 
     if (this._action === 'update') {
-      return this._createUpdateQuery()
+      return await this._createUpdateQuery()
     }
 
     if (this._action === 'delete') {
@@ -198,8 +199,7 @@ class ORM {
       ? returnToAQL(this._select, DOC_VAR)
       : DOC_VAR
     this.aqlSegments.push(
-      this._separator + 'RETURN',
-      distinct ? 'DISTINCT' : '',
+      this._separator + 'RETURN' + (distinct ? ' DISTINCT' : ''),
       returnItems
     )
   }
@@ -230,7 +230,8 @@ class ORM {
         JSON.stringify(result)
       )
       this.aqlSegments.push(this._separator + 'IN', this._collection.name)
-      resolve()
+      let query = this._createAQLQuery()
+      resolve(query)
     })
   }
 
