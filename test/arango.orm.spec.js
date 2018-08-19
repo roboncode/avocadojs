@@ -1,16 +1,22 @@
 const expect = require('chai').expect
 const ORM = require('../arango/ORM')
+const arango = require('../arango')
+
+let schema = arango.Schema({
+  name: String
+})
+
+arango.model('Test', schema)
 
 describe('arango.orm', () => {
   describe('for in', () => {
     const orm = new ORM()
     orm.action('find')
     orm.collection({ name: 'users' })
-    
-    const query = orm.toAQL()
 
-    it('should do something', () => {
-      expect(query).to.contain('FOR doc IN users RETURN doc')
+    it('should do something', async () => {
+      const query = await orm.toAQL()
+      expect(query).to.equal('FOR doc IN users RETURN doc')
     })
   })
 
@@ -21,34 +27,86 @@ describe('arango.orm', () => {
     orm.criteria({
       name: 'rob'
     })
-    
-    const query = orm.toAQL()
 
-    it('should do something', () => {
-      expect(query).to.contain('FOR doc IN users FILTER (doc.`name` == "rob") RETURN doc')
+    it('should do something', async () => {
+      const query = await orm.toAQL()
+      expect(query).to.equal(
+        'FOR doc IN users FILTER (doc.`name` == "rob") RETURN doc'
+      )
     })
   })
 
-  describe('for in with $or filter', () => {
+  describe('$or filter', () => {
     const orm = new ORM()
     orm.action('find')
     orm.collection({ name: 'users' })
     orm.criteria({
-      $or: [
-        {name: 'rob'},
-        {name: 'john'}
-      ]
+      $or: [{ name: 'rob' }, { name: 'john' }]
     })
-    
-    const query = orm.toAQL()
 
-    it('should do something', () => {
-      expect(query).to.contain('FOR doc IN users FILTER ((doc.`name` == "rob") OR (doc.`name` == "john")) RETURN doc')
+    it('should do something', async () => {
+      const query = await orm.toAQL()
+      expect(query).to.equal(
+        'FOR doc IN users FILTER ((doc.`name` == "rob") OR (doc.`name` == "john")) RETURN doc'
+      )
     })
   })
-  
-})
 
+  describe('increment filter using $inc', () => {
+    const orm = new ORM()
+    orm.action('update')
+    orm.collection({ name: 'users' })
+    orm.model(arango.model('Test'))
+    orm.data({
+      stats: {
+        friends: {
+          $inc: 1
+        }
+      }
+    })
+
+    it('should do something', async () => {
+      const query = await orm.toAQL()
+      expect(query).to.equal(
+        'FOR doc IN users UPDATE doc WITH {"stats":{"friends":doc.stats.friends+1}} IN users'
+      )
+    })
+  })
+
+  describe('increment filter using ++', () => {
+    const orm = new ORM()
+    orm.action('update')
+    orm.collection({ name: 'users' })
+    orm.model(arango.model('Test'))
+    orm.data({
+      friends: '++1'
+    })
+
+    it('should do something', async () => {
+      const query = await orm.toAQL()
+      expect(query).to.equal(
+        'FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users'
+      )
+    })
+  })
+
+  describe('increment filter using EXPR()', () => {
+    const orm = new ORM()
+    orm.action('update')
+    orm.collection({ name: 'users' })
+    orm.model(arango.model('Test'))
+    orm.data({
+      friends: 'EXPR(friends+1)'
+    })
+
+    it('should do something', async () => {
+      const query = await orm.toAQL()
+      expect(query).to.equal(
+        'FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users'
+      )
+    })
+  })
+})
 
 /*
 POST = {id: 1, text: "Hello"}
