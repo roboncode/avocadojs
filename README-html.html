@@ -1,0 +1,634 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>README</title><style>/*By https://github.com/olvlvl at https://github.com/olvlvl/macdown/blob/8305c6d967c024f8dea6439db3d83121410e02bf/MacDown/Resources/Styles/GitHub3.css*/
+body {
+    color: #333;
+    font: 16px/1.6 "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+    padding: 30px;
+    margin: 0;
+    word-wrap: break-word;
+}
+
+body > *:first-child {
+    margin-top: 0 !important;
+}
+
+body > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+a {
+    background: transparent;
+    color: #4183c4;
+    text-decoration: none;
+}
+
+a:active,
+a:hover {
+    outline: 0 none;
+    text-decoration: underline;
+}
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+b,
+strong {
+    font-weight: bold;
+}
+
+dfn {
+    font-style: italic;
+}
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+mark {
+    background: #ff0;
+    color: #000;
+}
+small {
+    font-size: 80%;
+}
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+sup {
+    top: -0.5em;
+}
+sub {
+    bottom: -0.25em;
+}
+img {
+    border: 0 none;
+}
+svg:not(:root) {
+    overflow: hidden;
+}
+figure {
+    margin: 1em 40px;
+}
+hr {
+    box-sizing: content-box;
+    height: 0;
+}
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace,monospace;
+    font-size: 1em;
+}
+
+pre {
+    overflow: auto;
+    font: 12px Consolas,"Liberation Mono",Menlo,Courier,monospace;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.absent {
+    color: #c00;
+}
+
+.anchor {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    padding-right: 6px;
+    padding-left: 30px;
+    margin-left: -30px;
+}
+
+.anchor:focus {
+    outline: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1em;
+    margin-bottom: 16px;
+    font-weight: bold;
+    line-height: 1.4;
+}
+
+h1 .octicon-link,
+h2 .octicon-link,
+h3 .octicon-link,
+h4 .octicon-link,
+h5 .octicon-link,
+h6 .octicon-link {
+    display: none;
+    color: #000;
+    vertical-align: middle;
+}
+
+h1:hover .anchor,
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor,
+h5:hover .anchor,
+h6:hover .anchor {
+    padding-left: 8px;
+    margin-left: -30px;
+    line-height: 1;
+    text-decoration: none;
+}
+
+h1:hover .anchor .octicon-link,
+h2:hover .anchor .octicon-link,
+h3:hover .anchor .octicon-link,
+h4:hover .anchor .octicon-link,
+h5:hover .anchor .octicon-link,
+h6:hover .anchor .octicon-link {
+    display: inline-block;
+}
+
+h1 tt,
+h1 code,
+h2 tt,
+h2 code,
+h3 tt,
+h3 code,
+h4 tt,
+h4 code,
+h5 tt,
+h5 code,
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+
+h1 {
+    padding-bottom: 0.3em;
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+
+h2 {
+    padding-bottom: 0.3em;
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+
+h4 {
+    font-size: 1.25em;
+}
+
+h5 {
+    font-size: 1em;
+}
+
+h6 {
+    font-size: 1em;
+    color: #777;
+}
+
+p,blockquote,
+ul,ol,
+dl,table,
+pre {
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+hr {
+    height: 4px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+}
+
+ul,
+ol {
+    padding-left: 2em;
+}
+
+ul.no-list,
+ol.no-list {
+    padding: 0;
+    list-style-type: none;
+}
+
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+li>p {
+    margin-top: 16px;
+}
+
+dl {
+    padding: 0;
+}
+
+dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold;
+}
+
+dl dd {
+    padding: 0 16px;
+    margin-bottom: 16px;
+}
+
+blockquote {
+    padding: 0 15px;
+    color: #777;
+    border-left: 4px solid #ddd;
+}
+
+blockquote>:first-child {
+    margin-top: 0;
+}
+
+blockquote>:last-child {
+    margin-bottom: 0;
+}
+
+table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: keep-all;
+    border-collapse: collapse;
+}
+
+table th {
+    font-weight: bold;
+}
+
+table th,
+table td {
+    padding: 6px 13px;
+    border: 1px solid #ddd;
+}
+
+table tr {
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+}
+
+table tr:nth-child(2n) {
+    background-color: #f8f8f8;
+}
+
+img {
+    max-width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+span.frame {
+    display: block;
+    overflow: hidden;
+}
+
+span.frame>span {
+    display: block;
+    float: left;
+    width: auto;
+    padding: 7px;
+    margin: 13px 0 0;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+span.frame span img {
+    display: block;
+    float: left;
+}
+
+span.frame span span {
+    display: block;
+    padding: 5px 0 0;
+    clear: both;
+    color: #333;
+}
+
+span.align-center {
+    display: block;
+    overflow: hidden;
+    clear: both;
+}
+
+span.align-center>span {
+    display: block;
+    margin: 13px auto 0;
+    overflow: hidden;
+    text-align: center;
+}
+
+span.align-center span img {
+    margin: 0 auto;
+    text-align: center;
+}
+
+span.align-right {
+    display: block;
+    overflow: hidden;
+    clear: both;
+}
+
+span.align-right>span {
+    display: block;
+    margin: 13px 0 0;
+    overflow: hidden;
+    text-align: right;
+}
+
+span.align-right span img {
+    margin: 0;
+    text-align: right;
+}
+
+span.float-left {
+    display: block;
+    float: left;
+    margin-right: 13px;
+    overflow: hidden;
+}
+
+span.float-left span {
+    margin: 13px 0 0;
+}
+
+span.float-right {
+    display: block;
+    float: right;
+    margin-left: 13px;
+    overflow: hidden;
+}
+
+span.float-right>span {
+    display: block;
+    margin: 13px auto 0;
+    overflow: hidden;
+    text-align: right;
+}
+
+code,tt {
+    padding: 0.2em 0;
+    margin: 0;
+    font-size: 85%;
+    background-color: rgba(0,0,0,0.04);
+    border-radius: 3px;
+}
+
+code:before,
+code:after,
+tt:before,
+tt:after {
+    letter-spacing: -0.2em;
+    content: "\00a0";
+}
+
+code br,
+tt br {
+    display: none;
+}
+
+del code {
+    text-decoration: inherit;
+}
+
+pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: 100%;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0;
+}
+
+pre {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border-radius: 3px;
+    word-wrap: normal;
+}
+
+pre code,
+pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0;
+}
+
+pre code:before,
+pre code:after,
+pre tt:before,
+pre tt:after {
+    content: normal;
+}
+
+</style></head>
+<body><style>
+pre.language-cmd {
+    background: black;
+    
+}
+
+code.language-cmd {
+    color: green;
+}
+</style>
+
+<div style="margin-top:-50px;display:flex;align-items:center">
+    <img src="https://dzwonsemrish7.cloudfront.net/items/3s2k2E3b053t1Q2A0G20/orango.png" height="100px" style="margin-right:15px">
+    <div style="padding-top: 72px">
+        <div style="line-height:60px;font-size:48px;font-weight:bold">Orango</div>
+        <div>ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers</div>
+        <div>Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
+Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a></div>
+    </div>
+</div>  
+
+<h3>Documentation</h3>
+
+<p><a href="https://orangojs.com">orangojs.com</a></p>
+
+<p>Orango is currently in development and <strong>should not be used in a production environment</strong> until it has been completed.</p>
+
+<h3>Installation</h3>
+
+<p>First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the <a href="https://hub.docker.com/r/arangodb/arangodb/">official docker container</a>. There is also a docker-compose.yml file that is in the root of this project if you want to copy it to your project, then all you have to do is run</p>
+
+<pre><code class="language-cmd">$ docker-compose up -d
+</code></pre>
+
+<p>Next, install Orango from the command line using <code>npm</code>:</p>
+
+<pre><code class="language-cmd">$ npm install orango
+</code></pre>
+
+<h3>Importing</h3>
+
+<pre><code class="language-js">// Using Node.js `require()`
+const orango = require(&#39;orango&#39;)
+
+// Using ES6 imports
+import orango from &#39;orango&#39;
+</code></pre>
+
+<p><strong>Simple user schema example</strong></p>
+
+<pre><code class="language-js">let schema = arango.Schema({
+  role: { type: String, valid: [&#39;admin&#39;, &#39;user&#39;], default: &#39;user&#39; },
+  screenName: String,
+  firstName: { type: String, regex: /^[A-Za-z\s&#39;]+$/, min: 3 },
+  lastName: { type: String, regex: /^[A-Za-z\s&#39;]+$/, min: 3 ,
+  email: { type: String, email: {/* no options needed */}, required: true },
+  updatedAt: Date
+})
+
+schema.computed.fullName = function() {
+  return this.firstName + &#39; &#39; + this.lastName
+}
+
+schema.statics.sayGoodbye = function() {
+  this.emitter.emit(&#39;sayGoodbye&#39;)
+}
+
+schema.methods.sayHello = function(day) {
+  this.emitter.emit(&#39;sayHello&#39;, day, this.firstName + &#39; &#39; + this.lastName)
+}
+</code></pre>
+
+<h4>Avocado Data Modeler</h4>
+
+<p>The data modeler allows you to register models.</p>
+
+<p>Avocado is a data modeler. It allows you to build schemas and models in a simplified JSON structure and apply those schemas against your data. It is I/O agnostic. It is a high-scaled version of the Joi API.</p>
+
+<p>Avocado also has a builder which can call built-in and custom functions to manipulate data in an asynchronous and optimized manner.</p>
+
+<p><strong>Example of defining a model</strong></p>
+
+<pre><code class="language-js">let schema = new Schema(...)
+module.exports = arango.model(&#39;User&#39;, schema)
+</code></pre>
+
+<h3>What are slices?</h3>
+
+<p>Slices extend Avocado in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.</p>
+
+<h4>Arango Slice</h4>
+
+<p><strong>Arango Slice</strong> is the library built on top of Avacado. It uses ArangoJS to interface with the <a href="https://www.arangodb.com/">ArangoDB</a>. It provides the following features:</p>
+
+<ul>
+<li>Central connectivity to ArangoDB</li>
+<li>Automated creation of databases, collections and indexing</li>
+<li>Ability to pre-populate database with data</li>
+</ul>
+
+<h3>Model has many built-in query methods</h3>
+
+<ul>
+<li>setConnection</li>
+<li>find</li>
+<li>findByEdge</li>
+<li>findById</li>
+<li>findByIdAndDelete</li>
+<li>findByIdAndUpdate</li>
+<li>findByQuery</li>
+<li>findMany</li>
+<li>updateOne</li>
+<li>deleteOne</li>
+<li>deleteMany</li>
+<li>findOne</li>
+<li>deleteMany</li>
+<li>findOne</li>
+<li>getCollection</li>
+<li>importMany</li>
+<li>updateMany</li>
+<li>remove</li>
+<li>save</li>
+</ul>
+
+<h3>Supports additional cool features like:</h3>
+
+<ul>
+<li>Conditional <q>$or</q> statements in query</li>
+<li>Automatic removal of default values</li>
+<li>Strict schemas which automatically strips unknown properties</li>
+<li>Simple incrementation of values using <q>++/--</q> or <q>$inc</q></li>
+<li>Simple sorting using using strings</li>
+<li>Simple return value filtering</li>
+<li>Ability to print AQL during execution (with support to prettify and colorize)</li>
+<li>Performance measurments on data conversion</li>
+<li>and more...</li>
+</ul>
+
+<h3>ORM for common query functions for document retrieval and modification</h3>
+
+<ul>
+<li>toAQL: returns the AQL string version of query</li>
+<li>action(find | findEdge | update | delete)</li>
+<li>collection</li>
+<li>computed</li>
+<li>connection</li>
+<li>criteria</li>
+<li>data</li>
+<li>exec</li>
+<li>limit</li>
+<li>model</li>
+<li>offset</li>
+<li>options</li>
+<li>query</li>
+<li>schemaOptions</li>
+<li>select</li>
+<li>sort</li>
+</ul>
+
+<h3>Schema using Avocado - Build schema with JSON structure and/or Joi</h3>
+
+<h2>Roadmap</h2>
+
+<ul>
+<li>Stick with ArangoSlice or call it something else?</li>
+<li>Break out ArangoSlice from Avocado</li>
+<li>unit tests (in progress) - 85 so far</li>
+<li>cleanup</li>
+<li>more documentation</li>
+<li>web browser compatible</li>
+</ul>
+</body>
+</html>

@@ -1,78 +1,201 @@
-# ArangoSlice &amp; AvocadoJS
+<style>
+pre.language-cmd {
+	background: black;
+	
+}
 
-### *** In Development ***
+code.language-cmd {
+	color: lime;
+}
+</style>
 
-ArangoSlice is a JavaScript Object Modeler for Node.js. 
+<div style="margin-top:-50px;display:flex;align-items:center">
+	<img src="https://dzwonsemrish7.cloudfront.net/items/3s2k2E3b053t1Q2A0G20/orango.png" height="100px" style="margin-right:15px">
+	<div style="padding-top: 72px">
+		<div style="line-height:60px;font-size:48px;font-weight:bold">orango</div>
+		<div>ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers</div>
+		<div>Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
+Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a></div>
+	</div>
+</div>	
 
-Inspired by [Mongoose](http://mongoosejs.com/). 
-Built using [Avocado](https://github.com/roboncode/avocadojs), [Joi](https://github.com/hapijs/joi) and [ArangoJS](https://github.com/arangodb/arangojs)
+### Documentation
 
-I really like [Mongoose](http://mongoosejs.com/) for [MongoDB](https://www.mongodb.com/) and I wanted something similar to it for [ArangoDB](https://www.arangodb.com/).
+[orangojs.com](https://orangojs.com)
 
+**Important! Orango** is currently in development and **should not be used in a production environment** until it has been completed.
 
-<!-- <img src="https://image.flaticon.com/icons/svg/835/835420.svg" width="150px"> -->
+### Installation
+First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a docker-compose.yml file that is in the root of this project if you want to copy it to your project, then all you have to do is run
 
-## Quick Start
-
-### Run Docker ArangoDB
-
+```cmd
+$ docker-compose up -d
 ```
-docker-compose up -d
+
+Next, install Orango from the command line using `npm`:
+
+```cmd
+$ npm install orango
 ```
 
-### Run Demo
-
-Running the demo will:
-
-- Create a database named "demo"
-- Create several collections with the appropriate indexes
-- Populate the collections with mock data
-- Perform queries on the data with different built in and custom methods
-
-```
-node demo
-```
-
-### What is Avocado?
-
-Avocado provides a these specific features:
-
-* Schema Creator
-* Model Creator
-* Validation
-* Supports computed properties, static and instance methods
-* Centralized Event Dispatcher
-* Builder to modify data in effecient manner
-* Helper functions for common data manipulation
-
-#### Avocado Schema Creator
-
-The schema creator allows you to build schemas for your data. It is just a JSON version of the [Joi library](https://github.com/hapijs/joi). It has the advantage of building quick schemas. It also supports adding a Joi schema directly into the JSON structure as well.
-
-**Simple user schema example**
+### Importing
 
 ```js
-let schema = arango.Schema({
-  role: { type: String, valid: ['admin', 'user'], default: 'user' },
-  screenName: String,
-  firstName: { type: String, regex: /^[A-Za-z\s']+$/, min: 3 },
-  lastName: { type: String, regex: /^[A-Za-z\s']+$/, min: 3 ,
-  email: { type: String, email: {/* no options needed */}, required: true },
-  updatedAt: Date
+// Using Node.js `require()`
+const orango = require('orango')
+
+// Using ES6 imports
+import orango from 'orango'
+```
+
+## Overview
+
+### Connecting to ArangoDB
+
+First, we need to define a connection. If your app uses only one database, you should use `orango.connect()`. If you need to create additional connections, use `orango.getInstance( instanceName:String ).connect()`.
+
+The method `connect(url:String="http://localhost:8529", db:String="_system")` takes the url string and database name to establish a connection. Otherwise, it will use the default values.
+
+```js
+const orango = require('orango')
+
+orango.events.on('connected', () => {
+  console.log('Orango is connected!')
 })
 
-schema.computed.fullName = function() {
-  return this.firstName + ' ' + this.lastName
+async function main() {
+   await orango.connect()
 }
 
-schema.statics.sayGoodbye = function() {
-  this.emitter.emit('sayGoodbye')
-}
-
-schema.methods.sayHello = function(day) {
-  this.emitter.emit('sayHello', day, this.firstName + ' ' + this.lastName)
-}
+main()
 ```
+
+> Orango buffers model definitions, so they can be defined before or after a connection is established.
+
+### Defining a Model
+
+```js
+const BlogPost = orango.Schema({
+	author: String,
+	title: String,
+	body: String,
+	date: Date	
+})
+
+orango.model('blog', BlogPost)
+```
+Aside from defining the structure of your documents and data types, a Schema handles the definition of:
+
+* Validators
+* Defaults
+* Getters
+* Setters
+* Indexes
+* Middleware
+* Methods definitions
+* Statics definitions
+* Computed properties
+* Plugins
+* Real-joins (thanks ArangoDB!)
+
+The following example shows some of these features:
+
+```js
+const orango = require('orango')
+const Joi = require('joi')
+
+const User = orango.Schema({
+	firstName: String,
+	lastName: String,
+	email: Joi.string().email(), // Joi can be used directly
+	age: { type: Number, min: 18 }, // JSON gets converted to Joi data types automatically
+	bio: { type: String, regex: /[a-z]/ },
+	updated: { type: Date, default: Date.now }
+}, {
+	strict: true, // properties not defined will be filtered out
+	indexes: [ // create indexes for items we will query against
+      {
+        type: 'hash',
+        fields: ['email']
+      },
+      {
+        type: 'skipList',
+        fields: ['firstName']
+      },
+      {
+        type: 'skipList',
+        fields: ['lastName']
+      }
+    ]
+})
+
+// computed property
+User.computed.name = function() {
+	return this.firstName + ' ' + this.lastName
+}
+
+orango.model('user', User)
+```
+
+### Accessing a Model
+
+Once we define a model through `orango.model('ModelName', mySchema)`, we can access it through the same function
+
+```js
+const myModel = orango.model('ModelName')
+```
+
+Or just do it all at once
+
+```js
+const myModel = orango.model('ModelName', mySchema)
+```
+The first argument is the singular name of the collection your model is for. **Orango automatically looks for the plural version of your model name.** For example, if you use
+
+```js
+const MyModel = orango.model('Ticket', mySchema);
+```
+
+Then Orango will create the model for your **tickets** collection, not your **ticket** collection.
+
+Once we have our model, we can then instantiate it, and save it:
+
+```js
+const instance = new MyModel();
+instance.my.key = 'hello';
+instance.save()
+```
+
+Or we can find documents from the same collection
+
+```js
+let docs = await MyModel.find()
+```
+You can also `findOne`, `findById`, `findByQuery`, `update`, etc. For more details check out [the docs](#).
+
+**Important!** If you opened a separate connection using `orango.getInstance('anotherNameBesidesDefault')` but attempt to access the model through `orango.model('ModelName')` it will not work as expected since it is not hooked up to the active db connection. In this case access your model through the connection you created:
+
+```js
+const example = orango.getInstance('example')
+example.connect()
+const MyModel = example.model('ModelName', schema)
+const m = new MyModel()
+m.save() // works
+```
+
+--vs--
+
+```js
+const example = orango.getInstance('example')
+example.connect()
+example.model('ModelName', schema)
+
+// will not be found because it it was not registered with this instance
+const MyModel = orango.model('ModelName')
+const m = new MyModel()
+m.save()
+```
+
 #### Avocado Data Modeler
 
 The data modeler allows you to register models.
@@ -159,9 +282,11 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
   
 
 ## Roadmap
+* Getter / Settings in schema
+* Array.push (APPEND), splice, pop, etc?
 * Stick with ArangoSlice or call it something else?
 * Break out ArangoSlice from Avocado
-* unit tests (in progress)
+* unit tests (in progress) - 85 so far
 * cleanup
 * more documentation
 * web browser compatible
