@@ -1,4 +1,5 @@
-# <img src="https://dzwonsemrish7.cloudfront.net/items/3s2k2E3b053t1Q2A0G20/orango.png" width="32px"> orango
+# <img alt="orango" src="https://dzwonsemrish7.cloudfront.net/items/2e201w2446332m0o2h2n/orango_logo.png" width="250px">
+
 
 ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
 
@@ -270,8 +271,7 @@ Slices extend Tang in order to provide I/O to various sources. These might be da
 ## Roadmap
 * Getter / Settings in schema
 * Array.push (APPEND), splice, pop, etc?
-* Stick with ArangoSlice or call it something else?
-* Break out ArangoSlice from Tang
+* Break out Orango from Tang
 * unit tests (in progress) - 85 so far
 * cleanup
 * more documentation
