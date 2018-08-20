@@ -509,7 +509,7 @@ import orango from &#39;orango&#39;
 
 <p><strong>Simple user schema example</strong></p>
 
-<pre><code class="language-js">let schema = arango.Schema({
+<pre><code class="language-js">let schema = orango.Schema({
   role: { type: String, valid: [&#39;admin&#39;, &#39;user&#39;], default: &#39;user&#39; },
   screenName: String,
   firstName: { type: String, regex: /^[A-Za-z\s&#39;]+$/, min: 3 },
@@ -542,16 +542,16 @@ schema.methods.sayHello = function(day) {
 <p><strong>Example of defining a model</strong></p>
 
 <pre><code class="language-js">let schema = new Schema(...)
-module.exports = arango.model(&#39;User&#39;, schema)
+module.exports = orango.model(&#39;User&#39;, schema)
 </code></pre>
 
 <h3>What are slices?</h3>
 
 <p>Slices extend Avocado in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.</p>
 
-<h4>Arango Slice</h4>
+<h4>Orango Slice</h4>
 
-<p><strong>Arango Slice</strong> is the library built on top of Avacado. It uses ArangoJS to interface with the <a href="https://www.arangodb.com/">ArangoDB</a>. It provides the following features:</p>
+<p><strong>Orango Slice</strong> is the library built on top of Avacado. It uses ArangoJS to interface with the <a href="https://www.arangodb.com/">ArangoDB</a>. It provides the following features:</p>
 
 <ul>
 <li>Central connectivity to ArangoDB</li>

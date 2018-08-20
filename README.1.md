@@ -50,7 +50,7 @@ The schema creator allows you to build schemas for your data. It is just a JSON 
 **Simple user schema example**
 
 ```js
-let schema = arango.Schema({
+let schema = orango.Schema({
   role: { type: String, valid: ['admin', 'user'], default: 'user' },
   screenName: String,
   firstName: { type: String, regex: /^[A-Za-z\s']+$/, min: 3 },
@@ -83,16 +83,16 @@ Avocado also has a builder which can call built-in and custom functions to manip
 
 ```js
 let schema = new Schema(...)
-module.exports = arango.model('User', schema)
+module.exports = orango.model('User', schema)
 ```
 
 ### What are slices?
 
 Slices extend Avocado in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
 
-#### Arango Slice
+#### Orango Slice
 
-**Arango Slice** is the library built on top of Avacado. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
+**Orango Slice** is the library built on top of Avacado. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
 
 * Central connectivity to ArangoDB
 * Automated creation of databases, collections and indexing

@@ -1,6 +1,6 @@
 const ArangoModel = require('./Model')
 // TODO: Find out why this fails
-// const connection = require('../arango/connection')
+// const connection = require('../orango/connection')
 const pluralize = require('pluralize')
 const convertToSnakecase = require('./helpers/convertToSnakecase')
 

@@ -1,6 +1,6 @@
-const arango = require('../../arango')
+const orango = require('../../orango')
 
-let schema = arango.Schema({
+let schema = orango.Schema({
   version: { type: String, default: '1.0' },
   priority: { type: Number, default: 0 },
   label: String,
@@ -13,4 +13,4 @@ let schema = arango.Schema({
     }
   ]
 })
-module.exports = arango.model('Category', schema)
+module.exports = orango.model('Category', schema)

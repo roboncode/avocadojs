@@ -1,6 +1,6 @@
 require('./mendy/models')
-const arango = require('./arango')
-const connection = require('./arango/Connection').getInstance()
+const orango = require('./orango')
+const connection = require('./orango/Connection').getInstance()
 const migrations = require('./mendy/migrations')
 require('colors')
 
@@ -13,7 +13,7 @@ async function main() {
 
   
   // await migrations.importMany()
-  const User = arango.model('User')
+  const User = orango.model('User')
   let doc = await User.findById('262219')
   console.log('#doc', doc)
 

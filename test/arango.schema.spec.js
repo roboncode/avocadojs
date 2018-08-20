@@ -1,7 +1,7 @@
 let expect = require('chai').expect
-let Schema = require('../arango/Schema')
+let Schema = require('../orango/Schema')
 
-describe('arango schema', () => {
+describe('orango schema', () => {
   describe('new schema', () => {
     it('should create a new schema that support "_key', async () => {
       let schema = new Schema({})

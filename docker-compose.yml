@@ -10,7 +10,7 @@ services:
       ARANGO_STORAGE_ENGINE: rocksdb
       ARANGO_NO_AUTH: 1
     volumes:
-      - ./docker/arango/db:/var/lib/arangodb3
-      - ./docker/arango/apps:/var/lib/arangodb3-apps
+      - ./docker/orango/db:/var/lib/arangodb3
+      - ./docker/orango/apps:/var/lib/arangodb3-apps
 
   

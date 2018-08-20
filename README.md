@@ -1,13 +1,13 @@
 <table>
-  <tr style="border: none">
-    <td style="border: none">
+  <tr>
+    <td>
       <img src="https://dzwonsemrish7.cloudfront.net/items/3s2k2E3b053t1Q2A0G20/orango.png" width="100px" style="margin-right:15px">
     </td>
-    <td style="border: none">
-        <div style="font-size:48px;font-weight:bold">orango</div>
-	  <div>ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers</div>
-		<div>Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
-Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a></div>
+    <td>
+        <h1>orango</h1>
+	  <p>ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers</p>
+		<p>Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
+Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a></p>
 	  </td>
   </tr>
 </table>
@@ -201,16 +201,16 @@ Avocado also has a builder which can call built-in and custom functions to manip
 
 ```js
 let schema = new Schema(...)
-module.exports = arango.model('User', schema)
+module.exports = orango.model('User', schema)
 ```
 
 ### What are slices?
 
 Slices extend Avocado in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
 
-#### Arango Slice
+#### Orango Slice
 
-**Arango Slice** is the library built on top of Avacado. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
+**Orango Slice** is the library built on top of Avacado. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
 
 * Central connectivity to ArangoDB
 * Automated creation of databases, collections and indexing

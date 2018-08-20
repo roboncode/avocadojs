@@ -1,11 +1,11 @@
-const arango = require('../../arango/Arango').getInstance()
+const orango = require('../../orango/Orango').getInstance()
 const Builder = require('../../avocado/Builder')
 
 async function importCategories(conn) {
-  const Model = arango.model('Category')
+  const Model = orango.model('Category')
 
   let items = require('./data/categories')
-  items = arango.toArray(items)
+  items = orango.toArray(items)
 
   let docs = await Builder.getInstance()
     .data(items)
@@ -17,10 +17,10 @@ async function importCategories(conn) {
 }
 
 async function importUsers() {
-  const Model = arango.model('User')
+  const Model = orango.model('User')
 
   let items = require('./data/users')
-  items = arango.toArray(items)
+  items = orango.toArray(items)
 
   let docs = await Builder.getInstance()
     .data(items)
@@ -32,10 +32,10 @@ async function importUsers() {
 }
 
 async function importFriends() {
-  const Model = arango.model('Friend')
+  const Model = orango.model('Friend')
 
   let items = require('./data/friends')
-  items = arango.toArray(items)
+  items = orango.toArray(items)
 
   let docs = await Builder.getInstance()
     .data(items)
@@ -47,10 +47,10 @@ async function importFriends() {
 }
 
 async function importDevices() {
-  const Model = arango.model('Device')
+  const Model = orango.model('Device')
 
   let items = require('./data/devices')
-  items = arango.toArray(items)
+  items = orango.toArray(items)
 
   let docs = await Builder.getInstance()
     .data(items)
@@ -62,10 +62,10 @@ async function importDevices() {
 }
 
 async function importPosts() {
-  const Model = arango.model('Post')
+  const Model = orango.model('Post')
 
   let items = require('./data/posts')
-  items = arango.toArray(items)
+  items = orango.toArray(items)
 
   let docs = await Builder.getInstance()
     .data(items)
@@ -77,10 +77,10 @@ async function importPosts() {
 }
 
 async function importLikes() {
-  const Model = arango.model('Like')
+  const Model = orango.model('Like')
 
   let items = require('./data/likes')
-  items = arango.toArray(items)
+  items = orango.toArray(items)
 
   let docs = await Builder.getInstance()
     .data(items)

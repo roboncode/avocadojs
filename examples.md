@@ -1,7 +1,7 @@
 ### Register a model
 
 ```js
-let schema = arango.Schema(
+let schema = orango.Schema(
   {
     email: { type: String, email: {} },
     firstName: String,
@@ -56,11 +56,11 @@ schema.statics.getUsersByDeviceId = async function(deviceId) {
     .exec()
 }
 
-module.exports = arango.model('User', schema)
+module.exports = orango.model('User', schema)
 ```
 
 ### Connect to a database
 
 ```js
-await arango.connect({ name: 'demo' })
+await orango.connect({ name: 'demo' })
 ```

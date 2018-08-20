@@ -1,9 +1,9 @@
-const arango = require('../../arango')
+const orango = require('../../orango')
 
-let schema = arango.Schema({
+let schema = orango.Schema({
   user: String,
   friend: String,
   tags: [String]
 })
 
-module.exports = arango.model('Friend', schema)
+module.exports = orango.model('Friend', schema)

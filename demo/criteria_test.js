@@ -1,4 +1,4 @@
-const cb = require('../arango/helpers/criteriaBuilder')
+const cb = require('../orango/helpers/criteriaBuilder')
 
 const criteria = {
   _key: 'rob',

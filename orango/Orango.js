@@ -6,7 +6,7 @@ const factory = require('./factory')
 const definePrivateProperty = require('../avocado/helpers/definePrivateProperty')
 const CONSTS = require('./consts')
 
-class Arango {
+class Orango {
   static getInstance(name = 'default') {
     if (!this._instances) {
       this._instances = {}
@@ -163,4 +163,4 @@ class Arango {
   }
 }
 
-module.exports = Arango
+module.exports = Orango
