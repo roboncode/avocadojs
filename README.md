@@ -1,16 +1,9 @@
-<table>
-  <tr>
-    <td>
-      <img src="https://dzwonsemrish7.cloudfront.net/items/3s2k2E3b053t1Q2A0G20/orango.png" width="100px" style="margin-right:15px">
-    </td>
-    <td>
-        <h1>orango</h1>
-	  <p>ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers</p>
-		<p>Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
-Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a></p>
-	  </td>
-  </tr>
-</table>
+# <img src="https://dzwonsemrish7.cloudfront.net/items/3s2k2E3b053t1Q2A0G20/orango.png" width="32px"> orango
+
+ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
+
+Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
+Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a>
 
 ### Documentation
 
@@ -189,13 +182,13 @@ const m = new MyModel()
 m.save()
 ```
 
-#### Avocado Data Modeler
+#### Tang Data Modeler
 
 The data modeler allows you to register models.
 
-Avocado is a data modeler. It allows you to build schemas and models in a simplified JSON structure and apply those schemas against your data. It is I/O agnostic. It is a high-scaled version of the Joi API.
+Tang is a data modeler. It allows you to build schemas and models in a simplified JSON structure and apply those schemas against your data. It is I/O agnostic. It is a high-scaled version of the Joi API.
 
-Avocado also has a builder which can call built-in and custom functions to manipulate data in an asynchronous and optimized manner.
+Tang also has a builder which can call built-in and custom functions to manipulate data in an asynchronous and optimized manner.
 
 **Example of defining a model**
 
@@ -206,7 +199,7 @@ module.exports = orango.model('User', schema)
 
 ### What are slices?
 
-Slices extend Avocado in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
+Slices extend Tang in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
 
 #### Orango Slice
 
@@ -271,14 +264,14 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 * select
 * sort
 
-### Schema using Avocado - Build schema with JSON structure and/or Joi
+### Schema using Tang - Build schema with JSON structure and/or Joi
   
 
 ## Roadmap
 * Getter / Settings in schema
 * Array.push (APPEND), splice, pop, etc?
 * Stick with ArangoSlice or call it something else?
-* Break out ArangoSlice from Avocado
+* Break out ArangoSlice from Tang
 * unit tests (in progress) - 85 so far
 * cleanup
 * more documentation

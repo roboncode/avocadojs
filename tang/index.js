@@ -2,7 +2,7 @@ const factory = require('./factory')
 const Schema = require('./Schema')
 const asyncForEach = require('./helpers/asyncForEach')
 
-class Avocado {
+class Tang {
   constructor() {
     this.models = []
   }
@@ -50,4 +50,4 @@ class Avocado {
   }
 }
 
-module.exports = new Avocado()
+module.exports = new Tang()

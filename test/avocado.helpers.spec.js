@@ -1,13 +1,13 @@
 const expect = require('chai').expect
-const asyncForEach = require('../avocado/helpers/asyncForEach')
-const clone = require('../avocado/helpers/clone')
-const definePrivateProperty = require('../avocado/helpers/definePrivateProperty')
-const difference = require('../avocado/helpers/difference')
-// const getObjectKeys = require('../avocado/helpers/getObjectKeys')
-const jsonStringify = require('../avocado/helpers/jsonStringify')
-const resolve = require('../avocado/helpers/resolve')
+const asyncForEach = require('../tang/helpers/asyncForEach')
+const clone = require('../tang/helpers/clone')
+const definePrivateProperty = require('../tang/helpers/definePrivateProperty')
+const difference = require('../tang/helpers/difference')
+// const getObjectKeys = require('../tang/helpers/getObjectKeys')
+const jsonStringify = require('../tang/helpers/jsonStringify')
+const resolve = require('../tang/helpers/resolve')
 
-describe('avocado helpers', () => {
+describe('tang helpers', () => {
   describe('asyncForEach an array', () => {
     it('should be asynchronous', async () => {
       let total = 0

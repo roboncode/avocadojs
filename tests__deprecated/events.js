@@ -1,23 +1,23 @@
 require('../models/User')
-const avocado = require('../avocado')
-const User = avocado.model('User')
+const tang = require('../tang')
+const User = tang.model('User')
 
 require('colors')
 
 console.log('===================================================='.grey)
 ;(async function() {
   User.emitter.on('commit', async message => {
-    await avocado.snooze()
+    await tang.snooze()
     console.log('Commit called'.green, message)
   })
 
   User.emitter.on('sayHello', async (day, name) => {
-    await avocado.snooze()
+    await tang.snooze()
     console.log(`[${day}]:`, `Hi there, ${name}!`)
   })
 
   User.emitter.on('sayGoodbye', async () => {
-    await avocado.snooze()
+    await tang.snooze()
     console.log('Goodbye!'.green)
   })
 

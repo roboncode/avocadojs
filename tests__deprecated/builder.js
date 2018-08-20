@@ -1,5 +1,5 @@
 require('../models/User')
-const builder = require('../avocado/Builder')
+const builder = require('../tang/Builder')
 const colorize = require('json-colorz')
 const _pick = require('lodash/pick')
 const _merge = require('lodash/merge')

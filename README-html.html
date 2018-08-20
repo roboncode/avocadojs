@@ -531,13 +531,13 @@ schema.methods.sayHello = function(day) {
 }
 </code></pre>
 
-<h4>Avocado Data Modeler</h4>
+<h4>Tang Data Modeler</h4>
 
 <p>The data modeler allows you to register models.</p>
 
-<p>Avocado is a data modeler. It allows you to build schemas and models in a simplified JSON structure and apply those schemas against your data. It is I/O agnostic. It is a high-scaled version of the Joi API.</p>
+<p>Tang is a data modeler. It allows you to build schemas and models in a simplified JSON structure and apply those schemas against your data. It is I/O agnostic. It is a high-scaled version of the Joi API.</p>
 
-<p>Avocado also has a builder which can call built-in and custom functions to manipulate data in an asynchronous and optimized manner.</p>
+<p>Tang also has a builder which can call built-in and custom functions to manipulate data in an asynchronous and optimized manner.</p>
 
 <p><strong>Example of defining a model</strong></p>
 
@@ -547,7 +547,7 @@ module.exports = orango.model(&#39;User&#39;, schema)
 
 <h3>What are slices?</h3>
 
-<p>Slices extend Avocado in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.</p>
+<p>Slices extend Tang in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.</p>
 
 <h4>Orango Slice</h4>
 
@@ -618,13 +618,13 @@ module.exports = orango.model(&#39;User&#39;, schema)
 <li>sort</li>
 </ul>
 
-<h3>Schema using Avocado - Build schema with JSON structure and/or Joi</h3>
+<h3>Schema using Tang - Build schema with JSON structure and/or Joi</h3>
 
 <h2>Roadmap</h2>
 
 <ul>
 <li>Stick with ArangoSlice or call it something else?</li>
-<li>Break out ArangoSlice from Avocado</li>
+<li>Break out ArangoSlice from Tang</li>
 <li>unit tests (in progress) - 85 so far</li>
 <li>cleanup</li>
 <li>more documentation</li>

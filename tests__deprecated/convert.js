@@ -1,11 +1,11 @@
 require('../models/User')
-const avocado = require('../avocado')
+const tang = require('../tang')
 const colorize = require('json-colorz')
 require('colors')
 
 console.log('===================================================='.grey)
 ;(async () => {
-  let user = avocado.convertTo(
+  let user = tang.convertTo(
     {
       bogus: true,
       daisy: 'chain',

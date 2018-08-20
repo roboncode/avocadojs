@@ -1,7 +1,7 @@
 module.exports = function () {
   return {
     files: [
-      'avocado/**/*.js',
+      'tang/**/*.js',
       'orango/**/*.js',
     ],
 

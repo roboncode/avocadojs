@@ -1,4 +1,4 @@
-const diff = require('../avocado/helpers/difference')
+const diff = require('../tang/helpers/difference')
 
 let base = {
   "authId": "8rNg2qTHq0aK1RVWT99Ygg6vgzB2",

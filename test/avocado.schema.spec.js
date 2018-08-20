@@ -1,8 +1,8 @@
 let expect = require('chai').expect
-let Schema = require('../avocado/Schema')
+let Schema = require('../tang/Schema')
 let Joi = require('joi')
 
-describe('avocado schema', () => {
+describe('tang schema', () => {
   describe('empty schema', () => {
     it('throw an error', () => {
       let emptySchema = function() {

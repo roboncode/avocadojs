@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const rootPath = path.join(__dirname, '..')
 const orango = require(path.join(rootPath, 'orango'))
-const Builder = require('../avocado/Builder')
+const Builder = require('../tang/Builder')
 
 const { importAllDocs } = require(path.join(__dirname, 'migrations'))
 require('colors')

@@ -1,6 +1,6 @@
-const avocado = require('../avocado')
+const tang = require('../tang')
 
-class ArangoSchema extends avocado.Schema {
+class ArangoSchema extends tang.Schema {
   constructor(jsonSchema, options = {}) {
     jsonSchema._key = String
     super(jsonSchema, options)

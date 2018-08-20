@@ -1,5 +1,5 @@
 const orango = require('../../orango/Orango').getInstance()
-const Builder = require('../../avocado/Builder')
+const Builder = require('../../tang/Builder')
 
 async function importCategories(conn) {
   const Model = orango.model('Category')

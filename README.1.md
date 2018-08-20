@@ -43,7 +43,7 @@ Tang is an database agnostic Object Modeling and validator. Orango is built on t
 * Builder to modify data in effecient manner
 * Helper functions for common data manipulation
 
-#### Avocado Schema Creator
+#### Tang Schema Creator
 
 The schema creator allows you to build schemas for your data. It is just a JSON version of the [Joi library](https://github.com/hapijs/joi). It has the advantage of building quick schemas. It also supports adding a Joi schema directly into the JSON structure as well.
 
@@ -71,13 +71,13 @@ schema.methods.sayHello = function(day) {
   this.emitter.emit('sayHello', day, this.firstName + ' ' + this.lastName)
 }
 ```
-#### Avocado Data Modeler
+#### Tang Data Modeler
 
 The data modeler allows you to register models.
 
-Avocado is a data modeler. It allows you to build schemas and models in a simplified JSON structure and apply those schemas against your data. It is I/O agnostic. It is a high-scaled version of the Joi API.
+Tang is a data modeler. It allows you to build schemas and models in a simplified JSON structure and apply those schemas against your data. It is I/O agnostic. It is a high-scaled version of the Joi API.
 
-Avocado also has a builder which can call built-in and custom functions to manipulate data in an asynchronous and optimized manner.
+Tang also has a builder which can call built-in and custom functions to manipulate data in an asynchronous and optimized manner.
 
 **Example of defining a model**
 
@@ -88,7 +88,7 @@ module.exports = orango.model('User', schema)
 
 ### What are slices?
 
-Slices extend Avocado in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
+Slices extend Tang in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
 
 #### Orango Slice
 
@@ -153,12 +153,12 @@ Slices extend Avocado in order to provide I/O to various sources. These might be
 * select
 * sort
 
-### Schema using Avocado - Build schema with JSON structure and/or Joi
+### Schema using Tang - Build schema with JSON structure and/or Joi
   
 
 ## Roadmap
 * Stick with ArangoSlice or call it something else?
-* Break out ArangoSlice from Avocado
+* Break out ArangoSlice from Tang
 * unit tests (in progress) - 85 so far
 * cleanup
 * more documentation

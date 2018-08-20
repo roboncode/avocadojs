@@ -1,4 +1,4 @@
-const Schema = require('../avocado/Schema')
+const Schema = require('../tang/Schema')
 const colorize = require('json-colorz')
 require('colors')
 
