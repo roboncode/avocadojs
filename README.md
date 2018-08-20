@@ -1,23 +1,16 @@
-<style>
-pre.language-cmd {
-	background: black;
-	
-}
-
-code.language-cmd {
-	color: lime;
-}
-</style>
-
-<div style="margin-top:-50px;display:flex;align-items:center">
-	<img src="https://dzwonsemrish7.cloudfront.net/items/3s2k2E3b053t1Q2A0G20/orango.png" height="100px" style="margin-right:15px">
-	<div style="padding-top: 72px">
-		<div style="line-height:60px;font-size:48px;font-weight:bold">orango</div>
-		<div>ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers</div>
+<table>
+  <tr style="border: none">
+    <td style="border: none">
+      <img src="https://dzwonsemrish7.cloudfront.net/items/3s2k2E3b053t1Q2A0G20/orango.png" width="100px" style="margin-right:15px">
+    </td>
+    <td style="border: none">
+        <div style="font-size:48px;font-weight:bold">orango</div>
+	  <div>ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers</div>
 		<div>Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
 Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a></div>
-	</div>
-</div>	
+	  </td>
+  </tr>
+</table>
 
 ### Documentation
 
