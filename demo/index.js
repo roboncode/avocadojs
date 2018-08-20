@@ -53,11 +53,11 @@ async function main_update_user() {
       // desc: 'This is another test'
       role: 'user',
       stats: {
-        friends: 0
+        friends: 1
       }
     },
     {
-      printAQL: true
+      printAQL: 'color'
     }
   ).exec()
 }
@@ -72,13 +72,16 @@ async function main_update_users() {
 
   const User = arango.model('User')
 
-  User.update(
+  User.updateOne(
     {
       _key: 'rob',
       // role: 'admin'
       $or: [
         {
           role: 'admin'
+        },
+        {
+          desc: 'test'
         }
       ]
     },
@@ -92,14 +95,14 @@ async function main_update_users() {
         // followers: {
         //   $inc: 1
         // },
-        followers: '-=2'
+        followers: '++2'
         // friends: 'EXPR( stats.friends + 1 )'
       }
     },
     {
-      printAQL: true
+      printAQL: 'color'
     }
-  )
+  ).exec()
   /*
   // console.log(qb.filter(qb.eq('_key', 'rob')).toAQL())
   console.log(qb.filter(qb.eq('a', qb.str('b'))).toAQL())
@@ -347,14 +350,14 @@ async function main_model_edge_inbound() {
   console.log(posts)
 }
 
-main()
+// main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
 // main_find_users()
 // main_find_user()
 // main_new_user()
-// main_query()
+main_query()
 // main_builder()
 // main_model_method()
 // main_model_edge_outbound()

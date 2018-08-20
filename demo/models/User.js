@@ -75,7 +75,7 @@ let schema = arango.Schema(
   },
   {
     strict: true,
-    keepNull: false,
+    removeOnMatchDefault: true,
     indexes: [
       {
         type: 'hash',
@@ -117,19 +117,17 @@ schema.statics.sayGoodbye = function() {
   this.emitter.emit('sayGoodbye')
 }
 
-schema.statics.getUserDevices = async function(id) {
-  let aql = `FOR user IN users
-    FILTER (user._key == "${id}")
-        LET devices = (
-            FOR device IN devices 
-            FILTER device.user == user._key 
-            RETURN device)
-    RETURN MERGE(user, {devices})`
-  return await this.findByQuery(aql, {
-    computed: true,
-    noDefaults: false,
-    strict: true
-  })
+schema.statics.getUserWithDevices = async function(id) {
+  anguler.model('Device').schema
+  return await User.findByQuery(
+    `FOR device IN devices
+        FILTER device._key == '${id}'
+          FOR @@doc IN @@collection
+            FILTER device.user == @@doc._key`,
+    { noDefaults: false }
+  )
+    .computed(true)
+    .exec()
 }
 
 schema.methods.sayHello = function(day) {

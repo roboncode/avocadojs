@@ -219,7 +219,7 @@ class ORM {
   }
 
   _createAQLUpdate() {
-    const keepNull = this._schemaOptions.hasOwnProperty('keepNull')
+    const removeOnMatchDefault = this._schemaOptions.removeOnMatchDefault
     return new Promise(async (resolve, reject) => {
       const result = await Builder.getInstance()
         .data(this._data)
@@ -234,7 +234,7 @@ class ORM {
           return data
         })
         .intercept(async data => {
-          if (keepNull) {
+          if (removeOnMatchDefault) {
             const defaultValues = this._model.schema.defaultValues
             data = await setDefaultsToNull(data, defaultValues)
           }
