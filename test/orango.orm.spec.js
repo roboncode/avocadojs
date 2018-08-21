@@ -1,6 +1,6 @@
 const expect = require('chai').expect
-const ORM = require('../orango/ORM')
-const orango = require('../orango')
+const ORM = require('../lib/ORM')
+const orango = require('../lib')
 
 let schema = orango.Schema({
   name: String

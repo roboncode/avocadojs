@@ -1,5 +1,5 @@
 let expect = require('chai').expect
-let Schema = require('../orango/Schema')
+let Schema = require('../lib/Schema')
 
 describe('orango schema', () => {
   describe('new schema', () => {
