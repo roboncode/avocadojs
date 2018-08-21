@@ -4,7 +4,7 @@
   "description": "ArangoDB Object Modeler for Node.js, Foxx and Web Browsers",
   "main": "./index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --delay",
     "demo": "node demo"
   },
   "author": "Rob Taylor <roboncode@gmail.com>",
