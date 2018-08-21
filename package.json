@@ -1,6 +1,6 @@
 {
   "name": "orango",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "ArangoDB Object Modeler for Node.js, Foxx and Web Browsers",
   "main": "./index.js",
   "scripts": {
