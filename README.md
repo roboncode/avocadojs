@@ -276,7 +276,9 @@ Slices extend Tang in order to provide I/O to various sources. These might be da
 * cleanup
 * more documentation
 * web browser compatible
+* add Travis CI
 * create document website for orangojs.com
+* add lint
 
 ## License
 
