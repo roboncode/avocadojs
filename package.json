@@ -7,7 +7,7 @@
     "test": "mocha",
     "demo": "node demo"
   },
-  "author": "",
+  "author": "Rob Taylor <roboncode@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "arangojs": "^6.4.0",
@@ -20,5 +20,25 @@
     "chai": "^4.1.2",
     "colors": "^1.3.0",
     "mocha": "^5.2.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roboncode/orango.git"
+  },
+  "keywords": [
+    "arangodb",
+    "foxx",
+    "node.js",
+    "javascript",
+    "object",
+    "modeler",
+    "schema"
+  ],
+  "bugs": {
+    "url": "https://github.com/roboncode/orango/issues"
+  },
+  "homepage": "https://github.com/roboncode/orango#readme"
 }
