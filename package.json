@@ -2,7 +2,7 @@
   "name": "orango",
   "version": "0.1.0",
   "description": "ArangoDB Object Modeler for Node.js, Foxx and Web Browsers",
-  "main": "orango/index.js",
+  "main": "./index.js",
   "scripts": {
     "test": "mocha",
     "demo": "node demo"
@@ -30,12 +30,18 @@
   },
   "keywords": [
     "arangodb",
+    "arangojs",
     "foxx",
-    "node.js",
-    "javascript",
-    "object",
-    "modeler",
-    "schema"
+    "document",
+    "model",
+    "schema",
+    "database",
+    "odm",
+    "datastore",
+    "query",
+    "nosql",
+    "orm",
+    "db"
   ],
   "bugs": {
     "url": "https://github.com/roboncode/orango/issues"
