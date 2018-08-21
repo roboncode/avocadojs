@@ -1,8 +1,8 @@
-const Builder = require('../avocado/Builder')
+const Builder = require('../tang/Builder')
 const sortToAQL = require('./helpers/sortToAQL')
 const returnToAQL = require('./helpers/returnToAQL')
 const criteriaBuilder = require('./helpers/criteriaBuilder')
-const asyncForEach = require('../avocado/helpers/asyncForEach')
+const asyncForEach = require('../tang/helpers/asyncForEach')
 const setDefaultsToNull = require('./helpers/setDefaultsToNull')
 const DOC_VAR = 'doc'
 const EXPR = /"expr\([\s+]?([\w\s.+-]+)\)"/gi
@@ -219,7 +219,7 @@ class ORM {
   }
 
   _createAQLUpdate() {
-    const keepNull = this._schemaOptions.hasOwnProperty('keepNull')
+    const removeOnMatchDefault = this._schemaOptions.removeOnMatchDefault
     return new Promise(async (resolve, reject) => {
       const result = await Builder.getInstance()
         .data(this._data)
@@ -234,7 +234,7 @@ class ORM {
           return data
         })
         .intercept(async data => {
-          if (keepNull) {
+          if (removeOnMatchDefault) {
             const defaultValues = this._model.schema.defaultValues
             data = await setDefaultsToNull(data, defaultValues)
           }

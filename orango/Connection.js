@@ -1,6 +1,6 @@
 const Database = require('arangojs').Database
-const EventDispatcher = require('../avocado/EventDispatcher')
-const definePrivateProperty = require('../avocado/helpers/definePrivateProperty')
+const EventDispatcher = require('../tang/EventDispatcher')
+const definePrivateProperty = require('../tang/helpers/definePrivateProperty')
 require('colors')
 
 class Connection {

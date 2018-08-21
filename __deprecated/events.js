@@ -1,25 +1,30 @@
 require('../models/User')
-const avocado = require('../avocado')
-const User = avocado.model('User')
+const tang = require('../tang')
+const User = tang.model('User')
 
 require('colors')
 
 console.log('===================================================='.grey)
 ;(async function() {
   User.emitter.on('commit', async message => {
-    await avocado.snooze()
+    await tang.snooze()
     console.log('Commit called'.green, message)
   })
 
-  User.emitter.on('sayHello', async () => {
-    await avocado.snooze()
-    console.log('Hi there!'.green)
+  User.emitter.on('sayHello', async (day, name) => {
+    await tang.snooze()
+    console.log(`[${day}]:`, `Hi there, ${name}!`)
   })
 
-  let user = new User()
+  User.emitter.on('sayGoodbye', async () => {
+    await tang.snooze()
+    console.log('Goodbye!'.green)
+  })
 
-  console.log('@fullName', user.fullName)
-  console.log('===================================================='.grey)
+  let user = new User({
+    firstName: 'Rob',
+    lastName: 'Taylor'
+  })
 
   // Direct call to emitter
   user.emitter.emit('commit', 'Two men enter, one man leaves.')

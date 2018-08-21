@@ -1,5 +1,5 @@
-const AvocadoModel = require('../avocado/Model')
-const Builder = require('../avocado/Builder')
+const AvocadoModel = require('../tang/Model')
+const Builder = require('../tang/Builder')
 const ORM = require('./ORM')
 
 require('colors')

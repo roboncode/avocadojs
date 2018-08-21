@@ -1,5 +1,5 @@
 let expect = require('chai').expect
 
-describe('arango model', () => {
+describe('orango model', () => {
 
 })

@@ -1,6 +1,6 @@
-const arango = require('../../arango')
+const orango = require('../../orango')
 
-let schema = arango.Schema({
+let schema = orango.Schema({
   user: String,
   token: String,
   provider: String, // firebase, onesignal
@@ -17,4 +17,4 @@ let schema = arango.Schema({
   ]
 })
 
-module.exports = arango.model('Device', schema)
+module.exports = orango.model('Device', schema)

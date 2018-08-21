@@ -1,14 +1,14 @@
 const expect = require('chai').expect
-const ORM = require('../arango/ORM')
-const arango = require('../arango')
+const ORM = require('../orango/ORM')
+const orango = require('../orango')
 
-let schema = arango.Schema({
+let schema = orango.Schema({
   name: String
 })
 
-arango.model('Test', schema)
+orango.model('Test', schema)
 
-describe('arango.orm', () => {
+describe('orango.orm', () => {
   describe('for in', () => {
     const orm = new ORM()
     orm.action('find')
@@ -56,7 +56,7 @@ describe('arango.orm', () => {
     const orm = new ORM()
     orm.action('update')
     orm.collection({ name: 'users' })
-    orm.model(arango.model('Test'))
+    orm.model(orango.model('Test'))
     orm.data({
       stats: {
         friends: {
@@ -77,7 +77,7 @@ describe('arango.orm', () => {
     const orm = new ORM()
     orm.action('update')
     orm.collection({ name: 'users' })
-    orm.model(arango.model('Test'))
+    orm.model(orango.model('Test'))
     orm.data({
       friends: '++1'
     })
@@ -94,7 +94,7 @@ describe('arango.orm', () => {
     const orm = new ORM()
     orm.action('update')
     orm.collection({ name: 'users' })
-    orm.model(arango.model('Test'))
+    orm.model(orango.model('Test'))
     orm.data({
       friends: 'EXPR(friends+1)'
     })

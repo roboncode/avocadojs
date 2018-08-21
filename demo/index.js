@@ -1,14 +1,14 @@
 const fs = require('fs')
 const path = require('path')
 const rootPath = path.join(__dirname, '..')
-const arango = require(path.join(rootPath, 'arango'))
-const Builder = require('../avocado/Builder')
+const orango = require(path.join(rootPath, 'orango'))
+const Builder = require('../tang/Builder')
 
 const { importAllDocs } = require(path.join(__dirname, 'migrations'))
 require('colors')
 
-arango.events.on('connected', () => {
-  console.log('Arango is connected!'.green)
+orango.events.on('connected', () => {
+  console.log('Orango is connected!'.green)
 })
 
 function readFiles(dir) {
@@ -24,14 +24,14 @@ async function main() {
   readFiles(path.join(__dirname, 'models'))
 
   // // Create connection
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
   // // Import migration docs
   await importAllDocs()
 
-  const User = arango.model('User')
+  const User = orango.model('User')
   let user = await User.findById('rob', {
     noDefaults: false
   }).exec()
@@ -42,22 +42,22 @@ async function main_update_user() {
   require('./models/User')
 
   // Create connection
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
   User.findByIdAndUpdate(
     'rob',
     {
       // desc: 'This is another test'
       role: 'user',
       stats: {
-        friends: 0
+        friends: 1
       }
     },
     {
-      printAQL: true
+      printAQL: 'color'
     }
   ).exec()
 }
@@ -66,19 +66,22 @@ async function main_update_users() {
   require('./models/User')
 
   // Create connection
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
 
-  User.update(
+  User.updateOne(
     {
       _key: 'rob',
       // role: 'admin'
       $or: [
         {
           role: 'admin'
+        },
+        {
+          desc: 'test'
         }
       ]
     },
@@ -92,14 +95,14 @@ async function main_update_users() {
         // followers: {
         //   $inc: 1
         // },
-        followers: '-=2'
+        followers: '++2'
         // friends: 'EXPR( stats.friends + 1 )'
       }
     },
     {
-      printAQL: true
+      printAQL: 'color'
     }
-  )
+  ).exec()
   /*
   // console.log(qb.filter(qb.eq('_key', 'rob')).toAQL())
   console.log(qb.filter(qb.eq('a', qb.str('b'))).toAQL())
@@ -128,11 +131,11 @@ async function main_delete_users() {
   require('./models/User')
 
   // Create connection
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
   let result = await User.deleteOne({
     _key: 'jane'
   }).exec()
@@ -144,11 +147,11 @@ async function main_find_users() {
   require('./models/User')
 
   // Create connection
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
   let users = await User.find(
     {
       // _key: 'jane'
@@ -166,11 +169,11 @@ async function main_find_user() {
   require('./models/User')
 
   // Create connection
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
   // let user = await User.findById('jane', {
   //   printAQL: true
   // })
@@ -212,11 +215,11 @@ async function main_new_user() {
   require('./models/User')
 
   // Create connection
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
 
   let user = new User({
     firstName: 'Lori',
@@ -234,11 +237,11 @@ async function main_new_user() {
 async function main_query() {
   require('./models/User')
   // Create connection
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
   let result = await User.findByQuery(
     `FOR device IN devices
         FILTER device._key == 'chrome'
@@ -258,7 +261,7 @@ async function main_query() {
 
 async function main_builder() {
   require('./models/User')
-  const User = arango.model('User')
+  const User = orango.model('User')
   let data = {
     bogus: true,
     desc: 'Hello, world!',
@@ -287,11 +290,11 @@ async function main_builder() {
 async function main_model_method() {
   require('./models/User')
 
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
   let user = await User.getUserDevices('rob', { string: true })
   console.log(user.fullName.cyan)
   console.log(user.devices)
@@ -301,11 +304,11 @@ async function main_model_method() {
 async function main_model_edge_outbound() {
   readFiles(path.join(__dirname, 'models'))
 
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const User = arango.model('User')
+  const User = orango.model('User')
   let user = await User.findByEdge(
     {
       id: 'posts/first',
@@ -327,11 +330,11 @@ async function main_model_edge_outbound() {
 async function main_model_edge_inbound() {
   readFiles(path.join(__dirname, 'models'))
 
-  await arango.connect({
+  await orango.connect({
     name: 'demo'
   })
 
-  const Post = arango.model('Post')
+  const Post = orango.model('Post')
   let posts = await Post.findByEdge(
     {
       id: 'users/rob',
@@ -347,14 +350,14 @@ async function main_model_edge_inbound() {
   console.log(posts)
 }
 
-main()
+// main()
 // main_update_user()
 // main_update_users()
 // main_delete_users()
 // main_find_users()
 // main_find_user()
 // main_new_user()
-// main_query()
+main_query()
 // main_builder()
 // main_model_method()
 // main_model_edge_outbound()

@@ -1,4 +1,4 @@
-const { Model, factory } = require('./avocado/Model')
+const { Model, factory } = require('./tang/Model')
 
 function testModel() {
   let inst = new Model({

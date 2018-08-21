@@ -1,8 +1,8 @@
-const arango = require('../../arango')
+const orango = require('../../orango')
 // const Device = require('./Device')
 const Joi = require('joi')
 
-let schema = arango.Schema(
+let schema = orango.Schema(
   {
     authId: String,
     role: { type: String, valid: ['admin', 'user'], default: 'user' },
@@ -24,45 +24,45 @@ let schema = arango.Schema(
     // // devices: [Device.schema.json], // Ids used to send push notifications to
     stats: {
       friends: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       },
       invites: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       },
       following: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       },
       followers: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       },
       messages: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       },
       posts: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       }
     },
     internalStats: {
       reports: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       }, // # of reports received
       reported: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       }, // # users reported
       blocks: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       }, // # mutes received
       blocked: {
-        type: arango.Types.Any,
+        type: orango.Types.Any,
         default: 0
       } // # users muted
     },
@@ -75,7 +75,7 @@ let schema = arango.Schema(
   },
   {
     strict: true,
-    keepNull: false,
+    removeOnMatchDefault: true,
     indexes: [
       {
         type: 'hash',
@@ -117,23 +117,21 @@ schema.statics.sayGoodbye = function() {
   this.emitter.emit('sayGoodbye')
 }
 
-schema.statics.getUserDevices = async function(id) {
-  let aql = `FOR user IN users
-    FILTER (user._key == "${id}")
-        LET devices = (
-            FOR device IN devices 
-            FILTER device.user == user._key 
-            RETURN device)
-    RETURN MERGE(user, {devices})`
-  return await this.findByQuery(aql, {
-    computed: true,
-    noDefaults: false,
-    strict: true
-  })
+schema.statics.getUserWithDevices = async function(id) {
+  anguler.model('Device').schema
+  return await User.findByQuery(
+    `FOR device IN devices
+        FILTER device._key == '${id}'
+          FOR @@doc IN @@collection
+            FILTER device.user == @@doc._key`,
+    { noDefaults: false }
+  )
+    .computed(true)
+    .exec()
 }
 
 schema.methods.sayHello = function(day) {
   this.emitter.emit('sayHello', day, this.firstName + ' ' + this.lastName)
 }
 
-module.exports = arango.model('User', schema, 'users')
+module.exports = orango.model('User', schema, 'users')

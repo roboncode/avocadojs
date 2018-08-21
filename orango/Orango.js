@@ -1,12 +1,12 @@
 const Connection = require('./Connection')
 const Schema = require('./Schema')
-const EventDispatcher = require('../avocado/EventDispatcher')
-const asyncForEach = require('../avocado/helpers/asyncForEach')
+const EventDispatcher = require('../tang/EventDispatcher')
+const asyncForEach = require('../tang/helpers/asyncForEach')
 const factory = require('./factory')
-const definePrivateProperty = require('../avocado/helpers/definePrivateProperty')
+const definePrivateProperty = require('../tang/helpers/definePrivateProperty')
 const CONSTS = require('./consts')
 
-class Arango {
+class Orango {
   static getInstance(name = 'default') {
     if (!this._instances) {
       this._instances = {}
@@ -163,4 +163,4 @@ class Arango {
   }
 }
 
-module.exports = Arango
+module.exports = Orango

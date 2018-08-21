@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const Builder = require('../avocado/Builder')
+const Builder = require('../tang/Builder')
 
 class Model {
   constructor(data) {
@@ -14,7 +14,7 @@ class Model {
 class Bogus {
 }
 
-describe('avocado builder', () => {
+describe('tang builder', () => {
   describe('create two "default" singletons', () => {
     let builder1 = Builder.getInstance()
     let builder2 = Builder.getInstance()
