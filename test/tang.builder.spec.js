@@ -14,25 +14,25 @@ class Model {
 class Bogus {
 }
 
-describe('tang builder', () => {
-  describe('create two "default" singletons', () => {
+describe('tang builder', function() {
+  describe('create two "default" singletons', function() {
     let builder1 = Builder.getInstance()
     let builder2 = Builder.getInstance()
-    it('builders to be the same', () => {
+    it('builders to be the same', function() {
       expect(builder1).to.equal(builder2)
     })
   })
 
-  describe('create two different singletons', () => {
+  describe('create two different singletons', function() {
     let builder1 = Builder.getInstance()
     let builder2 = Builder.getInstance('')
-    it('builders to be the same', () => {
+    it('builders to be the same', function() {
       expect(builder1).to.not.equal(builder2)
     })
   })
 
-  describe('intercept', () => {
-    it('should call intercept', async () => {
+  describe('intercept', function() {
+    it('should call intercept', async function() {
       let builder = Builder.getInstance()
       builder.data({ name: 'John Smith' })
       let result = await builder.exec()
@@ -40,8 +40,8 @@ describe('tang builder', () => {
     })
   })
 
-  describe('convertTo', () => {
-    it('should convert data to Model', async () => {
+  describe('convertTo', function() {
+    it('should convert data to Model', async function() {
       let builder = Builder.getInstance()
       builder.data({ name: 'John Smith' })
       builder.convertTo(Model)
@@ -50,8 +50,8 @@ describe('tang builder', () => {
     })
   })
 
-  describe('convertTo with array of items', () => {
-    it('should convert data to Model', async () => {
+  describe('convertTo with array of items', function() {
+    it('should convert data to Model', async function() {
       let builder = Builder.getInstance()
       builder.data([{ name: 'John Smith' }])
       builder.convertTo(Model)
@@ -60,8 +60,8 @@ describe('tang builder', () => {
     })
   })
 
-  describe('toObject', () => {
-    it('should invoke Model.toObject', async () => {
+  describe('toObject', function() {
+    it('should invoke Model.toObject', async function() {
       let builder = Builder.getInstance()
         .data({ name: 'John Smith' })
         .convertTo(Bogus)
@@ -71,8 +71,8 @@ describe('tang builder', () => {
     })
   })
 
-  describe('inspect', () => {
-    it('should inspect data\'s current state', async () => {
+  describe('inspect', function() {
+    it('should inspect data\'s current state', async function() {
       let builder = Builder.getInstance()
       builder.data({ name: 'John Smith' })
         .convertTo(Model)
@@ -83,8 +83,8 @@ describe('tang builder', () => {
     })
   })
 
-  describe('inspect', () => {
-    it('should inspect data\'s current state', async () => {
+  describe('inspect', function() {
+    it('should inspect data\'s current state', async function() {
       let builder = Builder.getInstance()
       let inspectCalled = false
       builder.addMethod('inspect', function (target, index, items, note = 'Inspect') {
@@ -100,14 +100,14 @@ describe('tang builder', () => {
     })
   })
 
-  describe('intercept', () => {
-    it('should call intercept', async () => {
+  describe('intercept', function() {
+    it('should call intercept', async function() {
       let builder = Builder.getInstance()
       let interceptCalled = false
       builder.data({ name: 'John Smith' })
         .convertTo(Model)
         .toObject()
-        .intercept((item) => {
+        .intercept(function(item) {
           interceptCalled = true
           return item
         })
@@ -116,14 +116,14 @@ describe('tang builder', () => {
     })
   })
 
-  describe('exec with handler for testing speed', () => {
-    it('should provide report for exec', async () => {
+  describe('exec with handler for testing speed', function() {
+    it('should provide report for exec', async function() {
       let builder = Builder.getInstance()
       let execReport
       builder.data({ name: 'John Smith' })
         .convertTo(Model)
         .toObject()
-      await builder.exec((report) => {
+      await builder.exec(function(report) {
         execReport = report
       })
       expect(execReport).to.be.not.be.empty

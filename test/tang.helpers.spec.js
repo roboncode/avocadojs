@@ -7,12 +7,12 @@ const difference = require('../tang/helpers/difference')
 const jsonStringify = require('../tang/helpers/jsonStringify')
 const resolve = require('../tang/helpers/resolve')
 
-describe('tang helpers', () => {
-  describe('asyncForEach an array', () => {
-    it('should be asynchronous', async () => {
+describe('tang helpers', function() {
+  describe('asyncForEach an array', function() {
+    it('should be asynchronous', async function() {
       let total = 0
-      await asyncForEach([1, 2, 3], async (num, index, data) => {
-        return new Promise(resolve => {
+      await asyncForEach([1, 2, 3], async function(num, index, data) {
+        return new Promise(function(resolve) {
           total += num
           setTimeout(resolve)
         })
@@ -21,37 +21,42 @@ describe('tang helpers', () => {
     })
   })
 
-  describe('asyncForEach an object', () => {
-    it('should be asynchronous', async () => {
+  describe('asyncForEach an object', function() {
+    it('should be asynchronous', async function() {
       let total = 0
-      await asyncForEach({
-        v1: 1,
-        v2: 2,
-        v3: 3
-      }, async (item, key, data) => {
-        return new Promise(resolve => {
-          total += item
-          setTimeout(resolve)
-        })
-      })
+      await asyncForEach(
+        {
+          v1: 1,
+          v2: 2,
+          v3: 3
+        },
+        async function(item, key, data) {
+          return new Promise(function(resolve) {
+            total += item
+            setTimeout(resolve)
+          })
+        }
+      )
       expect(total).to.equal(6)
     })
   })
 
-  describe('clone', () => {
-    it('clone object', () => {
+  describe('clone', function() {
+    it('clone object', function() {
       let src = {
-        a: [{
-          a1: 1,
-          b: true,
-          c: {
-            c1: 1
-          },
-          d: new Date(),
-          e: /test/gi,
-          f: function test() {},
-          g: 'hello'
-        }],
+        a: [
+          {
+            a1: 1,
+            b: true,
+            c: {
+              c1: 1
+            },
+            d: new Date(),
+            e: /test/gi,
+            f: function test() {},
+            g: 'hello'
+          }
+        ],
         b: true,
         c: {
           c1: 1
@@ -66,8 +71,8 @@ describe('tang helpers', () => {
     })
   })
 
-  describe('definePrivateProperty', () => {
-    it('should create a property that is not enumerable', () => {
+  describe('definePrivateProperty', function() {
+    it('should create a property that is not enumerable', function() {
       let o = {
         name: 'Rob'
       }
@@ -78,8 +83,8 @@ describe('tang helpers', () => {
     })
   })
 
-  describe('difference', () => {
-    it('should return the difference between two objects', () => {
+  describe('difference', function() {
+    it('should return the difference between two objects', function() {
       let now = Date.now()
       let a = {
         name: 'John',
@@ -101,8 +106,8 @@ describe('tang helpers', () => {
     })
   })
 
-  // describe('getObjectKeys', () => {
-  //   it('should return fullpath object keys', () => {
+  // describe('getObjectKeys', function() {
+  //   it('should return fullpath object keys', function() {
   //     let a = {
   //       b: {
   //         f: 1,
@@ -117,106 +122,105 @@ describe('tang helpers', () => {
   //   })
   // })
 
-  describe('JSON.stringify vs jsonStringify with circular reference', () => {
-
+  describe('JSON.stringify vs jsonStringify with circular reference', function() {
     function Foo() {
-      this.message = "Hello";
-      this.circular = this;
+      this.message = 'Hello'
+      this.circular = this
     }
 
-    var foo = new Foo();
+    var foo = new Foo()
 
-    describe('JSON.stringify', () => {
-      it('should throw circular reference error', () => {
-        let fn = function () {
+    describe('JSON.stringify', function() {
+      it('should throw circular reference error', function() {
+        let fn = function() {
           return JSON.stringify(foo)
         }
         expect(fn).to.throw('circular')
       })
     })
 
-    describe('jsonStringify', () => {
-      it('should convert to string', () => {
+    describe('jsonStringify', function() {
+      it('should convert to string', function() {
         expect(jsonStringify(foo)).to.equal('{"message":"Hello"}')
       })
     })
   })
 
-  describe('resolve', () => {
+  describe('resolve', function() {
     let data = {
       blog: {
         id: 1,
-        text: "My First Blog"
+        text: 'My First Blog'
       },
-      comments: [{
-          name: "John",
-          text: "Hello, world!"
+      comments: [
+        {
+          name: 'John',
+          text: 'Hello, world!'
         },
         {
-          name: "Jane",
-          text: "hi"
+          name: 'Jane',
+          text: 'hi'
         }
       ]
     }
 
-    describe('get', () => {
+    describe('get', function() {
       let rdata = resolve(clone(data))
-      describe('blog.id', () => {
-        it('should be 1', () => {
+      describe('blog.id', function() {
+        it('should be 1', function() {
           expect(rdata.get('blog.id')).to.equal(1)
         })
       })
 
-      describe('comments[1].name', () => {
-        it('should be "Jane"', () => {
+      describe('comments[1].name', function() {
+        it('should be "Jane"', function() {
           expect(rdata.get('comments.1.name')).to.equal('Jane')
         })
       })
     })
 
-    describe('set', () => {
+    describe('set', function() {
       let rdata = resolve(clone(data))
-      describe('set blog.id to "This is a test"', () => {
+      describe('set blog.id to "This is a test"', function() {
         rdata.set('blog.text', 'This is a test')
-        it('set value', () => {
+        it('set value', function() {
           expect(rdata.get('blog.text')).to.equal('This is a test')
         })
       })
 
-      describe('set comments[1].name to "Mary"', () => {
+      describe('set comments[1].name to "Mary"', function() {
         rdata.set('comments.0.name', 'Mary')
-        it('should be "Mary"', () => {
+        it('should be "Mary"', function() {
           expect(rdata.get('comments.0.name')).to.equal('Mary')
         })
       })
     })
 
-    describe('default', () => {
+    describe('default', function() {
       let rdata = resolve(clone(data))
-      describe('set default on undefined path"', () => {
+      describe('set default on undefined path"', function() {
         rdata.default('blog.published', true)
-        it('set value', () => {
+        it('set value', function() {
           expect(rdata.get('blog.published')).to.equal(true)
         })
       })
 
-      describe('set default on defined path', () => {
+      describe('set default on defined path', function() {
         rdata.default('blog.published', false)
-        it('not set value"', () => {
+        it('not set value"', function() {
           expect(rdata.get('blog.published')).to.equal(true)
         })
       })
     })
 
-    describe('clear', () => {
+    describe('clear', function() {
       let rdata = resolve(clone(data))
-      describe('clears data', () => {
+      describe('clears data', function() {
         rdata.clear()
-        it('delete all properties owned by object', () => {
+        it('delete all properties owned by object', function() {
           expect(rdata.get('blog')).to.be.undefined
         })
       })
     })
   })
-
 })

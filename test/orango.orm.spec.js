@@ -8,19 +8,19 @@ let schema = orango.Schema({
 
 orango.model('Test', schema)
 
-describe('orango.orm', () => {
-  describe('for in', () => {
+describe('orango.orm', function() {
+  describe('for in', function() {
     const orm = new ORM()
     orm.action('find')
     orm.collection({ name: 'users' })
 
-    it('should do something', async () => {
+    it('should do something', async function() {
       const query = await orm.toAQL()
       expect(query).to.equal('FOR doc IN users RETURN doc')
     })
   })
 
-  describe('for in with filter', () => {
+  describe('for in with filter', function() {
     const orm = new ORM()
     orm.action('find')
     orm.collection({ name: 'users' })
@@ -28,7 +28,7 @@ describe('orango.orm', () => {
       name: 'rob'
     })
 
-    it('should do something', async () => {
+    it('should do something', async function() {
       const query = await orm.toAQL()
       expect(query).to.equal(
         'FOR doc IN users FILTER (doc.`name` == "rob") RETURN doc'
@@ -36,7 +36,7 @@ describe('orango.orm', () => {
     })
   })
 
-  describe('$or filter', () => {
+  describe('$or filter', function() {
     const orm = new ORM()
     orm.action('find')
     orm.collection({ name: 'users' })
@@ -44,7 +44,7 @@ describe('orango.orm', () => {
       $or: [{ name: 'rob' }, { name: 'john' }]
     })
 
-    it('should do something', async () => {
+    it('should do something', async function() {
       const query = await orm.toAQL()
       expect(query).to.equal(
         'FOR doc IN users FILTER ((doc.`name` == "rob") OR (doc.`name` == "john")) RETURN doc'
@@ -52,7 +52,7 @@ describe('orango.orm', () => {
     })
   })
 
-  describe('increment filter using $inc', () => {
+  describe('increment filter using $inc', function() {
     const orm = new ORM()
     orm.action('update')
     orm.collection({ name: 'users' })
@@ -65,7 +65,7 @@ describe('orango.orm', () => {
       }
     })
 
-    it('should do something', async () => {
+    it('should do something', async function() {
       const query = await orm.toAQL()
       expect(query).to.equal(
         'FOR doc IN users UPDATE doc WITH {"stats":{"friends":doc.stats.friends+1}} IN users'
@@ -73,7 +73,7 @@ describe('orango.orm', () => {
     })
   })
 
-  describe('increment filter using ++', () => {
+  describe('increment filter using ++', function() {
     const orm = new ORM()
     orm.action('update')
     orm.collection({ name: 'users' })
@@ -82,7 +82,7 @@ describe('orango.orm', () => {
       friends: '++1'
     })
 
-    it('should do something', async () => {
+    it('should do something', async function() {
       const query = await orm.toAQL()
       expect(query).to.equal(
         'FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users'
@@ -90,7 +90,7 @@ describe('orango.orm', () => {
     })
   })
 
-  describe('increment filter using EXPR()', () => {
+  describe('increment filter using EXPR()', function() {
     const orm = new ORM()
     orm.action('update')
     orm.collection({ name: 'users' })
@@ -99,7 +99,7 @@ describe('orango.orm', () => {
       friends: 'EXPR(friends+1)'
     })
 
-    it('should do something', async () => {
+    it('should do something', async function() {
       const query = await orm.toAQL()
       expect(query).to.equal(
         'FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users'
