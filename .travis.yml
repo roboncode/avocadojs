@@ -1,3 +1,13 @@
+sudo: required
+
 language: node_js
 node_js:
   - 8.11.4
+
+services:
+  - docker
+
+before_install:
+  - docker pull arangodb:3.3.14
+  - docker run -d -e ARANGO_RANDOM_ROOT_PASSWORD=1 -p 8529:8529 arangodb"
+  - docker ps -a
