@@ -7,6 +7,7 @@ Inspired by <a href="http://mongoosejs.com/">Mongoose</a>.
 Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a>
 
 [![NPM version](https://badge.fury.io/js/orango.svg)](http://badge.fury.io/js/orango)
+[![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 
 [![npm](https://nodei.co/npm/orango.png)](https://www.npmjs.com/package/orango)
 
