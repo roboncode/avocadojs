@@ -274,14 +274,14 @@ Slices extend Tang in order to provide I/O to various sources. These might be da
   
 
 ## Roadmap
-* Getter / Settings in schema
 * Array.push (APPEND), splice, pop, etc?
+* convertTo() - check if object is model already and if of that type model
+* Getter / Settings in schema
 * Break out Tang into separate repo
 * unit tests (in progress) - 85 so far
 * cleanup
 * more documentation
 * web browser compatible
-* add Travis CI
 * create document website for orangojs.com
 * add lint
 
