@@ -328,16 +328,27 @@ async function main_model_edge_inbound() {
   console.log(posts)
 }
 
-async function main_array() {
+async function main_array_push() {
   require('./models/User')
 
   await orango.connect('demo')
 
   const User = orango.model('User')
 
-  let user = new User()
-  user.devices.push({ name: 'Hello, world!' })
-  console.log(JSON.stringify(user.devices.$actions))
+  let user = await User.findById('630106', { returnModel: true }).exec()
+  user.firstName = 'Test'
+  user.lastName = 'User'
+  user.devices.push({ name: 'Lori Taylor', junk: true })
+  user.save()
+
+  // New User
+  // let user = new User()
+  // user.firstName = 'Tom'
+  // user.junk = 123
+  // user.devices.push({ name: 'Hello, world!', moreJunk: 123 })
+  // console.log(user)
+  // user.save()
+
   // console.log(await user.toObject())
   // user.devices.append(1, 2, 3)
 
@@ -362,4 +373,4 @@ async function main_array() {
 // main_model_method()
 // main_model_edge_outbound()
 // main_model_edge_inbound()
-main_array()
+main_array_push()
