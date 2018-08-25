@@ -328,7 +328,7 @@ async function main_model_edge_inbound() {
   console.log(posts)
 }
 
-async function main_array_push() {
+async function main_subdoc() {
   require('./models/User')
 
   await orango.connect('demo')
@@ -336,29 +336,22 @@ async function main_array_push() {
   const User = orango.model('User')
 
   let user = await User.findById('630106', { returnModel: true }).exec()
-  user.firstName = 'Test'
-  user.lastName = 'User'
-  user.devices.push({ name: 'Lori Taylor', junk: true })
+  user.desc = 'this is killer!!!'
+  // user.devices.push({ name: 'Another test', more: true })
+  user.devices.pull(['F6470AAEF14C'])
   user.save()
+}
 
-  // New User
-  // let user = new User()
-  // user.firstName = 'Tom'
-  // user.junk = 123
-  // user.devices.push({ name: 'Hello, world!', moreJunk: 123 })
-  // console.log(user)
-  // user.save()
+async function main_update_subdoc(params) {
+  require('./models/User')
 
-  // console.log(await user.toObject())
-  // user.devices.append(1, 2, 3)
+  await orango.connect('demo')
 
-  // console.log('#model', user._schema.json)
+  const User = orango.model('User')
 
-  // let item = user.items.id(1)
-  // item.remove()
-
-  // let item = user.items.pos(0)
-  // item.remove()
+  User.findByIdAndUpdate('630106', {
+    devices: {}
+  })
 }
 
 // main()
@@ -373,4 +366,33 @@ async function main_array_push() {
 // main_model_method()
 // main_model_edge_outbound()
 // main_model_edge_inbound()
-main_array_push()
+main_subdoc()
+// main_update_subdoc()
+
+let d = {
+  firstName: 'Test',
+  createdAt: 1535224276472,
+  lastName: 'User',
+  devices: [
+    {
+      name: 'Rob Taylor',
+      junk: true,
+      $id: '231800529AA9'
+    },
+    {
+      name: 'Lori Taylor',
+      junk: true,
+      $id: '583F37466523'
+    },
+    {
+      name: 'Zac Taylor',
+      junk: true,
+      $id: 'A38F23F9A85E'
+    },
+    {
+      name: 'Zoe Taylor',
+      junk: true,
+      $id: 'D30DE102DCD'
+    }
+  ]
+}
