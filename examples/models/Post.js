@@ -1,4 +1,4 @@
-const orango = require('../../orango')
+const orango = require('../../lib')
 
 let schema = orango.Schema({
   title: String,

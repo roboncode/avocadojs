@@ -1,4 +1,4 @@
-const orango = require('../../orango/Orango').getInstance()
+const orango = require('../../lib/Orango').getInstance()
 const Builder = require('../../tang/Builder')
 
 async function importCategories(conn) {

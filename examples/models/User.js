@@ -1,4 +1,4 @@
-const orango = require('../../orango')
+const orango = require('../../lib')
 // const Device = require('./Device')
 const Joi = require('joi')
 
