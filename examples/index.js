@@ -373,31 +373,3 @@ async function main_update_subdoc(params) {
 // main_model_edge_inbound()
 main_subdoc()
 // main_update_subdoc()
-
-let d = {
-  firstName: 'Test',
-  createdAt: 1535224276472,
-  lastName: 'User',
-  devices: [
-    {
-      name: 'Rob Taylor',
-      junk: true,
-      $id: '231800529AA9'
-    },
-    {
-      name: 'Lori Taylor',
-      junk: true,
-      $id: '583F37466523'
-    },
-    {
-      name: 'Zac Taylor',
-      junk: true,
-      $id: 'A38F23F9A85E'
-    },
-    {
-      name: 'Zoe Taylor',
-      junk: true,
-      $id: 'D30DE102DCD'
-    }
-  ]
-}
