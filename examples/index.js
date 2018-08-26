@@ -53,7 +53,7 @@ async function main_update_user() {
       }
     },
     {
-      printAQL: 'color'
+      printAQL: true
     }
   ).exec()
 }
@@ -94,7 +94,7 @@ async function main_update_users() {
       }
     },
     {
-      printAQL: 'color'
+      printAQL: true
     }
   ).exec()
   /*
@@ -322,7 +322,7 @@ async function main_model_edge_inbound() {
     {
       noDefaults: true,
       // printAQL: true
-      printAQL: 'color'
+      printAQL: true
     }
   ).exec()
   console.log(posts)
@@ -335,28 +335,58 @@ async function main_subdoc() {
 
   const User = orango.model('User')
 
-  let user = await User.findById('630106', { returnModel: true }).exec()
-  user.movie = 'this is killer!!!'
-  user.whatever = false
-  // user.devices.push({ name: 'Another test', more: true })
-  // user.devices.pull(['F6470AAEF14C'])
-  user.save()
+  let user = await User.findById('630106', {
+    noDefaults: true,
+    returnModel: true
+  }).exec()
 
-  // let user = new User()
-  // user.whatever  = true
-  // user.save()
+  user.bogus = true
+
+  // Test #1
+  // user.devices = [
+  //   { $id: orango.uid(), name: 'Sam' },
+  //   { $id: orango.uid(), name: 'Goody' }
+  // ]
+  // user.tags = ['a', 'b']
+
+  // Test #2
+  user.devices.push({ name: 'Hey you!!!', junk: true })
+  user.devices.pull(['5b82cf0cc06829e7f279d16f'])
+
+
+  // user.devices.splice(0, 1)
+  user.save()
 }
 
-async function main_update_subdoc(params) {
+async function main_update_subdoc() {
   require('./models/User')
 
   await orango.connect('demo')
 
   const User = orango.model('User')
 
-  User.findByIdAndUpdate('630106', {
-    devices: {}
+  let aql = User.findByIdAndUpdate('630106', {
+    devices: {
+      $push: [{ name: 'The end' }],
+      $pull: ['FCB89779F605']
+    }
+  }).toAQL()
+
+  console.log(aql)
+}
+
+async function main_replace_subdoc() {
+  require('./models/User')
+
+  await orango.connect('demo')
+
+  const User = orango.model('User')
+
+  let user = new User({
+    devices: [{ name: 'Hey you again!!' }]
   })
+
+  user.save()
 }
 
 // main()
@@ -373,3 +403,4 @@ async function main_update_subdoc(params) {
 // main_model_edge_inbound()
 main_subdoc()
 // main_update_subdoc()
+// main_replace_subdoc()

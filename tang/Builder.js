@@ -82,7 +82,7 @@ class Builder {
             }
             return item
           } catch (e) {
-            console.log(`Error: ${e.message}`.bgRed)
+            console.log(`ValidationError: ${e.message}`.bgRed)
             return e
           }
         })

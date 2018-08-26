@@ -16,7 +16,8 @@ let schema = orango.Schema(
     avatar: String, // URL to avatar image
     banner: String, // URL to background image
     theme: String, // #FF0000
-    devices: [{ name: String }], // Ids used to send push notifications to
+    devices: [{ $id: String, name: String }], // Ids used to send push notifications to
+    tags: [String],
     // devices: [String], // Ids used to send push notifications to
     // // devices: [], // Ids used to send push notifications to
     // // devices: [ Device ], // Ids used to send push notifications to
