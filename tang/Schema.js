@@ -46,7 +46,7 @@ class Schema {
   get joi() {
     return this._joi
   }
- 
+
   get defaultValues() {
     return this._defaultValues
   }
@@ -117,6 +117,8 @@ class Schema {
           joiType = Joi.array().items(Joi.any())
         }
       }
+      // check for %words% => for injection
+      joiType = Joi.alternatives().try(joiType, Joi.string().regex(/%\w+%/))
     }
 
     return joiType

@@ -336,10 +336,15 @@ async function main_subdoc() {
   const User = orango.model('User')
 
   let user = await User.findById('630106', { returnModel: true }).exec()
-  user.desc = 'this is killer!!!'
+  user.movie = 'this is killer!!!'
+  user.whatever = false
   // user.devices.push({ name: 'Another test', more: true })
-  user.devices.pull(['F6470AAEF14C'])
+  // user.devices.pull(['F6470AAEF14C'])
   user.save()
+
+  // let user = new User()
+  // user.whatever  = true
+  // user.save()
 }
 
 async function main_update_subdoc(params) {

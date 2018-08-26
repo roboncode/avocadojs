@@ -2,6 +2,7 @@ const asyncForEach = require('./helpers/asyncForEach')
 const microtime = require('microtime')
 const snooze = require('./helpers/snooze')
 const padding = 35
+require('colors')
 
 class Builder {
   static getInstance(name = 'default') {
@@ -81,6 +82,7 @@ class Builder {
             }
             return item
           } catch (e) {
+            console.log(`Error: ${e.message}`.bgRed)
             return e
           }
         })
