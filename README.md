@@ -15,7 +15,14 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 
 [orangojs.com](https://orangojs.com)
 
-**Important! Orango** is currently in development and **should not be used in a production environment** until it has been completed.
+## Important! Orango is currently in development PRE-PRE-ALPHA :) and **should not be used in a production environment** until it has been completed.
+
+> I am hoping to have it in a testable **PRE-ALPHA** stage in mid September.
+
+### What is being worked on right now?
+
+* Subdocument support
+* Documentation site
 
 ### Installation
 First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a docker-compose.yml file that is in the root of this project if you want to copy it to your project, then all you have to do is run
@@ -134,13 +141,13 @@ orango.model('user', User)
 Once we define a model through `orango.model('ModelName', mySchema)`, we can access it through the same function
 
 ```js
-const myModel = orango.model('ModelName')
+const MyModel = orango.model('ModelName')
 ```
 
 Or just do it all at once
 
 ```js
-const myModel = orango.model('ModelName', mySchema)
+const MyModel = orango.model('ModelName', mySchema)
 ```
 The first argument is the singular name of the collection your model is for. **Orango automatically looks for the plural version of your model name.** For example, if you use
 
@@ -281,7 +288,6 @@ Slices extend Tang in order to provide I/O to various sources. These might be da
 * cleanup
 * more documentation
 * web browser compatible
-* add Travis CI
 * create document website for orangojs.com
 * add lint
 
