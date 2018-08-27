@@ -8,8 +8,6 @@ let schema = orango.Schema({
 
 orango.model('Test', schema)
 
-const AQL_NEWLINE = '\n   '
-
 describe('orango.orm', function() {
   describe('for in', function() {
     const orm = new ORM()
@@ -18,7 +16,6 @@ describe('orango.orm', function() {
 
     it('should do something', async function() {
       let query = await orm.toAQL()
-      query = query.split(AQL_NEWLINE).join('')
       expect(query).to.equal('FOR doc IN users RETURN doc')
     })
   })
@@ -33,7 +30,6 @@ describe('orango.orm', function() {
 
     it('should do something', async function() {
       let query = await orm.toAQL()
-      query = query.split(AQL_NEWLINE).join('')
       expect(query).to.equal(
         'FOR doc IN users FILTER (doc.`name` == "rob") RETURN doc'
       )
@@ -50,7 +46,6 @@ describe('orango.orm', function() {
 
     it('should do something', async function() {
       let query = await orm.toAQL()
-      query = query.split(AQL_NEWLINE).join('')
       expect(query).to.equal(
         'FOR doc IN users FILTER ((doc.`name` == "rob") OR (doc.`name` == "john")) RETURN doc'
       )
@@ -72,7 +67,6 @@ describe('orango.orm', function() {
 
     it('should do something', async function() {
       let query = await orm.toAQL()
-      query = query.split(AQL_NEWLINE).join('')
       expect(query).to.equal(
         'FOR doc IN users UPDATE doc WITH {"stats":{"friends":doc.stats.friends+1}} IN users'
       )
@@ -90,7 +84,6 @@ describe('orango.orm', function() {
 
     it('should do something', async function() {
       let query = await orm.toAQL()
-      query = query.split(AQL_NEWLINE).join('')
       expect(query).to.equal(
         'FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users'
       )
@@ -108,7 +101,6 @@ describe('orango.orm', function() {
 
     it('should do something', async function() {
       let query = await orm.toAQL()
-      query = query.split(AQL_NEWLINE).join('')
       expect(query).to.equal(
         'FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users'
       )
