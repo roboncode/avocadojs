@@ -40,7 +40,9 @@ module.exports = {
       content: '#fd6602'
     }]
   ],
-  serviceWorker: true,
+  serviceWorker: {
+    updatePopup: true
+  },
   themeConfig: {
     nav: [{
         text: 'Guide',
