@@ -350,9 +350,11 @@ async function main_subdoc() {
   // user.tags = ['a', 'b']
 
   // Test #2
-  user.devices.push({ name: 'Hey you!!!', junk: true })
-  user.devices.pull(['5b82cf0cc06829e7f279d16f'])
+  user.devices.push({ name: 'Hey again!!!', junk: true })
+  user.devices.pull(['5b832bf077959a8ced9f9787'])
 
+//  user.stuff.push({ name: 'Stuff again!!!', junk: true })
+//  user.stuff.pull(['5b832bf077959a8ced9f9787'])
 
   // user.devices.splice(0, 1)
   user.save()
