@@ -365,7 +365,7 @@ async function main_update_subdoc() {
 
   await orango.connect('demo')
 
-  const User = orango.model('User')
+  const User = orango.model('User') 
 
   let aql = User.findByIdAndUpdate('630106', {
     devices: {

@@ -158,7 +158,9 @@ describe('orango subdocs', function() {
       })
       test.posts.push({ text: 'test' })
       let aql = await test.toAQL({ update: true })
-      expect(aql).to.match(/FOR doc IN tests FILTER \(doc.`_key` == 1\) LET posts = APPEND\(doc.posts, \[{"text":"test","\$id":\"\w+\"}\]\) UPDATE doc WITH {"posts":posts} IN tests/)
+      expect(aql).to.match(
+        /FOR doc IN tests FILTER \(doc.`_key` == 1\) LET posts = APPEND\(doc.posts, \[{"text":"test","\$id":\"\w+\"}\]\) UPDATE doc WITH {"posts":posts} IN tests/
+      )
     })
   })
 
@@ -171,6 +173,36 @@ describe('orango subdocs', function() {
       let aql = await test.toAQL({ update: true })
       expect(aql).to.equal(
         'FOR doc IN tests FILTER (doc.`_key` == 1) LET posts = MINUS(doc.posts, ( FOR item IN doc.posts || [] FOR id IN ["test"] FILTER item.$id == id RETURN item)) UPDATE doc WITH {"posts":posts} IN tests'
+      )
+    })
+  })
+
+  describe('array pushing objects with $push', function() {
+    it('to append', async function() {
+      let test = new Test({
+        _key: 1
+      })
+      test.comments = {
+        $push: [{ text: 'test' }]
+      }
+      let aql = await test.toAQL({ update: true })
+      expect(aql).to.equal(
+        'FOR doc IN tests FILTER (doc.`_key` == 1) LET comments = APPEND(doc.comments, [{"text":"test"}]) UPDATE doc WITH {"comments":comments} IN tests'
+      )
+    })
+  })
+
+  describe('array pulling objects with $pull', function() {
+    it('to minus', async function() {
+      let test = new Test({
+        _key: 1
+      })
+      test.comments = {
+        $pull: ['test']
+      }
+      let aql = await test.toAQL({ update: true })
+      expect(aql).to.equal(
+        'FOR doc IN tests FILTER (doc.`_key` == 1) LET comments = MINUS(doc.comments, ( FOR item IN doc.comments || [] FOR id IN ["test"] FILTER item.$id == id RETURN item)) UPDATE doc WITH {"comments":comments} IN tests'
       )
     })
   })
