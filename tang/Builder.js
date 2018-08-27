@@ -19,6 +19,9 @@ class Builder {
     this.methods = {}
 
     this.addMethod('convertTo', function(data, index, items, Model) {
+      if(Model === data.constructor) {
+        return data
+      }
       return new Model(data)
     })
 
