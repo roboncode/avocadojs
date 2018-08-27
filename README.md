@@ -274,9 +274,9 @@ Slices extend Tang in order to provide I/O to various sources. These might be da
   
 
 ## Roadmap
-* Array.push (APPEND), splice, pop, etc?
-* convertTo() - check if object is model already and if of that type model
-* Getter / Settings in schema
+* Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
+* autoIndex in schema - will create indexes as properties become part of query
+* Getter / Setters in schema
 * Break out Tang into separate repo
 * unit tests (in progress) - 85 so far
 * cleanup
