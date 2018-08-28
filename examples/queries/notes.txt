@@ -1,4 +1,0 @@
-https://docs.arangodb.com/devel/Manual/Appendix/ErrorCodes.html
-
-SOME COOL TRICKS
-https://stackoverflow.com/questions/48955791/arangodb-aql-update-nested-documents

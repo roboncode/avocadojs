@@ -108,9 +108,9 @@ class Model {
     }
 
     if (computed) {
-      let virtualKeys = Object.keys(this._schema.computed)
-      for (let i = 0; i < virtualKeys.length; i++) {
-        let prop = virtualKeys[i]
+      let computedProps = Object.keys(this._schema.computed)
+      for (let i = 0; i < computedProps.length; i++) {
+        let prop = computedProps[i]
         json[prop] = this[prop]
       }
     }

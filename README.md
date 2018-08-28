@@ -276,6 +276,7 @@ module.exports = orango.model('User', schema)
 * Getter / Setters in schema
 * Events
 * Pre / Post Interceptors
+* Support upsert option
 
 ### Fixes
 * Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
@@ -290,6 +291,7 @@ module.exports = orango.model('User', schema)
 * web browser compatible
 * create document website for orangojs.com
 * add lint
+* Better error handler / dispatching
 
 ## MIT License
 
