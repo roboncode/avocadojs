@@ -44,23 +44,23 @@ module.exports = {
     updatePopup: true
   },
   themeConfig: {
-    nav: [{
-        text: 'Guide',
-        link: '/guide/',
-      },
-      {
-        text: 'Config Reference',
-        link: '/config/'
-      },
-      {
-        text: 'Default Theme Config',
-        link: '/default-theme-config/'
-      },
-      {
-        text: 'Changelog',
-        link: 'https://github.com/vuejs/vuepress/blob/master/CHANGELOG.md'
-      }
-    ],
+    // nav: [{
+    //     text: 'Guide',
+    //     link: '/guide/',
+    //   },
+    //   {
+    //     text: 'Config Reference',
+    //     link: '/config/'
+    //   },
+    //   {
+    //     text: 'Default Theme Config',
+    //     link: '/default-theme-config/'
+    //   },
+    //   {
+    //     text: 'Changelog',
+    //     link: 'https://github.com/vuejs/vuepress/blob/master/CHANGELOG.md'
+    //   }
+    // ],
     // sidebar: {
     //   '/guide/': {
     //     title: 'Guide',
@@ -74,9 +74,9 @@ module.exports = {
     // }
     sidebar: [
       ['/guide/', 'Introduction'],
-      ['/guide/Page-1', 'Page 1'],
-      ['/guide/Page-2', 'Page 2'],
-      ['/guide/Page-3', 'Page 3']
+      // ['/guide/Page-1', 'Page 1'],
+      // ['/guide/Page-2', 'Page 2'],
+      // ['/guide/Page-3', 'Page 3']
     ]
   },
   configureWebpack: {
