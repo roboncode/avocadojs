@@ -1,5 +1,6 @@
 .DS_Store
 .vscode/
+docs/
 examples/
 node_modules/
 test/
