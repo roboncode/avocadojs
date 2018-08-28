@@ -20,7 +20,7 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 
 ### Documentation
 
-[orangojs.com](https://orangojs.com)
+(Coming soon) **orangojs.com** will be the future home of documentation
 
 ### Project Status
 **Orango** is currently **in development** and **should not be used in a production environment** until it has been completed.
