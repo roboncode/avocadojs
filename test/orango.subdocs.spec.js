@@ -1,5 +1,7 @@
 let expect = require('chai').expect
 const orango = require('../lib')
+const ORM = require('../lib/ORM')
+const criteriaBuilder = require('../lib/helpers/criteriaBuilder')
 
 let schema = orango.Schema(
   {
@@ -198,11 +200,27 @@ describe('orango subdocs', function() {
         _key: 1
       })
       test.comments = {
-        $pull: ['test']
+        $key: 'name',
+        $pull: { $or: [{ $id: 'test' }, { user: '@test' }] }
       }
       let aql = await test.toAQL({ update: true })
       expect(aql).to.equal(
-        'FOR doc IN tests FILTER (doc.`_key` == 1) LET comments = MINUS(doc.comments, ( FOR item IN doc.comments || [] FOR id IN ["test"] FILTER item.$id == id RETURN item)) UPDATE doc WITH {"comments":comments} IN tests'
+        'FOR doc IN tests FILTER (doc.`_key` == 1) LET comments = MINUS(doc.comments, ( FOR item IN doc.comments FILTER ((item.$id == "test") OR (item.`user` == "@test")) RETURN item)) UPDATE doc WITH {"comments":comments} IN tests'
+      )
+    })
+  })
+
+  describe('array pulling objects with $pull', function() {
+    it('to minus', async function() {
+      let test = new Test({
+        _key: 1
+      })
+      test.comments = {
+        $pull: ['foo', 'bar']
+      }
+      let aql = await test.toAQL({ update: true })
+      expect(aql).to.equal(
+        'FOR doc IN tests FILTER (doc.`_key` == 1) LET comments = MINUS(doc.comments, ( FOR item IN doc.comments || [] FOR id IN ["foo","bar"] FILTER item.$id == id RETURN item)) UPDATE doc WITH {"comments":comments} IN tests'
       )
     })
   })
