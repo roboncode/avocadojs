@@ -11,6 +11,13 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 
 [![npm](https://nodei.co/npm/orango.png)](https://www.npmjs.com/package/orango)
 
+**Orango** is the library built on top of Tang. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
+
+* Central connectivity to ArangoDB
+* Automated creation of databases, collections and indexing
+* Ability to pre-populate database with data
+* and more...
+
 ### Documentation
 
 [orangojs.com](https://orangojs.com)
@@ -203,18 +210,6 @@ let schema = new Schema(...)
 module.exports = orango.model('User', schema)
 ```
 
-### What are slices?
-
-Slices extend Tang in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
-
-#### Orango Slice
-
-**Orango Slice** is the library built on top of Avacado. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
-
-* Central connectivity to ArangoDB
-* Automated creation of databases, collections and indexing
-* Ability to pre-populate database with data
-
 ### Model has many built-in query methods
 
 * setConnection
@@ -274,10 +269,17 @@ Slices extend Tang in order to provide I/O to various sources. These might be da
   
 
 ## Roadmap
-* Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
+
+### Features
 * autoIndex in schema - will create indexes as properties become part of query
 * Getter / Setters in schema
+
+### Fixes
+* Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
+* Fix up for loops to be async
 * Break out Tang into separate repo
+
+### Other
 * unit tests (in progress) - 85 so far
 * cleanup
 * more documentation
@@ -285,9 +287,9 @@ Slices extend Tang in order to provide I/O to various sources. These might be da
 * create document website for orangojs.com
 * add lint
 
-## License
+## MIT License
 
-Copyright (c) 2018 RobOnCode &lt;roboncode@gmail.com&gt;
+Copyright (c) 2018 RobOnCode &lt;roboncode+orango@gmail.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
