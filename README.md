@@ -22,7 +22,8 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 
 [orangojs.com](https://orangojs.com)
 
-**Important! Orango** is currently in development and **should not be used in a production environment** until it has been completed.
+### Project Status
+**Orango** is currently **in development** and **should not be used in a production environment** until it has been completed.
 
 ### Installation
 First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a docker-compose.yml file that is in the root of this project if you want to copy it to your project, then all you have to do is run
@@ -273,11 +274,14 @@ module.exports = orango.model('User', schema)
 ### Features
 * autoIndex in schema - will create indexes as properties become part of query
 * Getter / Setters in schema
+* Events
+* Pre / Post Interceptors
 
 ### Fixes
 * Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
 * Fix up for loops to be async
 * Break out Tang into separate repo
+* criteriaBuilder array support
 
 ### Other
 * unit tests (in progress) - 85 so far
