@@ -2,6 +2,7 @@ const asyncForEach = require('./helpers/asyncForEach')
 const microtime = require('microtime')
 const snooze = require('./helpers/snooze')
 const padding = 35
+require('colors')
 
 class Builder {
   static getInstance(name = 'default') {
@@ -18,6 +19,9 @@ class Builder {
     this.methods = {}
 
     this.addMethod('convertTo', function(data, index, items, Model) {
+      if(Model === data.constructor) {
+        return data
+      }
       return new Model(data)
     })
 
@@ -81,6 +85,7 @@ class Builder {
             }
             return item
           } catch (e) {
+            console.log(`ValidationError: ${e.message}`.bgRed)
             return e
           }
         })

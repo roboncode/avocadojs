@@ -11,11 +11,19 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 
 [![npm](https://nodei.co/npm/orango.png)](https://www.npmjs.com/package/orango)
 
+**Orango** is the library built on top of Tang. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
+
+* Central connectivity to ArangoDB
+* Automated creation of databases, collections and indexing
+* Ability to pre-populate database with data
+* and more...
+
 ### Documentation
 
-[orangojs.com](https://orangojs.com)
+(Coming soon) **orangojs.com** will be the future home of documentation
 
-**Important! Orango** is currently in development and **should not be used in a production environment** until it has been completed.
+### Project Status
+**Orango** is currently **in development** and **should not be used in a production environment** until it has been completed.
 
 ### Installation
 First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a docker-compose.yml file that is in the root of this project if you want to copy it to your project, then all you have to do is run
@@ -134,13 +142,13 @@ orango.model('user', User)
 Once we define a model through `orango.model('ModelName', mySchema)`, we can access it through the same function
 
 ```js
-const myModel = orango.model('ModelName')
+const MyModel = orango.model('ModelName')
 ```
 
 Or just do it all at once
 
 ```js
-const myModel = orango.model('ModelName', mySchema)
+const MyModel = orango.model('ModelName', mySchema)
 ```
 The first argument is the singular name of the collection your model is for. **Orango automatically looks for the plural version of your model name.** For example, if you use
 
@@ -203,18 +211,6 @@ let schema = new Schema(...)
 module.exports = orango.model('User', schema)
 ```
 
-### What are slices?
-
-Slices extend Tang in order to provide I/O to various sources. These might be databases, local file access, services, etc. The first and primary slice being developed is for ArangoDb.
-
-#### Orango Slice
-
-**Orango Slice** is the library built on top of Avacado. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
-
-* Central connectivity to ArangoDB
-* Automated creation of databases, collections and indexing
-* Ability to pre-populate database with data
-
 ### Model has many built-in query methods
 
 * setConnection
@@ -274,20 +270,32 @@ Slices extend Tang in order to provide I/O to various sources. These might be da
   
 
 ## Roadmap
-* Getter / Settings in schema
-* Array.push (APPEND), splice, pop, etc?
+
+### Features
+* autoIndex in schema - will create indexes as properties become part of query
+* Getter / Setters in schema
+* Events
+* Pre / Post Interceptors
+* Support upsert option
+
+### Fixes
+* Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
+* Fix up for loops to be async
 * Break out Tang into separate repo
-* unit tests (in progress) - 85 so far
+* criteriaBuilder array support
+
+### Other
+* unit tests (in progress) - 100+ and counting
 * cleanup
 * more documentation
 * web browser compatible
-* add Travis CI
 * create document website for orangojs.com
 * add lint
+* Better error handler / dispatching
 
-## License
+## MIT License
 
-Copyright (c) 2018 RobOnCode &lt;roboncode@gmail.com&gt;
+Copyright (c) 2018 RobOnCode &lt;roboncode+orango@gmail.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

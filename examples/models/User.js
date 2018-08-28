@@ -1,36 +1,19 @@
-const orango = require('../../orango')
-// const Device = require('./Device')
-const Joi = require('joi')
-
+/**
+ * Schemas are a JSON representation of Joi schemas. You can use 
+ * Joi within the JSON to handle custom definitions. You will see
+ * that almost everythin can be handles via JSON.
+ */
+const orango = require('../../lib')
 let schema = orango.Schema(
   {
-    authId: String,
     role: { type: String, valid: ['admin', 'user'], default: 'user' },
-    screenName: String, // roboncode
+    screenName: String, // @foobar
     firstName: { type: String, regex: /^[A-Za-z\s']+$/, min: 3 },
     lastName: String,
     email: { type: String, email: {} },
-    phone: String,
-    location: String,
-    desc: String,
-    avatar: String, // URL to avatar image
-    banner: String, // URL to background image
-    theme: String, // #FF0000
-    // devices: [String], // Ids used to send push notifications to
-    // // devices: [], // Ids used to send push notifications to
-    devices: [{ name: String }], // Ids used to send push notifications to
-    // // devices: [ Device ], // Ids used to send push notifications to
-    // // devices: [Device.schema], // Ids used to send push notifications to
-    // // devices: [Device.schema.json], // Ids used to send push notifications to
+    knownDevices: [{ $id: String, name: String }],
+    tags: [String],
     stats: {
-      friends: {
-        type: orango.Types.Any,
-        default: 0
-      },
-      invites: {
-        type: orango.Types.Any,
-        default: 0
-      },
       following: {
         type: orango.Types.Any,
         default: 0
@@ -39,43 +22,22 @@ let schema = orango.Schema(
         type: orango.Types.Any,
         default: 0
       },
-      messages: {
-        type: orango.Types.Any,
-        default: 0
-      },
       posts: {
         type: orango.Types.Any,
         default: 0
       }
     },
-    internalStats: {
-      reports: {
-        type: orango.Types.Any,
-        default: 0
-      }, // # of reports received
-      reported: {
-        type: orango.Types.Any,
-        default: 0
-      }, // # users reported
-      blocks: {
-        type: orango.Types.Any,
-        default: 0
-      }, // # mutes received
-      blocked: {
-        type: orango.Types.Any,
-        default: 0
-      } // # users muted
-    },
     settings: {
       lang: { type: String, default: 'en-us' },
       timezone: { type: Number, default: -18000 }
     },
-    createdAt: Date,
+    createdAt: { type: Date },
     updatedAt: { type: Date, default: Date.now }
   },
   {
     strict: true,
     removeOnMatchDefault: true,
+    // TODO: autoIndex: true,
     indexes: [
       {
         type: 'hash',
@@ -113,12 +75,8 @@ schema.computed.id = function() {
   return this._key
 }
 
-schema.statics.sayGoodbye = function() {
-  this.emitter.emit('sayGoodbye')
-}
-
 schema.statics.getUserWithDevices = async function(id) {
-  anguler.model('Device').schema
+  orango.model('Device').schema
   return await User.findByQuery(
     `FOR device IN devices
         FILTER device._key == '${id}'
@@ -130,8 +88,9 @@ schema.statics.getUserWithDevices = async function(id) {
     .exec()
 }
 
-schema.methods.sayHello = function(day) {
-  this.emitter.emit('sayHello', day, this.firstName + ' ' + this.lastName)
+schema.methods.sayHi = function(day) {
+  this.emitter.emit(`Hi, my name is ${this.firstName}.`)
 }
 
-module.exports = orango.model('User', schema, 'users')
+// You can override the default collection name in the last param
+module.exports = orango.model('User', schema/*, 'users'*/)

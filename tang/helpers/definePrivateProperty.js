@@ -1,7 +1,8 @@
 function definePrivateProperty(target, key, value) {
   Object.defineProperty(target, key, {
     value,
-    enumerable: false
+    enumerable: false,
+    writable: true
   })
 }
 

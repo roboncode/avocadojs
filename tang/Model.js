@@ -1,6 +1,7 @@
 const clone = require('./helpers/clone')
 const definePrivateProperty = require('./helpers/definePrivateProperty')
 const EventEmitter = require('events')
+const jsonStringify = require('./helpers/jsonStringify')
 
 let eventMethods = ['emit', 'off', 'on', 'once']
 let eventEmitter = new EventEmitter()
@@ -99,12 +100,17 @@ class Model {
     const computed = options.computed
     delete options.computed
 
-    let json = await this.validate(options)
+    let json
+    if(options.skipValidation) {
+      json = jsonStringify(this)
+    } else {
+      json = await this.validate(options)
+    }
 
     if (computed) {
-      let virtualKeys = Object.keys(this._schema.computed)
-      for (let i = 0; i < virtualKeys.length; i++) {
-        let prop = virtualKeys[i]
+      let computedProps = Object.keys(this._schema.computed)
+      for (let i = 0; i < computedProps.length; i++) {
+        let prop = computedProps[i]
         json[prop] = this[prop]
       }
     }
