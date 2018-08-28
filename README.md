@@ -142,13 +142,13 @@ orango.model('user', User)
 Once we define a model through `orango.model('ModelName', mySchema)`, we can access it through the same function
 
 ```js
-const myModel = orango.model('ModelName')
+const MyModel = orango.model('ModelName')
 ```
 
 Or just do it all at once
 
 ```js
-const myModel = orango.model('ModelName', mySchema)
+const MyModel = orango.model('ModelName', mySchema)
 ```
 The first argument is the singular name of the collection your model is for. **Orango automatically looks for the plural version of your model name.** For example, if you use
 
@@ -284,7 +284,7 @@ module.exports = orango.model('User', schema)
 * criteriaBuilder array support
 
 ### Other
-* unit tests (in progress) - 85 so far
+* unit tests (in progress) - 100+ and counting
 * cleanup
 * more documentation
 * web browser compatible
