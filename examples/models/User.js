@@ -1,4 +1,4 @@
-const orango = require('../../orango')
+const orango = require('../../lib')
 // const Device = require('./Device')
 const Joi = require('joi')
 
@@ -16,9 +16,10 @@ let schema = orango.Schema(
     avatar: String, // URL to avatar image
     banner: String, // URL to background image
     theme: String, // #FF0000
+    devices: [{ $id: String, name: String }], // Ids used to send push notifications to
+    tags: [String],
     // devices: [String], // Ids used to send push notifications to
     // // devices: [], // Ids used to send push notifications to
-    devices: [{ name: String }], // Ids used to send push notifications to
     // // devices: [ Device ], // Ids used to send push notifications to
     // // devices: [Device.schema], // Ids used to send push notifications to
     // // devices: [Device.schema.json], // Ids used to send push notifications to
@@ -70,7 +71,7 @@ let schema = orango.Schema(
       lang: { type: String, default: 'en-us' },
       timezone: { type: Number, default: -18000 }
     },
-    createdAt: Date,
+    createdAt: { type: Date },
     updatedAt: { type: Date, default: Date.now }
   },
   {

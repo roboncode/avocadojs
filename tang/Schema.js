@@ -46,7 +46,7 @@ class Schema {
   get joi() {
     return this._joi
   }
- 
+
   get defaultValues() {
     return this._defaultValues
   }
@@ -79,6 +79,7 @@ class Schema {
     if (type === 'object') {
       // if the type is an object then loop through and get child schemas
       let schema = {}
+
       for (let prop in data) {
         if (data.hasOwnProperty(prop)) {
           schema[prop] = this._parse(data[prop])
@@ -117,6 +118,8 @@ class Schema {
           joiType = Joi.array().items(Joi.any())
         }
       }
+      // check for %words% => for injection
+      // joiType = Joi.alternatives().try(joiType, Joi.string().regex(/%\w+%/))
     }
 
     return joiType

@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const rootPath = path.join(__dirname, '..')
-const orango = require(path.join(rootPath, 'orango'))
+const orango = require(path.join(rootPath, 'lib'))
 const Builder = require('../tang/Builder')
 
 const { importAllDocs } = require(path.join(__dirname, 'migrations'))
@@ -24,9 +24,7 @@ async function main() {
   readFiles(path.join(__dirname, 'models'))
 
   // // Create connection
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   // // Import migration docs
   await importAllDocs()
@@ -42,9 +40,7 @@ async function main_update_user() {
   require('./models/User')
 
   // Create connection
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
   User.findByIdAndUpdate(
@@ -57,7 +53,7 @@ async function main_update_user() {
       }
     },
     {
-      printAQL: 'color'
+      printAQL: true
     }
   ).exec()
 }
@@ -66,9 +62,7 @@ async function main_update_users() {
   require('./models/User')
 
   // Create connection
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
 
@@ -100,7 +94,7 @@ async function main_update_users() {
       }
     },
     {
-      printAQL: 'color'
+      printAQL: true
     }
   ).exec()
   /*
@@ -131,9 +125,7 @@ async function main_delete_users() {
   require('./models/User')
 
   // Create connection
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
   let result = await User.deleteOne({
@@ -147,9 +139,7 @@ async function main_find_users() {
   require('./models/User')
 
   // Create connection
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
   let users = await User.find(
@@ -169,9 +159,7 @@ async function main_find_user() {
   require('./models/User')
 
   // Create connection
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
   // let user = await User.findById('jane', {
@@ -215,9 +203,7 @@ async function main_new_user() {
   require('./models/User')
 
   // Create connection
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
 
@@ -237,9 +223,7 @@ async function main_new_user() {
 async function main_query() {
   require('./models/User')
   // Create connection
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
   let result = await User.findByQuery(
@@ -290,9 +274,7 @@ async function main_builder() {
 async function main_model_method() {
   require('./models/User')
 
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
   let user = await User.getUserDevices('rob', { string: true })
@@ -304,9 +286,7 @@ async function main_model_method() {
 async function main_model_edge_outbound() {
   readFiles(path.join(__dirname, 'models'))
 
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const User = orango.model('User')
   let user = await User.findByEdge(
@@ -330,9 +310,7 @@ async function main_model_edge_outbound() {
 async function main_model_edge_inbound() {
   readFiles(path.join(__dirname, 'models'))
 
-  await orango.connect({
-    name: 'demo'
-  })
+  await orango.connect('demo')
 
   const Post = orango.model('Post')
   let posts = await Post.findByEdge(
@@ -344,10 +322,73 @@ async function main_model_edge_inbound() {
     {
       noDefaults: true,
       // printAQL: true
-      printAQL: 'color'
+      printAQL: true
     }
   ).exec()
   console.log(posts)
+}
+
+async function main_subdoc() {
+  require('./models/User')
+
+  await orango.connect('demo')
+
+  const User = orango.model('User')
+
+  let user = await User.findById('630106', {
+    noDefaults: true,
+    returnModel: true
+  }).exec()
+
+  user.bogus = true
+
+  // Test #1
+  // user.devices = [
+  //   { $id: orango.uid(), name: 'Sam' },
+  //   { $id: orango.uid(), name: 'Goody' }
+  // ]
+  // user.tags = ['a', 'b']
+
+  // Test #2
+  user.devices.push({ name: 'Hey again!!!', junk: true })
+  user.devices.pull(['5b832bf077959a8ced9f9787'])
+
+//  user.stuff.push({ name: 'Stuff again!!!', junk: true })
+//  user.stuff.pull(['5b832bf077959a8ced9f9787'])
+
+  // user.devices.splice(0, 1)
+  user.save()
+}
+
+async function main_update_subdoc() {
+  require('./models/User')
+
+  await orango.connect('demo')
+
+  const User = orango.model('User') 
+
+  let aql = User.findByIdAndUpdate('630106', {
+    devices: {
+      $push: [{ name: 'The end' }],
+      $pull: ['FCB89779F605']
+    }
+  }).toAQL()
+
+  console.log(aql)
+}
+
+async function main_replace_subdoc() {
+  require('./models/User')
+
+  await orango.connect('demo')
+
+  const User = orango.model('User')
+
+  let user = new User({
+    devices: [{ name: 'Hey you again!!' }]
+  })
+
+  user.save()
 }
 
 // main()
@@ -357,8 +398,11 @@ async function main_model_edge_inbound() {
 // main_find_users()
 // main_find_user()
 // main_new_user()
-main_query()
+// main_query()
 // main_builder()
 // main_model_method()
 // main_model_edge_outbound()
 // main_model_edge_inbound()
+main_subdoc()
+// main_update_subdoc()
+// main_replace_subdoc()
