@@ -6,10 +6,10 @@ ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
 Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
 Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a>
 
-[![NPM version](https://badge.fury.io/js/orango.svg)](http://badge.fury.io/js/orango)
-[![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
-
-[![npm](https://nodei.co/npm/orango.png)](https://www.npmjs.com/package/orango)
+<a href="https://npmcharts.com/compare/orango?minimal=true"><img src="https://img.shields.io/npm/dm/orango.svg" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/v/orango.svg" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/l/orango.svg" alt="License"></a>
+  [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 
 **Orango** is the library built on top of Tang. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
 
