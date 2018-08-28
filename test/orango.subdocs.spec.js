@@ -1,7 +1,5 @@
 let expect = require('chai').expect
 const orango = require('../lib')
-const ORM = require('../lib/ORM')
-const criteriaBuilder = require('../lib/helpers/criteriaBuilder')
 
 let schema = orango.Schema(
   {
@@ -22,9 +20,6 @@ describe('orango subdocs', function() {
     it('be a NEW DOCUMENT', async function() {
       let test = new Test()
       let aql = await test.toAQL()
-      // .save({
-      //   // upsert: true
-      // })
       expect(aql).to.equal('NEW DOCUMENT')
     })
   })
@@ -34,10 +29,6 @@ describe('orango subdocs', function() {
       try {
         let test = new Test()
         await test.toAQL()
-        // .save({
-        //   update: true
-        //   // upsert: true
-        // })
       } catch (e) {
         expect(e.message).to.be.equal('Missing required _key')
       }
@@ -48,10 +39,6 @@ describe('orango subdocs', function() {
     it('be valid', async function() {
       let test = new Test({ _key: 1 })
       let aql = await test.toAQL({ update: true })
-      // .save({
-      //   update: true
-      //   // withDefaults: true
-      // })
       expect(aql).to.equal(
         'FOR doc IN tests FILTER (doc.`_key` == 1) UPDATE doc WITH {} IN tests'
       )
@@ -200,7 +187,6 @@ describe('orango subdocs', function() {
         _key: 1
       })
       test.comments = {
-        $key: 'name',
         $pull: { $or: [{ $id: 'test' }, { user: '@test' }] }
       }
       let aql = await test.toAQL({ update: true })
