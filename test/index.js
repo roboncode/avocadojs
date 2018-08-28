@@ -10,7 +10,7 @@ function checkConnection() {
     res.on('end', function() {
       // var body = Buffer.concat(chunks)
       // console.log(body.toString())
-      run()
+      setTimeout(run, 1000)
     })
   })
 
