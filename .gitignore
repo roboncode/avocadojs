@@ -36,6 +36,7 @@ build/Release
 node_modules/
 jspm_packages/
 docker/
+dist/
 tmp/
 
 # TypeScript v1 declaration files
