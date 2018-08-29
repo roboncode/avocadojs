@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Orango',
   description: 'ArangoDB Object Modeler for Node.js, Foxx and Web Browsers',
-  base: '/orango/',
+  // base: '/orango/',
   head: [
     ['link', {
       rel: 'icon',

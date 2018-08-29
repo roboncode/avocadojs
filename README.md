@@ -20,13 +20,13 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 
 ### Documentation
 
-(Coming soon) **orangojs.com** will be the future home of documentation
+Official documentation can be found at **[orango.js.org](https://orango.js.org)**.
 
 ### Project Status
-**Orango** is currently **in development** and **should not be used in a production environment** until it has been completed.
+**Orango** is currently **in development** and **should not be used in a production environment** at this time.
 
 ### Installation
-First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a docker-compose.yml file that is in the root of this project if you want to copy it to your project, then all you have to do is run
+First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a `docker-compose.yml` file that is in the `tools` directory if you want to copy it to your project, then all you have to do is run the code below to start an instance of ArangoDB.
 
 ```cmd
 $ docker-compose up -d
