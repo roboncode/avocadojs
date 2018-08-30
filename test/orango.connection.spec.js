@@ -10,4 +10,17 @@ describe('orango connection', function() {
       )
     })
   })
+
+  describe('with options', function() {
+    it('connect to default "test" db', async function() {
+      let conn = await orango.connect('test')
+      expect(conn.url + '/' + conn.name).to.equal('http://localhost:8529/test')
+    })
+  })
+
+  describe('check if connected', function() {
+    it('to be connected', async function() {
+      expect(orango.connection.connected).to.equal(true)
+    })
+  })
 })
