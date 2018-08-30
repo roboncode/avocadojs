@@ -2,7 +2,7 @@
 home: true
 heroImage: /hero.png
 actionText: Get Started →
-actionLink: /guide/
+actionLink: /guide/getting-started
 features:
 - title: Data modeler
   details: Easily add structure to your data with models and schemas that can index, validate, pre-populate and query ArangoDB.
