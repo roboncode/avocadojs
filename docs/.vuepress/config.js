@@ -45,40 +45,61 @@ module.exports = {
     updatePopup: true
   },
   themeConfig: {
-    // nav: [{
-    //     text: 'Guide',
-    //     link: '/guide/',
-    //   },
-    //   {
-    //     text: 'Config Reference',
-    //     link: '/config/'
-    //   },
-    //   {
-    //     text: 'Default Theme Config',
-    //     link: '/default-theme-config/'
-    //   },
-    //   {
-    //     text: 'Changelog',
-    //     link: 'https://github.com/vuejs/vuepress/blob/master/CHANGELOG.md'
-    //   }
-    // ],
-    // sidebar: {
-    //   '/guide/': {
-    //     title: 'Guide',
-    //     collapse: false,
-    //     children: [
-    //       '',
-    //       'Introduction',
-    //       ['/guide/Page-1', 'Page 1'],
-    //     ]
-    //   }
-    // }
+    // logo: '/logo.png',
+    logo: '/hero.png',
+    lastUpdated: true,
+    nav: [
+      {
+        text: 'Guide',
+        link: '/guide/getting-started',
+      },
+      {
+        text: 'API',
+        link: '/api/',
+      },
+      // {
+      //   text: 'Changelog',
+      //   link: 'https://github.com/roboncode/orango/blob/master/CHANGELOG.md'
+      // }
+    ],
     sidebar: [
-      ['/guide/', 'Introduction'],
-      // ['/guide/Page-1', 'Page 1'],
-      // ['/guide/Page-2', 'Page 2'],
-      // ['/guide/Page-3', 'Page 3']
-    ]
+      {
+        title: 'Guide',
+        collapsable: false,
+        children: [
+          '/guide/installation',
+          '/guide/getting-started'
+        ]
+      },
+      {
+        title: 'API',
+        collapsable: false,
+        children: [
+          '/api/orango',
+          '/api/connection',
+          '/api/schema',
+        ]
+      },
+      '/roadmap'
+    ],
+    // Assumes GitHub. Can also be a full GitLab url.
+    repo: 'roboncode/orango',
+    // Customising the header label
+    // Defaults to "GitHub"/"GitLab"/"Bitbucket" depending on `themeConfig.repo`
+    // repoLabel: 'Contribute!',
+
+    // Optional options for generating "Edit this page" link
+
+    // if your docs are in a different repo from your main project:
+    // docsRepo: 'vuejs/vuepress',
+    // if your docs are not at the root of the repo:
+    docsDir: 'docs',
+    // if your docs are in a specific branch (defaults to 'master'):
+    // docsBranch: 'master',
+    // defaults to false, set to true to enable
+    editLinks: true,
+    // custom text for edit link. Defaults to "Edit this page"
+    editLinkText: 'Help us improve this page!'
   },
   configureWebpack: {
     resolve: {
