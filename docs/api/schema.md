@@ -1,0 +1,6 @@
+---
+pageClass: api
+---
+
+# Schema
+
