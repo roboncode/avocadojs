@@ -61,6 +61,21 @@ describe('orango model', function() {
   describe('findByIdAndUpdate with bogus id', function() {
     it('should have a name `Test`', async function() {
       const SimpleTest = orango.model('SimpleTest')
+      let result
+      try {
+        result = await SimpleTest.findByIdAndUpdate(null, {
+          name: 'update'
+        }).exec()
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.be.an('error')
+    })
+  })
+
+  describe('findByIdAndUpdate with bogus id', function() {
+    it('should have a name `Test`', async function() {
+      const SimpleTest = orango.model('SimpleTest')
       let result = await SimpleTest.findByIdAndUpdate('bogus', {
         name: 'update'
       }).exec()
