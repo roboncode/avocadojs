@@ -156,4 +156,12 @@ describe('orango model', function() {
       expect(result.id).to.equal(key)
     })
   })
+
+  describe.only('findByIdAndDelete', function() {
+    it('delete an item', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let result = await SimpleTest.findByIdAndDelete('key').exec()
+      expect(true).to.be(true)
+    })
+  })
 })

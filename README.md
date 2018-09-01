@@ -273,6 +273,7 @@ module.exports = orango.model('User', schema)
 ## Roadmap
 
 ### Features
+* Support database users
 * autoIndex in schema - will create indexes as properties become part of query
 * Getter / Setters in schema
 * Events

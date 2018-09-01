@@ -106,6 +106,20 @@ describe('orango.orm', function() {
       )
     })
   })
+
+  describe('custom query', function() {
+    const orm = new ORM()
+    orm.action('find')
+    orm.collection({ name: 'users' })
+    orm.options({ printAQL: 'color' })
+    orm.query(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)
+    it('should do something', async function() {
+      let query = await orm.toAQL(true)
+      expect(query).to.equal(
+        'FOR doc IN users FILTER device.user == doc._key RETURN doc'
+      )
+    })
+  })
 })
 
 /*
