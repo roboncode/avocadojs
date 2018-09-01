@@ -1,3 +1,4 @@
+require('coveralls')
 var http = require('http')
 
 function checkConnection() {

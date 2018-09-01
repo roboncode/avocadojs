@@ -1,7 +1,7 @@
 let expect = require('chai').expect
 let orango = require('../lib')
 
-describe('orango connection', function() {
+xdescribe('orango connection', function() {
   describe('with no options', function() {
     it('connect to default _system db', async function() {
       let conn = await orango.connect()
