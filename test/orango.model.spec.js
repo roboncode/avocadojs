@@ -157,11 +157,32 @@ describe('orango model', function() {
     })
   })
 
-  describe.only('findByIdAndDelete', function() {
+  describe('findByIdAndDelete', function() {
     it('delete an item', async function() {
       const SimpleTest = orango.model('SimpleTest')
-      let result = await SimpleTest.findByIdAndDelete('key').exec()
-      expect(true).to.be(true)
+      let result = await SimpleTest.findByIdAndDelete(key).exec()
+      expect(result.deleted).to.equal(1)
+    })
+  })
+
+  describe('count', function() {
+    it('count collection', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      await new SimpleTest().save()
+      await new SimpleTest().save()
+      await new SimpleTest().save()
+      let count = await SimpleTest.count().exec()
+      expect(count).to.greaterThan(2)
+    })
+  })
+
+  describe('truncate', function() {
+    it('truncate collection', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      await new SimpleTest().save()
+      await SimpleTest.truncate()
+      let count = await SimpleTest.count().exec()
+      expect(count).to.equal(0)
     })
   })
 })

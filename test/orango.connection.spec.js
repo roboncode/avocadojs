@@ -1,7 +1,7 @@
 let expect = require('chai').expect
 let orango = require('../lib')
 
-xdescribe('orango connection', function() {
+describe('orango connection', function() {
 
   let dbName = 'test_' + orango.uid()
 
