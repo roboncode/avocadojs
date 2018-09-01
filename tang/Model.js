@@ -1,7 +1,9 @@
+
 const clone = require('./helpers/clone')
 const definePrivateProperty = require('./helpers/definePrivateProperty')
 const EventEmitter = require('events')
 const jsonStringify = require('./helpers/jsonStringify')
+const Schema = require('./Schema')
 
 let eventMethods = ['emit', 'off', 'on', 'once']
 let eventEmitter = new EventEmitter()
@@ -11,6 +13,9 @@ class Model {
    * @param { Object } input - the incoming data to validate
    */
   constructor(data, schema = {}, options = {}) {
+    if (!(schema instanceof Schema)) {
+      schema = new Schema(schema)
+    }
     // keep origin data source
     definePrivateProperty(this, 'isModel', true)
     definePrivateProperty(this, '_dataSource', data)
