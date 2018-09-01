@@ -68,7 +68,7 @@ describe('orango.orm', function() {
     it('should do something', async function() {
       let query = await orm.toAQL()
       expect(query).to.equal(
-        'FOR doc IN users UPDATE doc WITH {"stats":{"friends":doc.stats.friends+1}} IN users'
+        'LET modified = COUNT( FOR doc IN users UPDATE doc WITH {"stats":{"friends":doc.stats.friends+1}} IN users RETURN NEW ? 1 : 0) RETURN { modified }'
       )
     })
   })
@@ -85,7 +85,7 @@ describe('orango.orm', function() {
     it('should do something', async function() {
       let query = await orm.toAQL()
       expect(query).to.equal(
-        'FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users'
+        'LET modified = COUNT( FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users RETURN NEW ? 1 : 0) RETURN { modified }'
       )
     })
   })
@@ -102,7 +102,7 @@ describe('orango.orm', function() {
     it('should do something', async function() {
       let query = await orm.toAQL()
       expect(query).to.equal(
-        'FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users'
+        'LET modified = COUNT( FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users RETURN NEW ? 1 : 0) RETURN { modified }'
       )
     })
   })

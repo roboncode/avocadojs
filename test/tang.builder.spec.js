@@ -35,7 +35,7 @@ describe('tang builder', function() {
     it('should call intercept', async function() {
       let builder = Builder.getInstance()
       builder.data({ name: 'John Smith' })
-      let result = await builder.exec()
+      let result = await builder.build()
       expect(result).to.deep.equal({ name: 'John Smith' })
     })
   })
@@ -45,7 +45,7 @@ describe('tang builder', function() {
       let builder = Builder.getInstance()
       builder.data({ name: 'John Smith' })
       builder.convertTo(Model)
-      let result = await builder.exec()
+      let result = await builder.build()
       expect(result).to.instanceof(Model)
     })
   })
@@ -55,7 +55,7 @@ describe('tang builder', function() {
       let builder = Builder.getInstance()
       builder.data([{ name: 'John Smith' }])
       builder.convertTo(Model)
-      let result = await builder.exec()
+      let result = await builder.build()
       expect(result[0]).to.instanceof(Model)
     })
   })
@@ -66,7 +66,7 @@ describe('tang builder', function() {
         .data({ name: 'John Smith' })
         .convertTo(Bogus)
         .toObject()
-      let result = await builder.exec()
+      let result = await builder.build()
       expect(result).to.be.an('error')
     })
   })
@@ -78,7 +78,7 @@ describe('tang builder', function() {
         .convertTo(Model)
         .toObject()
         .inspect()
-      let result = await builder.exec()
+      let result = await builder.build()
       expect(result).to.deep.equal({ name: 'John Smith' })
     })
   })
@@ -95,7 +95,7 @@ describe('tang builder', function() {
         .convertTo(Model)
         .toObject()
         .inspect()
-      await builder.exec()
+      await builder.build()
       expect(inspectCalled).to.be.true
     })
   })
@@ -111,7 +111,7 @@ describe('tang builder', function() {
           interceptCalled = true
           return item
         })
-      await builder.exec()
+      await builder.build()
       expect(interceptCalled).to.be.true
     })
   })
@@ -123,7 +123,7 @@ describe('tang builder', function() {
       builder.data({ name: 'John Smith' })
         .convertTo(Model)
         .toObject()
-      await builder.exec(function(report) {
+      await builder.build(function(report) {
         execReport = report
       })
       expect(execReport).to.be.not.be.empty
