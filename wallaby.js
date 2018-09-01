@@ -2,7 +2,7 @@ module.exports = function () {
   return {
     files: [
       'tang/**/*.js',
-      'orango/**/*.js',
+      'lib/**/*.js',
     ],
 
     tests: [
