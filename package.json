@@ -8,7 +8,7 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs"
   },
-  "author": "Rob Taylor <roboncode@gmail.com>",
+  "author": "Rob Taylor <roboncode@gmail.com> (https://www.linkedin.com/in/roboncode/)",
   "license": "MIT",
   "dependencies": {
     "arangojs": "^6.4.0",
@@ -44,6 +44,12 @@
     "nosql",
     "orm",
     "db"
+  ],
+  "maintainers": [
+    "Rob Taylor <roboncode@gmail.com> (https://www.linkedin.com/in/roboncode/)"
+  ],
+  "contributors": [
+    "Rob Taylor <roboncode@gmail.com> (https://www.linkedin.com/in/roboncode/)"
   ],
   "bugs": {
     "url": "https://github.com/roboncode/orango/issues"
