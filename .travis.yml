@@ -11,3 +11,5 @@ before_install:
   - docker pull arangodb
   - docker run -d -e ARANGO_NO_AUTH=1 -p 8529:8529 arangodb
   - docker ps -a
+
+after_success: npm run coverage  

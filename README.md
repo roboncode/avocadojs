@@ -10,6 +10,7 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
   <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/v/orango.svg" alt="Version"></a>
   <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/l/orango.svg" alt="License"></a>
   [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
+[![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  
 
 **Orango** is the library built on top of Tang. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
 
