@@ -1,5 +1,6 @@
 let expect = require('chai').expect
 let orango = require('../lib')
+let Orango = require('../lib/Orango')
 
 describe('orango connection', function() {
 
@@ -15,8 +16,8 @@ describe('orango connection', function() {
   })
 
   describe('with options', function() {
-    it('connect to default "test" db', async function() {
-      let conn = await orango.connect('test')
+    it('connect to "test" db', async function() {
+      let conn = await Orango.get('conn-test').connect('test')
       expect(conn.url + '/' + conn.name).to.equal('http://localhost:8529/test')
     })
   })
