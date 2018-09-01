@@ -266,7 +266,7 @@ async function main_builder() {
       // noDefaults: this._options.noDefaults || false,
       unknownProps: 'strip'
     })
-    .exec()
+    .build()
 
   console.log(result)
 }

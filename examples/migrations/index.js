@@ -12,7 +12,7 @@ async function importUsers() {
     .data(items)
     .convertTo(Model)
     .toObject({ noDefaults: true })
-    .exec()
+    .build()
 
   await Model.importMany(docs, true)
 }
@@ -27,7 +27,7 @@ async function importFriends() {
     .data(items)
     .convertTo(Model)
     .toObject({ noDefaults: true })
-    .exec()
+    .build()
 
   await Model.importMany(docs, true)
 }
@@ -42,7 +42,7 @@ async function importPosts() {
     .data(items)
     .convertTo(Model)
     .toObject({ noDefaults: true })
-    .exec()
+    .build()
 
   await Model.importMany(docs, true)
 }
@@ -57,7 +57,7 @@ async function importLikes() {
     .data(items)
     .convertTo(Model)
     .toObject({ noDefaults: true })
-    .exec()
+    .build()
 
   await Model.importMany(docs, true)
 }

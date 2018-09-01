@@ -60,7 +60,7 @@ class Builder {
     }
   }
 
-  async exec(handler) {
+  async build(handler) {
     let report = []
     let startTotalTime = microtime.now()
     let startTime
