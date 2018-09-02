@@ -7,17 +7,18 @@ const props = 'statics methods computed'.split(' ')
 
 class Schema {
   constructor(json, options = {}) {
+    this.isSchema = true
+
+    if (!json || (typeof json !== 'object' && !Object.keys(json).length)) {
+      throw new Error('Schema expects object with at least one key/value pair')
+    }
+    
     for (let i = 0; i < props.length; i++) {
       let prop = props[i]
       this[prop] = json[prop] || {}
       delete json[prop]
     }
 
-    this.isSchema = true
-
-    if (!json || (typeof json !== 'object' && !Object.keys(json).length)) {
-      throw new Error('Schema expects object with at least one key/value pair')
-    }
     this._json = json
     this._options = options
     this._joi = this._parse(json)
