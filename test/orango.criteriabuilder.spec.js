@@ -99,7 +99,15 @@ describe('orango criteria builder', function() {
     })
   })
 
-  describe(`complex criteria}`, function() {
+  describe('{ foo: {bar: null}}', function() {
+    let data = { foo: {bar: null}}
+    it(jstr(data), function() {
+      let c = criteriaBuilder(data, 'test')
+      expect(c).to.equal('(test.foo.`bar` == null)')
+    })
+  })
+
+  describe(`complex criteria`, function() {
     let data = {
       _key: '12345',
       role: 'admin',
