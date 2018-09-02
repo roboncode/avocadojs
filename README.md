@@ -279,6 +279,7 @@ module.exports = orango.model('User', schema)
 * Events
 * Pre / Post Interceptors
 * Support upsert option
+* Integrate [Arango Chair](https://www.arangodb.com/2017/03/arangochair-tool-listening-changes-arangodb/)
 
 ### Fixes
 * Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
