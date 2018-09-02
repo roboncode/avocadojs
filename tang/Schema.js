@@ -3,8 +3,16 @@ const Joi = require('joi')
 const JSONstringify = require('./helpers/jsonStringify')
 require('colors')
 
+const props = 'statics methods computed'.split(' ')
+
 class Schema {
   constructor(json, options = {}) {
+    for (let i = 0; i < props.length; i++) {
+      let prop = props[i]
+      this[prop] = json[prop] || {}
+      delete json[prop]
+    }
+
     this.isSchema = true
 
     if (!json || (typeof json !== 'object' && !Object.keys(json).length)) {
@@ -25,10 +33,6 @@ class Schema {
       }
     )
     // this._schemaKeys = getObjectKeys(json)
-
-    this.statics = {}
-    this.methods = {}
-    this.computed = {}
   }
 
   get options() {

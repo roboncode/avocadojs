@@ -1,5 +1,6 @@
 require('coveralls')
-var http = require('http')
+let http = require('http')
+let Orango = require('../lib/Orango')
 
 function checkConnection() {
   var req = http.request('http://localhost:8529', function(res) {
@@ -16,5 +17,10 @@ function checkConnection() {
 
   req.end()
 }
+
+after(async function() {
+  await Orango.get('cleanup').connect()
+  await Orango.get('cleanup').dropDatabase('test')
+})
 
 checkConnection()

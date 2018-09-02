@@ -28,7 +28,7 @@ describe('orango model', function() {
     })
   })
 
-  describe('createa a new document adding data into constructor', function() {
+  describe('createa a new model adding data into constructor', function() {
     it('should have a name `Test`', function() {
       const SimpleTest = orango.model('SimpleTest')
       let simpleTest = new SimpleTest({
@@ -38,12 +38,101 @@ describe('orango model', function() {
     })
   })
 
-  describe('creates a new document adding data as prop', function() {
+  describe('creates a new model adding data as prop', function() {
     it('should have a name `Test`', function() {
       const SimpleTest = orango.model('SimpleTest')
       let simpleTest = new SimpleTest()
       simpleTest.name = 'Test'
       expect(simpleTest.name).to.equal('Test')
+    })
+  })
+
+  describe('creates a new model with a Schema', function() {
+    it('should have a name `Test`', function() {
+      const schema = orango.Schema({
+        name: String
+      })
+      schema.statics = {
+        fullName() {}
+      }
+      const SimpleTest = orango.model('SimpleTest', schema)
+      let simpleTest = new SimpleTest()
+      simpleTest.name = 'Test'
+      expect(simpleTest.name).to.equal('Test')
+    })
+  })
+
+  describe('creates a new model with a Schema and static functino', function() {
+    it('should have a static function', function() {
+      const schema = orango.Schema({
+        name: String
+      })
+      schema.statics = {
+        fullName() {}
+      }
+      const SimpleTest = orango.model('SimpleTest', schema)
+      SimpleTest.fullName()
+      expect(SimpleTest.fullName).to.a('function')
+    })
+  })
+
+  describe('creates a new model with indexes', function() {
+    it('should have indexes', async function() {
+      const schema = orango.Schema(
+        {
+          name: String
+        },
+        {
+          indexes: [
+            {
+              type: 'hash',
+              fields: ['name']
+            }
+          ]
+        }
+      )
+      let IndexModel = orango.model('IndexTest', schema)
+
+      const indexes = await IndexModel.getCollection().indexes()
+      expect(indexes.length).to.equal(2)
+      expect(indexes[1].type).to.equal('hash')
+      expect(indexes[1].fields).to.deep.equal(['name'])
+    })
+  })
+
+  describe('creates an edge collection', function() {
+    it('create an edge collection', function(done) {
+      this.timeout(5000)
+
+      const schema = orango.Schema(
+        {
+          name: String
+        },
+        {
+          edge: true
+        }
+      )
+      orango.model('EdgeTest', schema)
+      // expect(true).to.be.true
+      // done()
+      setTimeout(async function() {
+        const cols = await orango.connection.db.listCollections()
+        let str = JSON.stringify(cols)
+        expect(str).to.contain('edge_tests')
+        done()
+      })
+    })
+  })
+
+  describe('create a new model with indexes', function() {
+    it('should have a name `Test`', function() {
+      const SimpleTest = orango.model('SimpleTest3', {
+        name: String,
+        statics: {
+          fullName() {}
+        }
+      })
+      expect(SimpleTest.fullName).to.a('function')
     })
   })
 
