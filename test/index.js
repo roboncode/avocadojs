@@ -19,8 +19,12 @@ function checkConnection() {
 }
 
 after(async function() {
-  await Orango.get('cleanup').connect()
-  await Orango.get('cleanup').dropDatabase('test')
+  try {
+    await Orango.get('cleanup').connect()
+    await Orango.get('cleanup').dropDatabase('test')
+  } catch(e) {
+    console.log('Ooops!', e.message)
+  }
 })
 
 checkConnection()

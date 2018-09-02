@@ -77,7 +77,10 @@ describe('orango model', function() {
   })
 
   describe('creates a new model with indexes', function() {
-    it('should have indexes', async function() {
+    it('should have indexes', function(done) {
+      let ms = 1000
+      this.timeout(ms)
+
       const schema = orango.Schema(
         {
           name: String
@@ -91,18 +94,23 @@ describe('orango model', function() {
           ]
         }
       )
+
       let IndexModel = orango.model('IndexTest', schema)
 
-      const indexes = await IndexModel.getCollection().indexes()
-      expect(indexes.length).to.equal(2)
-      expect(indexes[1].type).to.equal('hash')
-      expect(indexes[1].fields).to.deep.equal(['name'])
+      setTimeout(async function() {
+        const indexes = await IndexModel.getCollection().indexes()
+        expect(indexes.length).to.equal(2)
+        expect(indexes[1].type).to.equal('hash')
+        expect(indexes[1].fields).to.deep.equal(['name'])
+        done()
+      }, ms - 500)
     })
   })
 
   describe('creates an edge collection', function() {
     it('create an edge collection', function(done) {
-      this.timeout(5000)
+      let ms = 1000
+      this.timeout(ms)
 
       const schema = orango.Schema(
         {
@@ -113,14 +121,12 @@ describe('orango model', function() {
         }
       )
       orango.model('EdgeTest', schema)
-      // expect(true).to.be.true
-      // done()
       setTimeout(async function() {
         const cols = await orango.connection.db.listCollections()
         let str = JSON.stringify(cols)
         expect(str).to.contain('edge_tests')
         done()
-      })
+      }, ms - 500)
     })
   })
 

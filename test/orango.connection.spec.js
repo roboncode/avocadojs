@@ -1,9 +1,9 @@
 let expect = require('chai').expect
 let orango = require('../lib')
 let Orango = require('../lib/Orango')
+require('colors')
 
 describe('orango connection', function() {
-
   let dbName = 'test_' + orango.uid()
 
   describe('with no options', function() {
@@ -44,7 +44,12 @@ describe('orango connection', function() {
 
   describe('disconnect from database', function() {
     it('be disonnected', async function() {
-      await orango.disconnect()
+      try {
+        debugger
+        await orango.disconnect()
+      } catch (e) {
+        console.log('ERROR'.bgRed, e.message)
+      }
       expect(orango.connection.connected).equal(false)
     })
   })
