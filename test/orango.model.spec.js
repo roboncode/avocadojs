@@ -78,7 +78,7 @@ describe('orango model', function() {
 
   describe('creates a new model with indexes', function() {
     it('should have indexes', function(done) {
-      let ms = 1000
+      let ms = 5000
       this.timeout(ms)
 
       const schema = orango.Schema(
@@ -109,13 +109,13 @@ describe('orango model', function() {
         expect(indexes[2].type).to.equal('skiplist')
         expect(indexes[2].fields).to.deep.equal(['name'])
         done()
-      }, ms - 500)
+      }, ms - 1000)
     })
   })
 
   describe('creates an edge collection', function() {
     it('create an edge collection', function(done) {
-      let ms = 1000
+      let ms = 5000
       this.timeout(ms)
 
       const schema = orango.Schema(
@@ -132,7 +132,7 @@ describe('orango model', function() {
         let str = JSON.stringify(cols)
         expect(str).to.contain('edge_tests')
         done()
-      }, ms - 500)
+      }, ms - 1000)
     })
   })
 
