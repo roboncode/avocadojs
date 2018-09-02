@@ -5,6 +5,7 @@
   "main": "./index.js",
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha --delay",
+    "test-only": "mocha --delay",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs"

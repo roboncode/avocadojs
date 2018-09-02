@@ -16,18 +16,6 @@ describe('orango model', function() {
     })
   })
 
-  describe('test', function() {
-    it('test', function() {
-      expect(true).to.equal(true)
-    })
-  })
-
-  describe('test', function() {
-    it('test', function() {
-      expect(true).to.equal(true)
-    })
-  })
-
   describe('createa a new model adding data into constructor', function() {
     it('should have a name `Test`', function() {
       const SimpleTest = orango.model('SimpleTest')
@@ -153,9 +141,57 @@ describe('orango model', function() {
       const SimpleTest = orango.model('SimpleTest')
       let simpleTest = new SimpleTest()
       simpleTest.name = 'new'
-      let result = await simpleTest.save()
-      key = result._key
-      expect(result._id).to.not.be.undefined
+      await simpleTest.save()
+      expect(simpleTest._key).to.be.a('string')
+    })
+  })
+
+  describe('save as new', function() {
+    it('new key should exist', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let test = new SimpleTest()
+      let result = await test.save({ saveAsNew: true })
+      expect(result._key).to.be.a('string')
+    })
+  })
+
+  describe('save return AQL', function() {
+    it('return AQL ', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let test = new SimpleTest()
+      let result = await test.toAQL()
+      expect(result).to.be.equal('NEW DOCUMENT')
+    })
+  })
+
+  describe('save force update but missing _key', function() {
+    it('throw an error ', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let test = new SimpleTest()
+      let result
+      try {
+        result = await test.save({ update: true })
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.be.an('error')
+    })
+  })
+
+  describe('update using save()', function() {
+    it('should save document', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let test = new SimpleTest()
+      await test.save()
+      test.name = 'Test'
+      console.log('#before', test._key)
+      let aql = await test.toAQL()
+      console.log('#after', test._key)
+      expect(aql).to.equal(
+        'LET modified = COUNT( FOR doc IN simple_tests FILTER (doc.`_key` == "' +
+          test._key +
+          '") UPDATE doc WITH {"name":"Test"} IN simple_tests RETURN 1) RETURN { modified }'
+      )
     })
   })
 
@@ -187,7 +223,9 @@ describe('orango model', function() {
   describe('findByIdAndUpdate return success', function() {
     it('should have a name `Test`', async function() {
       const SimpleTest = orango.model('SimpleTest')
-      let result = await SimpleTest.findByIdAndUpdate(key, {
+      let test = new SimpleTest()
+      await test.save()
+      let result = await SimpleTest.findByIdAndUpdate(test._key, {
         name: 'update'
       }).exec()
       expect(result.modified).to.equal(1)
@@ -197,8 +235,10 @@ describe('orango model', function() {
   describe('findByIdAndUpdate return new', function() {
     it('should have a name `Test`', async function() {
       const SimpleTest = orango.model('SimpleTest')
+      let test = new SimpleTest()
+      await test.save()
       let result = await SimpleTest.findByIdAndUpdate(
-        key,
+        test._key,
         {
           name: 'update'
         },
@@ -211,22 +251,27 @@ describe('orango model', function() {
   describe('findByIdAndUpdate return old', function() {
     it('should have a name `Test`', async function() {
       const SimpleTest = orango.model('SimpleTest')
+      let test = new SimpleTest()
+      test.name = 'new'
+      await test.save()
       let result = await SimpleTest.findByIdAndUpdate(
-        key,
+        test._key,
         {
           name: 'changed'
         },
         { returnOld: true }
       ).exec()
-      expect(result.name).to.equal('update')
+      expect(result.name).to.equal('new')
     })
   })
 
   describe('findByIdAndUpdate return old and new', function() {
     it('should have a name `Test`', async function() {
       const SimpleTest = orango.model('SimpleTest')
+      let test = new SimpleTest()
+      await test.save()
       let result = await SimpleTest.findByIdAndUpdate(
-        key,
+        test._key,
         {
           name: 'changed'
         },
@@ -253,16 +298,45 @@ describe('orango model', function() {
   describe('findById', function() {
     it('return doc', async function() {
       const SimpleTest = orango.model('SimpleTest')
-      let result = await SimpleTest.findById(key).exec()
-      expect(result.id).to.equal(key)
+      let test = new SimpleTest()
+      await test.save()
+      let result = await SimpleTest.findById(test._key).exec()
+      expect(result.id).to.equal(test._key)
+    })
+  })
+
+  describe('findByIdAndDelete with no id', function() {
+    it('throw an error', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let result
+      try {
+        result = await SimpleTest.findByIdAndDelete().exec()
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.be.an('error')
     })
   })
 
   describe('findByIdAndDelete', function() {
     it('delete an item', async function() {
       const SimpleTest = orango.model('SimpleTest')
-      let result = await SimpleTest.findByIdAndDelete(key).exec()
+      let test = new SimpleTest()
+      await test.save()
+      let result = await SimpleTest.findByIdAndDelete(test._key).exec()
       expect(result.deleted).to.equal(1)
+    })
+  })
+
+  describe('remove', function() {
+    it('removes doc', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let test = new SimpleTest()
+      await test.save()
+      expect(test._key).to.be.a('string')
+      await test.remove()
+      console.log('#result', test._key)
+      expect(test._key).to.be.undefined
     })
   })
 

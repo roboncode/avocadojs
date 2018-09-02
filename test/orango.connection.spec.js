@@ -43,9 +43,8 @@ describe('orango connection', function() {
   })
 
   describe('disconnect from database', function() {
-    it('be disonnected', async function() {
+    it('be disconnect', async function() {
       try {
-        debugger
         await orango.disconnect()
       } catch (e) {
         console.log('ERROR'.bgRed, e.message)
