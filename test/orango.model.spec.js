@@ -90,6 +90,10 @@ describe('orango model', function() {
             {
               type: 'hash',
               fields: ['name']
+            },
+            {
+              type: 'skipList',
+              fields: ['name']
             }
           ]
         }
@@ -99,9 +103,11 @@ describe('orango model', function() {
 
       setTimeout(async function() {
         const indexes = await IndexModel.getCollection().indexes()
-        expect(indexes.length).to.equal(2)
+        expect(indexes.length).to.equal(3)
         expect(indexes[1].type).to.equal('hash')
         expect(indexes[1].fields).to.deep.equal(['name'])
+        expect(indexes[2].type).to.equal('skiplist')
+        expect(indexes[2].fields).to.deep.equal(['name'])
         done()
       }, ms - 500)
     })
