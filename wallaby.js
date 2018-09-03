@@ -1,16 +1,11 @@
-module.exports = function () {
+module.exports = function() {
   return {
-    files: [
-      'tang/**/*.js',
-      'lib/**/*.js',
-    ],
+    files: ['lib/**/*.js'],
 
-    tests: [
-      'test/**/*spec.js'
-    ],
+    tests: ['test/**/*spec.js'],
 
     env: {
       type: 'node'
     }
-  };
-};
+  }
+}

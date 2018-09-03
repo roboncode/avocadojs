@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const rootPath = path.join(__dirname, '..')
 const orango = require(path.join(rootPath, 'lib'))
-const Builder = require('../tang/Builder')
+const { Builder } = require('tangjs/lib')
 
 const { importAllDocs } = require(path.join(__dirname, 'migrations'))
 require('colors')
@@ -353,8 +353,8 @@ async function main_subdoc() {
   user.devices.push({ name: 'Hey again!!!', junk: true })
   user.devices.pull(['5b832bf077959a8ced9f9787'])
 
-//  user.stuff.push({ name: 'Stuff again!!!', junk: true })
-//  user.stuff.pull(['5b832bf077959a8ced9f9787'])
+  //  user.stuff.push({ name: 'Stuff again!!!', junk: true })
+  //  user.stuff.pull(['5b832bf077959a8ced9f9787'])
 
   // user.devices.splice(0, 1)
   user.save()
@@ -365,7 +365,7 @@ async function main_update_subdoc() {
 
   await orango.connect('demo')
 
-  const User = orango.model('User') 
+  const User = orango.model('User')
 
   let aql = User.findByIdAndUpdate('630106', {
     devices: {
