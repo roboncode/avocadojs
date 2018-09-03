@@ -26,7 +26,8 @@ describe('orango model', function() {
     })
     orango.model('Post', PostSchema)
 
-    const LikeSchema = orango.Schema({}, { edge: true })
+    // const LikeSchema = orango.Schema({}, { edge: true })
+    const LikeSchema = orango.EdgeSchema('Post', 'User')
     orango.model('Like', LikeSchema)
 
     // connect to "test" database
@@ -383,7 +384,7 @@ describe('orango model', function() {
     })
   })
 
-  describe('findByEdge', function() {
+  describe.only('findByEdge', function() {
     it('should use an edge collection to perform joins', async function() {
       const User = orango.model('User')
       const Post = orango.model('Post')
@@ -416,7 +417,7 @@ describe('orango model', function() {
         },
         {
           noDefaults: true,
-          printAQL: true
+          // printAQL: true
         }
       ).exec()
 
@@ -430,12 +431,12 @@ describe('orango model', function() {
       ])
     })
 
-    describe('findByEdge', function() {
+    describe.only('findByEdge', function() {
       it('should use an edge collection to perform joins', async function() {
         const User = orango.model('User')
         const Post = orango.model('Post')
         const Like = orango.model('Like')
-  
+        console.log('#col', Like.getCollection().name)
         let john = new User({ name: 'John' })
         await john.save()
   
@@ -451,10 +452,13 @@ describe('orango model', function() {
         // })
         let like = new Like({
           _from: 'posts/' + post._key,
-          _to: 'users/' + jane._key
+          _to: 'users/' + jane._key 
         })
         await like.save()
   
+        // TODO: Would like to have this
+        // let likedPosts = Post.findByEdge(Like.getCollection().name, jane._key)
+        // let likedPosts = Post.findByEdge(Like, jane._key)
         let likedPosts = await Post.findByEdge(
           {
             id: 'users/' + jane._key,
@@ -463,7 +467,7 @@ describe('orango model', function() {
           },
           {
             noDefaults: true,
-            printAQL: true
+            // printAQL: true
           }
         ).exec()
   
