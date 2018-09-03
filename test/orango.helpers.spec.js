@@ -8,6 +8,7 @@ let parseArrayPaths = require('../lib/helpers/parseArrayPaths')
 let setDefaultsToNull = require('../lib/helpers/setDefaultsToNull')
 let sortToAQL = require('../lib/helpers/sortToAQL')
 let returnToAQL = require('../lib/helpers/returnToAQL')
+let objectToArray = require('../lib/helpers/objectToArray')
 
 describe('orango helpers', function() {
   let data = {
@@ -93,6 +94,42 @@ describe('orango helpers', function() {
     })
   })
 
+  describe('objectToArray with object', function() {
+    it('should convert object to array', function() {
+      let items = objectToArray({
+        john: { name: 'John' },
+        jane: { name: 'Jane' }
+      })
+      expect(items).to.deep.equal([
+        {
+          _key: 'john',
+          name: 'John'
+        },
+        {
+          _key: 'jane',
+          name: 'Jane'
+        }
+      ])
+    })
+  })
+
+  describe('objectToArray with array', function() {
+    it('should use existing array', function() {
+      let src = [
+        {
+          _key: 'john',
+          name: 'John'
+        },
+        {
+          _key: 'jane',
+          name: 'Jane'
+        }
+      ]
+      let items = objectToArray(src)
+      expect(items).to.equal(src)
+    })
+  })
+
   describe('parseArrayPaths', function() {
     it('should create an array of paths', function() {
       let data = { foo: [], bar: { baz: [] } }
@@ -156,7 +193,6 @@ describe('orango helpers', function() {
   })
 
   describe('sortToAQL with string', function() {
-    let sortStr = 'lastName firstName -id'
     let aql = sortToAQL(
       {
         lastName: 1,
