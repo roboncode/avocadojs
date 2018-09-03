@@ -2,21 +2,40 @@ let expect = require('chai').expect
 let orango = require('../lib')
 
 describe('orango model', function() {
-  let key
-
   before(function(done) {
     // define models
-    orango.model('SimpleTest', {
+    const schema = orango.Schema(
+      {
+        name: String
+      },
+      {
+        strict: true
+      }
+    )
+    orango.model('SimpleTest', schema)
+
+    // These is for Edge Test
+    const UserSchema = orango.Schema({
       name: String
     })
+    orango.model('User', UserSchema)
 
-    // // connect to "test" database
+    const PostSchema = orango.Schema({
+      author: String,
+      text: String
+    })
+    orango.model('Post', PostSchema)
+
+    const LikeSchema = orango.Schema({}, { edge: true })
+    orango.model('Like', LikeSchema)
+
+    // connect to "test" database
     orango.connect('test').then(() => {
       setTimeout(done, 500)
     })
   })
 
-  describe('createa a new model adding data into constructor', function() {
+  describe('creates a new model adding data into constructor', function() {
     it('should have a name `Test`', function() {
       const SimpleTest = orango.model('SimpleTest')
       let simpleTest = new SimpleTest({
@@ -178,6 +197,25 @@ describe('orango model', function() {
     })
   })
 
+  describe('import', function() {
+    it('should import data', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let result = await SimpleTest.importMany(
+        [
+          {
+            name: 'Test1'
+          },
+          {
+            name: 'Test2',
+            bogus: true
+          }
+        ],
+        true
+      )
+      expect(result.created).to.equal(2)
+    })
+  })
+
   describe('update using save()', function() {
     it('should save document', async function() {
       const SimpleTest = orango.model('SimpleTest')
@@ -282,6 +320,23 @@ describe('orango model', function() {
     })
   })
 
+  describe('findByQuery', function() {
+    it('find an item', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let simpleTest = new SimpleTest({ name: 'Test' })
+      await simpleTest.save()
+      let result
+      try {
+        result = await SimpleTest.findByQuery(
+          `FOR @@doc IN @@collection FILTER @@doc._key == '${simpleTest._key}'`
+        ).exec()
+      } catch (e) {
+        result = e
+      }
+      expect(result[0].id).to.deep.equal(simpleTest._key)
+    })
+  })
+
   describe('findById with no key', function() {
     it('return error', async function() {
       const SimpleTest = orango.model('SimpleTest')
@@ -325,6 +380,103 @@ describe('orango model', function() {
       await test.save()
       let result = await SimpleTest.findByIdAndDelete(test._key).exec()
       expect(result.deleted).to.equal(1)
+    })
+  })
+
+  describe('findByEdge', function() {
+    it('should use an edge collection to perform joins', async function() {
+      const User = orango.model('User')
+      const Post = orango.model('Post')
+      const Like = orango.model('Like')
+
+      let john = new User({ name: 'John' })
+      await john.save()
+
+      let jane = new User({ name: 'Jane' })
+      await jane.save()
+
+      let post = new Post({ author: john._key, text: 'Hello, world!' })
+      await post.save()
+      // TODO: Would like to have this
+      // let like = new Like({
+      //   post: post._key,
+      //   user: jane._key
+      // })
+      let like = new Like({
+        _from: 'posts/' + post._key,
+        _to: 'users/' + jane._key
+      })
+      await like.save()
+
+      let users = await User.findByEdge(
+        {
+          id: 'posts/' + post._key,
+          collection: 'likes',
+          inbound: false
+        },
+        {
+          noDefaults: true,
+          printAQL: true
+        }
+      ).exec()
+
+      expect(users).to.deep.equal([
+        {
+          _key: jane._key,
+          _id: jane._id,
+          _rev: jane._rev,
+          name: jane.name
+        }
+      ])
+    })
+
+    describe('findByEdge', function() {
+      it('should use an edge collection to perform joins', async function() {
+        const User = orango.model('User')
+        const Post = orango.model('Post')
+        const Like = orango.model('Like')
+  
+        let john = new User({ name: 'John' })
+        await john.save()
+  
+        let jane = new User({ name: 'Jane' })
+        await jane.save()
+  
+        let post = new Post({ author: john._key, text: 'Hello, world!' })
+        await post.save()
+        // TODO: Would like to have this
+        // let like = new Like({
+        //   post: post._key,
+        //   user: jane._key
+        // })
+        let like = new Like({
+          _from: 'posts/' + post._key,
+          _to: 'users/' + jane._key
+        })
+        await like.save()
+  
+        let likedPosts = await Post.findByEdge(
+          {
+            id: 'users/' + jane._key,
+            collection: 'likes',
+            inbound: true
+          },
+          {
+            noDefaults: true,
+            printAQL: true
+          }
+        ).exec()
+  
+        expect(likedPosts).to.deep.equal([
+          {
+            _key: post._key,
+            _id: post._id,
+            _rev: post._rev,
+            author: john._key,
+            text: post.text
+          }
+        ])
+      })
     })
   })
 
