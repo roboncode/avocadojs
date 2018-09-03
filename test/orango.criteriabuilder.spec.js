@@ -1,6 +1,6 @@
 let expect = require('chai').expect
 let criteriaBuilder = require('../lib/helpers/criteriaBuilder')
-let jstr = require('../tang/helpers/jsonStringify')
+let jstr = require('tangjs/lib/helpers/jsonStringify')
 
 describe('orango criteria builder', function() {
   describe(`{ foo: 'bar' }`, function() {

@@ -1,6 +1,6 @@
 const orango = require('../../lib')
 const objectToArray = require('../../lib/helpers/objectToArray')
-const Builder = require('../../tang/Builder')
+const Builder = require('tangjs/lib/Builder')
 
 async function importUsers() {
   const Model = orango.model('User')

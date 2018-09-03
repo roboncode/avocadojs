@@ -28,7 +28,7 @@ describe('orango connection', function() {
     })
   })
 
-  describe('creaate to new database', function() {
+  describe('create to new database', function() {
     it('create a new databae', async function() {
       let conn = await orango.connect(dbName)
       let dbs = await conn.db.listDatabases()
