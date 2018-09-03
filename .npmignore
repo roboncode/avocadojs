@@ -6,6 +6,7 @@ docs/
 examples/
 node_modules/
 test/
+tmp/
 tools/
 wallaby.js
 .travis.yml
