@@ -6,24 +6,24 @@ const Model = require('./Model')
  * @param {*} options
  */
 function factory(name, schema = {}, options = {}) {
-  class AvocadoModel extends Model {
+  class TangModel extends Model {
     constructor(data) {
       super(data, schema, options)
     }
   }
 
-  AvocadoModel.options = options
-  AvocadoModel.schema = schema
+  TangModel.options = options
+  TangModel.schema = schema
 
-  Object.defineProperty(AvocadoModel, 'name', { value: name })
+  Object.defineProperty(TangModel, 'name', { value: name })
 
   for (let name in schema.statics) {
-    AvocadoModel[name] = function() {
-      return schema.statics[name].apply(AvocadoModel, arguments)
+    TangModel[name] = function() {
+      return schema.statics[name].apply(TangModel, arguments)
     }
   }
 
-  return AvocadoModel
+  return TangModel
 }
 
 module.exports = factory
