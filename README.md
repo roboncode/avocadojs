@@ -288,7 +288,6 @@ module.exports = orango.model('User', schema)
 * criteriaBuilder array support
 
 ### Other
-* unit tests (in progress) - 100+ and counting
 * cleanup
 * more documentation
 * web browser compatible
