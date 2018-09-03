@@ -7,7 +7,7 @@ function checkConnection() {
     res.on('data', function(chunk) {})
 
     res.on('end', function() {
-      setTimeout(run, 1000)
+      setTimeout(run, 5000)
     })
   })
 
