@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const orango = require('../lib')
+const orango = require('../../lib')
 
 function readFiles(dir) {
   let files = fs.readdirSync(dir)

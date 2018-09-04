@@ -1,4 +1,4 @@
-const Orango = require('../lib/Orango')
+const Orango = require('../../lib/Orango')
 require('colors')
 
 const o1 = Orango.get('o1')

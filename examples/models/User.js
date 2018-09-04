@@ -7,10 +7,10 @@ const orango = require('../../lib')
 let schema = orango.Schema(
   {
     role: { type: String, valid: ['admin', 'user'], default: 'user' },
-    screenName: String, // @foobar
+    screenName: String,
     firstName: { type: String, regex: /^[A-Za-z\s']+$/, min: 3 },
     lastName: String,
-    email: { type: String, email: {} },
+    email: { type: String, email: {} }, // causes email
     knownDevices: [{ $id: String, name: String }],
     tags: [String],
     stats: {

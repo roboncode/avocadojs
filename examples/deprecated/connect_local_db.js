@@ -1,4 +1,4 @@
-const orango = require('../lib')
+const orango = require('../../lib')
 require('colors')
 
 orango.events.on('connected', () => {
