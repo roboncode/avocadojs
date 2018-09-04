@@ -21,10 +21,10 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 
 ### Documentation
 
-Official documentation can be found at **[orango.js.org](https://orango.js.org)**.
+Official documentation can be found at **[orango.js.org](https://orango.js.org)**. (*Work in progress*)
 
 ### Project Status
-**Orango** is currently **in development** and **should not be used in a production environment** at this time.
+**[Updated 04 Sept 2018]**  I have tests in place currently at [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  . I am testing out the API workflow on a test project and then I will working on the documentation. In the meantime, if you are eager to start using Orango, I would recommend looking at the test cases for examples. There are other items on the Roadmap but I am working on a stable 1.0 release
 
 ### Installation
 First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a `docker-compose.yml` file that is in the `tools` directory if you want to copy it to your project, then all you have to do is run the code below to start an instance of ArangoDB.
@@ -243,7 +243,7 @@ module.exports = orango.model('User', schema)
 * Simple sorting using using strings
 * Simple return value filtering
 * Ability to print AQL during execution (with support to prettify and colorize)
-* Performance measurments on data conversion
+* Performance measurements on data conversion
 * and more...
 
 
@@ -280,21 +280,18 @@ module.exports = orango.model('User', schema)
 * Pre / Post Interceptors
 * Support upsert option
 * Integrate [Arango Chair](https://www.arangodb.com/2017/03/arangochair-tool-listening-changes-arangodb/)
-
+* web browser compatible
+* Better error handler / dispatching
+*
 ### Fixes
 * Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
 * Fix up for loops to be async
-* Break out Tang into separate repo
-* criteriaBuilder array support
+* criteriaBuilder array support (maybe)
 * Break out all errors into constants
 
 ### Other
-* cleanup
-* more documentation
-* web browser compatible
-* create document website for orangojs.com
-* add lint
-* Better error handler / dispatching
+* Cleanup
+* Add lint support
 
 ## MIT License
 
