@@ -28,7 +28,7 @@ describe('Orango', function() {
     it('should throw an error', async function() {
       let result
       try {
-        let testOrango = Orango.get('test-notconnected')
+        let testOrango = Orango.get('test-not-connected')
         await testOrango.createCollection('test')
       } catch (e) {
         result = e
@@ -39,10 +39,9 @@ describe('Orango', function() {
 
   describe('create edge collection', function() {
     it('create an edge collection', async function() {
-      let testOrango = Orango.get('test-notconnected')
-      await testOrango.connect()
-      let col = await testOrango.createEdgeCollection('edge_col_' + Date.now())
-      expect(col.name).to.be.equal('edge_col')
+      let name = 'edge_col_' + Date.now()
+      let col = await orango.createEdgeCollection(name)
+      expect(col.name).to.be.equal(name)
     })
   })
 
@@ -50,9 +49,7 @@ describe('Orango', function() {
     it('should throw an error', async function() {
       let result
       try {
-        let testOrango = Orango.get('test-truncated')
-        await testOrango.connect()
-        await testOrango.ensureIndexes('test-bogus')
+        await orango.ensureIndexes('bogus')
       } catch (e) {
         result = e
       }

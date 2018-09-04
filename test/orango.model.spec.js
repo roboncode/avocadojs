@@ -3,7 +3,7 @@ let orango = require('../lib')
 let Orango = require('../lib/Orango')
 
 describe('orango model', function() {
-  before(function(done) {
+  before(function() {
     // define models
     const schema = orango.Schema(
       {
@@ -30,11 +30,6 @@ describe('orango model', function() {
     // const LikeSchema = orango.Schema({}, { edge: true })
     const LikeSchema = orango.EdgeSchema('Post', 'User')
     orango.model('Like', LikeSchema)
-
-    // connect to "test" database
-    orango.connect('test').then(() => {
-      setTimeout(done, 500)
-    })
   })
 
   describe('creates a new model with bogus name', function() {
@@ -98,9 +93,9 @@ describe('orango model', function() {
   })
 
   describe('creates a new model with indexes', function() {
-    it('should have indexes', function(done) {
-      let ms = 5000
-      this.timeout(ms)
+    it('should have indexes', async function() {
+      // let ms = 5000
+      // this.timeout(ms)
 
       const schema = orango.Schema(
         {
@@ -122,15 +117,15 @@ describe('orango model', function() {
 
       let IndexModel = orango.model('IndexTest', schema)
 
-      setTimeout(async function() {
+      // setTimeout(async function() {
         const indexes = await IndexModel.getCollection().indexes()
         expect(indexes.length).to.equal(3)
         expect(indexes[1].type).to.equal('hash')
         expect(indexes[1].fields).to.deep.equal(['name'])
         expect(indexes[2].type).to.equal('skiplist')
         expect(indexes[2].fields).to.deep.equal(['name'])
-        done()
-      }, ms - 1000)
+        // done()
+      // }, ms - 1000)
     })
   })
 

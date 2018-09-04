@@ -11,8 +11,7 @@ describe('edge connections', function() {
   let Post
 
   before(async function() {
-    await orango.connect('test')
-
+    // :: SIMPLE TEST :: //
     const schema = orango.Schema(
       {
         name: String
@@ -21,42 +20,38 @@ describe('edge connections', function() {
         strict: true
       }
     )
-    orango.model('SimpleTest', schema)
+    await orango.model('SimpleTest', schema)
 
     // :: USER :: //
     const UserSchema = orango.Schema({
       name: String
     })
-    User = orango.model('User', UserSchema)
+    User = await orango.model('User', UserSchema)
 
     // :: POST :: //
     const PostSchema = orango.Schema({
       author: String,
       text: String
     })
-    Post = orango.model('Post', PostSchema)
+    Post = await orango.model('Post', PostSchema)
 
     // :: LIKE :: //
     const LikeSchema = orango.EdgeSchema('users', 'posts')
-    Like = orango.model('Like', LikeSchema)
+    Like = await orango.model('Like', LikeSchema)
   })
 
-  function createDocs() {
-    return Promise(async resolve => {
-      john = new User({ name: 'John' })
-      await john.save()
+  async function createDocs() {
+    john = new User({ name: 'John' })
+    await john.save()
 
-      jane = new User({ name: 'Jane' })
-      await jane.save()
+    jane = new User({ name: 'Jane' })
+    await jane.save()
 
-      post = new Post({ author: john._key, text: 'Hello, world!' })
-      await post.save()
+    post = new Post({ author: john._key, text: 'Hello, world!' })
+    await post.save()
 
-      like = new Like(jane._key, post._key)
-      await like.save()
-
-      setTimeout(resolve, 1000)
-    })
+    like = new Like(jane._key, post._key)
+    await like.save()
   }
 
   describe('remove from user', function() {
