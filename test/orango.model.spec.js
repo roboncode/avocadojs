@@ -1,5 +1,6 @@
 let expect = require('chai').expect
 let orango = require('../lib')
+let Orango = require('../lib/Orango')
 
 describe('orango model', function() {
   before(function(done) {
@@ -33,6 +34,18 @@ describe('orango model', function() {
     // connect to "test" database
     orango.connect('test').then(() => {
       setTimeout(done, 500)
+    })
+  })
+
+  describe('creates a new model with bogus name', function() {
+    it('should have a name `Test`', function() {
+      let result
+      try {
+        const SimpleTest = orango.model('SimpleTest', {}, {})
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.be.an('error')
     })
   })
 
@@ -144,6 +157,8 @@ describe('orango model', function() {
     })
   })
 
+
+
   describe('create a new model with indexes', function() {
     it('should have a name `Test`', function() {
       const SimpleTest = orango.model('SimpleTest3', {
@@ -230,6 +245,14 @@ describe('orango model', function() {
           test._key +
           '") UPDATE doc WITH {"name":"Test"} IN simple_tests RETURN 1) RETURN { modified }'
       )
+    })
+  })
+
+  describe('printAQL on find', function() {
+    it('print AQL query', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let results = await SimpleTest.find({}, { printAQL: 'color' })
+      expect(results).to.not.be.undefined
     })
   })
 
@@ -337,6 +360,16 @@ describe('orango model', function() {
     })
   })
 
+  describe('findMany with no connection', function() {
+    it('should throw an error', async function() {
+      let orango = Orango.get('random_' + Date.now())
+      let Test = orango.model('Test', {})
+      let result = Test.getCollection()
+      expect(result.isError).to.be.true
+      expect(result.save).to.throw('No connection to database')
+    })
+  })
+
   describe('findById with no key', function() {
     it('return error', async function() {
       const SimpleTest = orango.model('SimpleTest')
@@ -382,6 +415,22 @@ describe('orango model', function() {
       expect(result.deleted).to.equal(1)
     })
   })
+
+  describe('findById return orm', function() {
+    it('return ORM', async function() {
+      const SimpleTest = orango.model('SimpleTest')
+      let orm = await SimpleTest.find({}, { returnType: 'orm' })
+      expect(orm.constructor.name).to.equal('ORM')
+    })
+  })
+
+  // describe('delete all', function() {
+  //   it('will delete all records', async function() {
+  //     const SimpleTest = orango.model('SimpleTest')
+  //     await new SimpleTest().save()
+  //     await SimpleTest.deleteMany({}, {})
+  //   })
+  // })
 
   describe('findByEdge', function() {
     it('should use an edge collection to perform joins', async function() {
@@ -431,14 +480,14 @@ describe('orango model', function() {
 
         let post = new Post({ author: john._key, text: 'Hello, world!' })
         await post.save()
-        
+
         let like = new Like(jane._key, post._key)
         await like.save()
 
         let likedPosts = await Post.findByEdge(Like, jane._key, {
           noDefaults: true
         })
-  
+
         expect(likedPosts).to.deep.equal([
           {
             _key: post._key,

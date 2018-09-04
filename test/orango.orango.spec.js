@@ -24,6 +24,49 @@ describe('Orango', function() {
     })
   })
 
+  describe('create collection when not connected', function() {
+    it('should throw an error', async function() {
+      let result
+      try {
+        let testOrango = Orango.get('test-notconnected')
+        await testOrango.createCollection('test')
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.be.an('error')
+    })
+  })
+
+  describe('create edge collection', function() {
+    it('create an edge collection', async function() {
+      let testOrango = Orango.get('test-notconnected')
+      await testOrango.connect()
+      let col = await testOrango.createEdgeCollection('edge_col_' + Date.now())
+      expect(col.name).to.be.equal('edge_col')
+    })
+  })
+
+  describe('index collection that does not exist', function() {
+    it('should throw an error', async function() {
+      let result
+      try {
+        let testOrango = Orango.get('test-truncated')
+        await testOrango.connect()
+        await testOrango.ensureIndexes('test-bogus')
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.be.an('error')
+    })
+  })
+
+  describe('builder()', function() {
+    it('gets a new instance of builder', async function() {
+      let builder = orango.builder()
+      expect(builder).to.not.be.undefined
+    })
+  })
+
   describe('uid()', function() {
     it('generates a unique id', async function() {
       let id1 = orango.uid()
@@ -75,5 +118,4 @@ describe('Orango', function() {
       })
     })
   })
-  
 })
