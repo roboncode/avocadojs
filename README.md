@@ -286,6 +286,7 @@ module.exports = orango.model('User', schema)
 * Fix up for loops to be async
 * Break out Tang into separate repo
 * criteriaBuilder array support
+* Break out all errors into constants
 
 ### Other
 * cleanup

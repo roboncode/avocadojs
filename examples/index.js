@@ -29,7 +29,7 @@ async function main() {
   // // Import migration docs
   await importAllDocs()
 
-  const User = orango.model('User')
+  const User = await orango.model('User')
   let user = await User.findById('rob', {
     noDefaults: false
   }).exec()
@@ -42,7 +42,7 @@ async function main_update_user() {
   // Create connection
   await orango.connect('demo')
 
-  const User = orango.model('User')
+  const User = await orango.model('User')
   User.findByIdAndUpdate(
     'rob',
     {
@@ -64,7 +64,7 @@ async function main_update_users() {
   // Create connection
   await orango.connect('demo')
 
-  const User = orango.model('User')
+  const User = await orango.model('User')
 
   User.updateOne(
     {
@@ -127,7 +127,7 @@ async function main_delete_users() {
   // Create connection
   await orango.connect('demo')
 
-  const User = orango.model('User')
+  const User = await orango.model('User')
   let result = await User.deleteOne({
     _key: 'jane'
   }).exec()
@@ -141,7 +141,7 @@ async function main_find_users() {
   // Create connection
   await orango.connect('demo')
 
-  const User = orango.model('User')
+  const User = await orango.model('User')
   let users = await User.find(
     {
       // _key: 'jane'
@@ -161,7 +161,7 @@ async function main_find_user() {
   // Create connection
   await orango.connect('demo')
 
-  const User = orango.model('User')
+  const User = await orango.model('User')
   // let user = await User.findById('jane', {
   //   printAQL: true
   // })
@@ -205,7 +205,7 @@ async function main_new_user() {
   // Create connection
   await orango.connect('demo')
 
-  const User = orango.model('User')
+  const User = await orango.model('User')
 
   let user = new User({
     firstName: 'Lori',
@@ -225,7 +225,7 @@ async function main_query() {
   // Create connection
   await orango.connect('demo')
 
-  const User = orango.model('User')
+  const User = await orango.model('User')
   let result = await User.findByQuery(
     `FOR device IN devices
         FILTER device._key == 'chrome'
@@ -245,7 +245,7 @@ async function main_query() {
 
 async function main_builder() {
   require('./models/User')
-  const User = orango.model('User')
+  const User = await orango.model('User')
   let data = {
     bogus: true,
     desc: 'Hello, world!',
