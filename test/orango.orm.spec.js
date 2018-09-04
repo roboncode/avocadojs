@@ -2,12 +2,6 @@ const expect = require('chai').expect
 const ORM = require('../lib/ORM')
 const orango = require('../lib')
 
-let schema = orango.Schema({
-  name: String
-})
-
-orango.model('Test', schema)
-
 describe('orango.orm', function() {
   describe('for in', function() {
     const orm = new ORM()
@@ -53,19 +47,19 @@ describe('orango.orm', function() {
   })
 
   describe('increment filter using $inc', function() {
-    const orm = new ORM()
-    orm.action('update')
-    orm.collection({ name: 'users' })
-    orm.model(orango.model('Test'))
-    orm.data({
-      stats: {
-        friends: {
-          $inc: 1
-        }
-      }
-    })
-
     it('should do something', async function() {
+      const orm = new ORM()
+      orm.action('update')
+      orm.collection({ name: 'users' })
+      orm.model(orango.model('Test'))
+      orm.data({
+        stats: {
+          friends: {
+            $inc: 1
+          }
+        }
+      })
+
       let query = await orm.toAQL()
       expect(query).to.equal(
         'LET modified = COUNT( FOR doc IN users UPDATE doc WITH {"stats":{"friends":doc.stats.friends+1}} IN users RETURN 1) RETURN { modified }'
@@ -74,15 +68,15 @@ describe('orango.orm', function() {
   })
 
   describe('increment filter using ++', function() {
-    const orm = new ORM()
-    orm.action('update')
-    orm.collection({ name: 'users' })
-    orm.model(orango.model('Test'))
-    orm.data({
-      friends: '++1'
-    })
-
     it('should do something', async function() {
+      const orm = new ORM()
+      orm.action('update')
+      orm.collection({ name: 'users' })
+      orm.model(orango.model('Test'))
+      orm.data({
+        friends: '++1'
+      })
+
       let query = await orm.toAQL()
       expect(query).to.equal(
         'LET modified = COUNT( FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users RETURN 1) RETURN { modified }'
@@ -91,15 +85,15 @@ describe('orango.orm', function() {
   })
 
   describe('increment filter using EXPR()', function() {
-    const orm = new ORM()
-    orm.action('update')
-    orm.collection({ name: 'users' })
-    orm.model(orango.model('Test'))
-    orm.data({
-      friends: 'EXPR(friends+1)'
-    })
-
     it('should do something', async function() {
+      const orm = new ORM()
+      orm.action('update')
+      orm.collection({ name: 'users' })
+      orm.model(orango.model('Test'))
+      orm.data({
+        friends: 'EXPR(friends+1)'
+      })
+
       let query = await orm.toAQL()
       expect(query).to.equal(
         'LET modified = COUNT( FOR doc IN users UPDATE doc WITH {"friends":doc.friends+1} IN users RETURN 1) RETURN { modified }'
@@ -108,12 +102,13 @@ describe('orango.orm', function() {
   })
 
   describe('custom query', function() {
-    const orm = new ORM()
-    orm.action('find')
-    orm.collection({ name: 'users' })
-    orm.options({ printAQL: 'color' })
-    orm.query(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)
     it('should do something', async function() {
+      const orm = new ORM()
+      orm.action('find')
+      orm.collection({ name: 'users' })
+      orm.options({ printAQL: 'color' })
+      orm.query(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)
+      
       let query = await orm.toAQL(true)
       expect(query).to.equal(
         'FOR doc IN users FILTER device.user == doc._key RETURN doc'
@@ -121,9 +116,3 @@ describe('orango.orm', function() {
     })
   })
 })
-
-/*
-POST = {id: 1, text: "Hello"}
-USER = {_key: 'rob', name: "Rob"}
-POST_USERS = {post: 1, user: "rob"}
-*/

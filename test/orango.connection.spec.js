@@ -41,14 +41,14 @@ describe('orango connection', function() {
     })
   })
 
-  xdescribe('disconnect from database', function() {
+  describe('disconnect from database', function() {
     it('be disconnect', async function() {
       try {
-        await orango.disconnect()
+        await Orango.get('disconnect').disconnect()
       } catch (e) {
         console.log('ERROR'.bgRed, e.message)
       }
-      expect(orango.connection.connected).equal(false)
+      expect(Orango.get('disconnect').connection.connected).equal(false)
     })
   })
 })

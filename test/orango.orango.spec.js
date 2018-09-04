@@ -73,17 +73,15 @@ describe('Orango', function() {
   })
 
   describe('model', function() {
-    describe('definition', function() {
+    describe('definition', async function() {
       let schema = orango.Schema({ name: String })
-      let Test = orango.model('Test', schema)
+      let Test = await orango.model('DefTest', schema).ready
       it('to return instance of model class', function() {
-        expect(Test.name).to.equal('Test')
+        expect(Test.name).to.equal('DefTest')
       })
     })
 
-    describe('get model as class', function() {
-      let schema = orango.Schema({ name: String })
-      orango.model('Test', schema)
+    describe('get model as class', async function() {
       let Test = orango.model('Test')
       it('to return instance of model class', function() {
         expect(Test.name).to.equal('Test')
@@ -91,25 +89,28 @@ describe('Orango', function() {
     })
 
     describe('get model that has not been defined', function() {
-      it('to throw a Not Found error', function() {
-        let fn = function() {
-          orango.model('Bogus')
+      it('to throw a Not Found error', async function() {
+        let result
+        try {
+          result = orango.model('Bogus')
+        } catch(e) {
+          result = e
         }
-        expect(fn).to.throw('Model not found')
+        expect(result.message).to.equal('Model not found: Bogus')
       })
     })
 
-    describe('get model collection name', function() {
+    describe('get model collection name', async function() {
       const schema = orango.Schema({ name: String })
-      const MyTest = orango.model('MyTest', schema)
+      const MyTest = await orango.model('MyTest', schema).ready
       it('to be pluralized version of name', function() {
         expect(MyTest.collectionName).to.equal('my_tests')
       })
     })
 
-    describe('get model collection name from overridden name', function() {
+    describe('get model collection name from overridden name', async function() {
       const schema = orango.Schema({ name: String })
-      const MyTest = orango.model('MyTest', schema, 'tests')
+      const MyTest = await orango.model('MyTest', schema, 'tests')
       it('to use custom name', function() {
         expect(MyTest.collectionName).to.equal('tests')
       })

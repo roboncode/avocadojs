@@ -6,8 +6,24 @@ let Orango = require('../lib/Orango')
 
 async function connectToDefaultDb() {
   try {
+    // connect to test db
     await orango.connect('test')
+    // connect to system db
     await Orango.get('system').connect()
+    // this db is used for the purpose of disconnecting test
+    await Orango.get('disconnect').connect()
+
+    // create Test model
+    await orango.model('Test', {
+      name: {
+        type: String,
+        default: 'test'
+      },
+      comments: [{ $id: String, text: String }],
+      tags: [String]
+    }).ready
+
+    // run tests
     run()
   } catch (e) {
     setTimeout(connectToDefaultDb, 1000)
@@ -33,6 +49,7 @@ function checkConnection() {
 after(async function() {
   try {
     await Orango.get('system').dropDatabase('test')
+    await Orango.get('system').dropDatabase('disconnect')
   } catch (e) {
     console.log('Ooops!', e.message)
   }

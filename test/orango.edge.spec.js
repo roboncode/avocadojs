@@ -11,33 +11,22 @@ describe('edge connections', function() {
   let Post
 
   before(async function() {
-    // :: SIMPLE TEST :: //
-    const schema = orango.Schema(
-      {
-        name: String
-      },
-      {
-        strict: true
-      }
-    )
-    await orango.model('SimpleTest', schema)
-
     // :: USER :: //
     const UserSchema = orango.Schema({
       name: String
     })
-    User = await orango.model('User', UserSchema)
+    User = await orango.model('User', UserSchema).ready
 
     // :: POST :: //
     const PostSchema = orango.Schema({
       author: String,
       text: String
     })
-    Post = await orango.model('Post', PostSchema)
+    Post = await orango.model('Post', PostSchema).ready
 
     // :: LIKE :: //
     const LikeSchema = orango.EdgeSchema('users', 'posts')
-    Like = await orango.model('Like', LikeSchema)
+    Like = await orango.model('Like', LikeSchema).ready
   })
 
   async function createDocs() {
@@ -53,6 +42,62 @@ describe('edge connections', function() {
     like = new Like(jane._key, post._key)
     await like.save()
   }
+
+  describe('creates an edge collection', function() {
+    it('create an edge collection', async function() {
+      const schema = orango.Schema(
+        {
+          name: String
+        },
+        {
+          edge: true
+        }
+      )
+      await orango.model('EdgeTest', schema).ready
+      const cols = await orango.connection.db.listCollections()
+      let str = JSON.stringify(cols)
+      expect(str).to.contain('edge_tests')
+    })
+  })
+
+  describe('findByEdge - find User', function() {
+    it('should use an edge collection to perform joins', async function() {
+      await createDocs()
+
+      let likedUsers = await User.findByEdge(Like, post._key, {
+        noDefaults: true
+      })
+
+      expect(likedUsers).to.deep.equal([
+        {
+          _key: jane._key,
+          _id: jane._id,
+          _rev: jane._rev,
+          name: jane.name
+        }
+      ])
+    })
+  })
+
+  describe('findByEdge - find Post', function() {
+    it('should use an edge collection to perform joins', async function() {
+      await createDocs()
+
+      let likedPosts = await Post.findByEdge(Like, jane._key, {
+        noDefaults: true
+      })
+
+      expect(likedPosts).to.deep.equal([
+        {
+          _key: post._key,
+          _id: post._id,
+          _rev: post._rev,
+          author: john._key,
+          text: post.text
+        }
+      ])
+    })
+  })
 
   describe('remove from user', function() {
     it('should remove a single item', async function() {
