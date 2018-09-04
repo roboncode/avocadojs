@@ -89,7 +89,7 @@ Creates a document collection in the connected database. This is used internally
 
 ``` js
 await orango.createCollection(name: String 
-[, indexes: Array, truncate: Boolean = false): DocumentCollection
+[, indexes: Array]): DocumentCollection
 ```
 
 ### createEdgeCollection() <Badge text="async" type="error"/>
@@ -98,7 +98,7 @@ Creates an edge collection in the connected database.
 This is used internally by `Orango` when models are defined and a connection is established.
 
 ``` js
-await orango.createEdgeCollection(name: String [, truncate = false]): EdgeCollection
+await orango.createEdgeCollection(name: String): EdgeCollection
 ```
 
 ### ensureIndexes() <Badge text="async" type="error"/>
