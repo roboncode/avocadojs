@@ -123,6 +123,14 @@ describe('edge connections', function() {
     })
   })
 
+  describe('remove from Like with user and post', function() {
+    it('should remove a single item', async function() {
+      await createDocs()
+      let result = await Like.removeFromEdge(jane, post)
+      expect(result.deleted).to.equal(1)
+    })
+  })
+
   describe('remove from Like with user id and post id', function() {
     it('should remove a single item', async function() {
       await createDocs()
