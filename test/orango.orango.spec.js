@@ -88,6 +88,22 @@ describe('orango', function() {
     })
   })
 
+  describe('import docs without a connection', function() {
+    it('throw an error', async function() {
+      let result
+      try {
+        let importOrango = orango.get('import')
+        await importOrango.model('ImportTest', { name: String }).ready
+        result = await importOrango.importDocs('ImportTest', [{ name: 'One' }], {
+          truncate: true
+        })
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.be.an('error')
+    })
+  })
+
   describe('builder()', function() {
     it('gets a new instance of builder', async function() {
       let builder = orango.builder()

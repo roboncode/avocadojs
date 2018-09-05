@@ -65,17 +65,16 @@ describe('edge connections', function() {
       await createDocs()
 
       let likedUsers = await User.findByEdge(Like, post._key, {
-        noDefaults: true
-      })
+        noDefaults: true,
+        returnType: 'orm'
+      }).limit(1).exec()
 
-      expect(likedUsers).to.deep.equal([
-        {
-          _key: jane._key,
-          _id: jane._id,
-          _rev: jane._rev,
-          name: jane.name
-        }
-      ])
+      expect(likedUsers).to.deep.equal({
+        _key: jane._key,
+        _id: jane._id,
+        _rev: jane._rev,
+        name: jane.name
+      })
     })
   })
 
