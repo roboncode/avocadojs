@@ -65,17 +65,15 @@ describe('edge connections', function() {
       await createDocs()
 
       let likedUsers = await User.findByEdge(Like, post._key, {
-        noDefaults: true
-      })
+        noDefaults: true,
+      }).limit(1)
 
-      expect(likedUsers).to.deep.equal([
-        {
-          _key: jane._key,
-          _id: jane._id,
-          _rev: jane._rev,
-          name: jane.name
-        }
-      ])
+      expect(likedUsers).to.deep.equal({
+        _key: jane._key,
+        _id: jane._id,
+        _rev: jane._rev,
+        name: jane.name
+      })
     })
   })
 
@@ -119,6 +117,14 @@ describe('edge connections', function() {
     it('should remove a single item', async function() {
       await createDocs()
       let result = await Like.removeFromEdge(jane)
+      expect(result.deleted).to.equal(1)
+    })
+  })
+
+  describe('remove from Like with user and post', function() {
+    it('should remove a single item', async function() {
+      await createDocs()
+      let result = await Like.removeFromEdge(jane, post)
       expect(result.deleted).to.equal(1)
     })
   })
