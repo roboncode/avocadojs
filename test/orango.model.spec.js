@@ -179,8 +179,8 @@ describe('orango model', function() {
     })
   })
 
-  describe('update using save()', function() {
-    it('should save document', async function() {
+  describe('update using toAQL()', function() {
+    it('should return AQL', async function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
       await test.save()
@@ -194,6 +194,43 @@ describe('orango model', function() {
       )
     })
   })
+
+  describe('update using toAQL() and remove keys', function() {
+    it('should retlurn AQL without keys', async function() {
+      const ModelTest = orango.model('ModelTest')
+      let test = new ModelTest()
+      test._id = '1'
+      test._key = '1'
+      test._rev = '1'
+      test.name = 'Test'
+      await test.save()
+
+      let aql = await test.toAQL({ saveAsNew: true })
+      expect(aql).to.equal('NEW DOCUMENT')
+    })
+  })
+
+  describe('update using toAQL() marked as new without _key', function() {
+    it('should throw an error', async function() {
+      const ModelTest = orango.model('ModelTest')
+      let test = new ModelTest()
+      test.name = 'Test'
+      test.isNew = true
+
+      let result
+      try {
+         await test.toAQL({
+          update: true
+        })
+      } catch(e) {
+        result = e
+      }
+      
+      expect(result).to.be.an('error')
+      expect(result.message).to.equal('Missing required _key')
+    })
+  })
+  
 
   describe('printAQL on find', function() {
     it('print AQL query', async function() {
