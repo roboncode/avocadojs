@@ -101,6 +101,7 @@ describe('orango', function() {
         result = e
       }
       expect(result).to.be.an('error')
+      expect(result.message).to.be.contain('Not connected to database')
     })
   })
 

@@ -371,7 +371,7 @@ describe('orango model', function() {
   describe('findById return orm', function() {
     it('return ORM', async function() {
       const ModelTest = orango.model('ModelTest')
-      let orm = await ModelTest.find({}, { returnType: 'orm' })
+      let orm = ModelTest.find({})
       expect(orm.constructor.name).to.equal('ORM')
     })
   })
