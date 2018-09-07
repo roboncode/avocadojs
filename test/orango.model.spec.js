@@ -1,11 +1,18 @@
 let expect = require('chai').expect
 let orango = require('../lib')
-let Orango = require('../lib/Orango')
+let Model = require('../lib/Model')
 let CONSTS = require('../lib/consts')
 
 describe('orango model', function() {
   before(async function() {
     await orango.model('ModelTest', {}).ready
+  })
+
+  describe('create a new Model() with schema object', function() {
+    it('should create a new model`', function() {
+      let model = new Model({ name: 'Test' }, { name: String })
+      expect(model.name).to.equal('Test')
+    })
   })
 
   describe('creates a new model with bogus name as object instead of string', function() {
@@ -304,14 +311,14 @@ describe('orango model', function() {
     it('should throw an error', async function() {
       let result
       try {
-        let orango = Orango.get('random_' + Date.now())
-        let Test = orango.model('Test')
+        let orangoTest = orango.get('random_' + Date.now())
+        let Test = orangoTest.model('Test')
         result = Test.getCollection()
       } catch (e) {
         result = e
       }
       expect(result).to.be.an('error')
-      expect(result.message).to.equal(CONSTS.ERRORS.NOT_CONNECTED)
+      expect(result.message).to.equal(CONSTS.ERRORS.MODEL_NOT_FOUND + 'Test')
     })
   })
 
@@ -364,7 +371,7 @@ describe('orango model', function() {
   describe('findById return orm', function() {
     it('return ORM', async function() {
       const ModelTest = orango.model('ModelTest')
-      let orm = await ModelTest.find({}, { returnType: 'orm' })
+      let orm = ModelTest.find({})
       expect(orm.constructor.name).to.equal('ORM')
     })
   })

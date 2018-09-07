@@ -1,26 +1,46 @@
 let expect = require('chai').expect
 let orango = require('../lib')
-let Orango = require('../lib/Orango')
 
-describe('Orango', function() {
+describe('orango', function() {
   describe('get()', function() {
     it('get default instance of orango', async function() {
-      let defaultOrango = await Orango.get()
+      let defaultOrango = await orango.get()
       expect(defaultOrango).to.equal(orango)
     })
   })
 
   describe('get("test")', function() {
     it('get default instance of orango', async function() {
-      let testOrango = await Orango.get('test')
+      let testOrango = await orango.get('test')
       expect(testOrango).to.not.equal(orango)
     })
   })
 
   describe('get("test")', function() {
     it('get default instance of orango', async function() {
-      let testOrango = await Orango.get('test')
+      let testOrango = await orango.get('test')
       expect(testOrango).to.not.equal(orango)
+    })
+  })
+
+  describe('connect to same database', function() {
+    it('should return same connection', async function() {
+      let conn = orango.connection
+      await orango.connect('test')
+      expect(orango.connection).to.equal(conn)
+    })
+  })
+
+  describe('connect to different database without connecting', function() {
+    it('throw an error', async function() {
+      let result
+      try {
+        await orango.connect()
+        result = orango.connection
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.an('error')
     })
   })
 
@@ -28,7 +48,7 @@ describe('Orango', function() {
     it('should throw an error', async function() {
       let result
       try {
-        let testOrango = Orango.get('test-not-connected')
+        let testOrango = orango.get('test-not-connected')
         await testOrango.createCollection('test')
       } catch (e) {
         result = e
@@ -57,6 +77,34 @@ describe('Orango', function() {
     })
   })
 
+  describe('import docs', function() {
+    it('should import data as documents', async function() {
+      let result = await orango.importDocs(
+        'Test',
+        [{ name: 'Test 1' }, { name: 'Test 2' }, { name: 'Test 3' }],
+        { truncate: true }
+      )
+      expect(result.created).to.equal(3)
+    })
+  })
+
+  describe('import docs without a connection', function() {
+    it('throw an error', async function() {
+      let result
+      try {
+        let importOrango = orango.get('import')
+        await importOrango.model('ImportTest', { name: String }).ready
+        result = await importOrango.importDocs('ImportTest', [{ name: 'One' }], {
+          truncate: true
+        })
+      } catch (e) {
+        result = e
+      }
+      expect(result).to.be.an('error')
+      expect(result.message).to.be.contain('Not connected to database')
+    })
+  })
+
   describe('builder()', function() {
     it('gets a new instance of builder', async function() {
       let builder = orango.builder()
@@ -73,17 +121,17 @@ describe('Orango', function() {
   })
 
   describe('model', function() {
-    describe('definition', async function() {
-      let schema = orango.Schema({ name: String })
-      let Test = await orango.model('DefTest', schema).ready
-      it('to return instance of model class', function() {
+    describe('definition', function() {
+      it('to return instance of model class', async function() {
+        let schema = orango.Schema({ name: String })
+        let Test = await orango.model('DefTest', schema).ready
         expect(Test.name).to.equal('DefTest')
       })
     })
 
-    describe('get model as class', async function() {
-      let Test = orango.model('Test')
-      it('to return instance of model class', function() {
+    describe('get model as class', function() {
+      it('to return instance of model class', async function() {
+        let Test = orango.model('Test')
         expect(Test.name).to.equal('Test')
       })
     })
@@ -93,26 +141,59 @@ describe('Orango', function() {
         let result
         try {
           result = orango.model('Bogus')
-        } catch(e) {
+        } catch (e) {
           result = e
         }
         expect(result.message).to.equal('Model not found: Bogus')
       })
     })
 
-    describe('get model collection name', async function() {
-      const schema = orango.Schema({ name: String })
-      const MyTest = await orango.model('MyTest', schema).ready
-      it('to be pluralized version of name', function() {
+    describe('get model collection name', function() {
+      it('to be pluralized version of name', async function() {
+        const schema = orango.Schema({ name: String })
+        const MyTest = await orango.model('MyTest', schema).ready
         expect(MyTest.collectionName).to.equal('my_tests')
       })
     })
 
-    describe('get model collection name from overridden name', async function() {
-      const schema = orango.Schema({ name: String })
-      const MyTest = await orango.model('MyTest', schema, 'tests')
-      it('to use custom name', function() {
+    describe('get model collection name from overridden name', function() {
+      it('to use custom name', async function() {
+        const schema = orango.Schema({ name: String })
+        const MyTest = await orango.model('CustomModel', schema, 'tests')
         expect(MyTest.collectionName).to.equal('tests')
+      })
+    })
+
+    describe('create a model that already exists', function() {
+      it('to throw an error', async function() {
+        let result
+        try {
+          orango.model('Test', {})
+        } catch (e) {
+          result = e
+        }
+        expect(result.message).to.contain('already exists')
+      })
+    })
+
+    describe('create document models prior to connecting', function() {
+      it('should create collections', async function() {
+        let customOrango = orango.get('custom')
+        await customOrango.model('CustomModel', { name: String })
+        await customOrango.connect('custom')
+        let cols = await customOrango.connection.db.listCollections()
+        expect(JSON.stringify(cols)).to.include('custom_model')
+      })
+    })
+
+    describe('create edge models prior to connecting', function() {
+      it('should create collections', async function() {
+        let customOrango = orango.get('edge')
+        const edgeSchema = orango.EdgeSchema('a', 'b')
+        await customOrango.model('EdgeModel', edgeSchema)
+        await customOrango.connect('edge')
+        let cols = await customOrango.connection.db.listCollections()
+        expect(JSON.stringify(cols)).to.include('edge_model')
       })
     })
   })
