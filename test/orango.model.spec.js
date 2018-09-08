@@ -5,7 +5,23 @@ let CONSTS = require('../lib/consts')
 
 describe('orango model', function() {
   before(async function() {
-    await orango.model('ModelTest', {}).ready
+    let schema = orango.Schema(
+      {
+        name: String,
+        firstName: String,
+        lastName: String,
+        created: { type: Date, default: Date.now }
+      },
+      {
+        strict: true,
+        keepNull: true,
+        removeOnMatchDefault: true
+      }
+    )
+    schema.computed.greeting = function() {
+      return 'I am ' + this.firstName
+    }
+    await orango.model('ModelTest', schema).ready
   })
 
   describe('create a new Model() with schema object', function() {
@@ -179,6 +195,22 @@ describe('orango model', function() {
     })
   })
 
+  xdescribe('creating a doc with a duplicate key', function() {
+    it('should throw an error', async function() {
+      const ModelTest = orango.model('ModelTest')
+      let result
+      try {
+        await new ModelTest({_key: 'dup'}).save()
+        await new ModelTest({_key: 'dup'}).save()
+      } catch(e) {
+        result = e
+      }
+      console.log(result)
+      expect(result).to.be.an('error')
+      expect(result.message).to.equal('')
+    })
+  })
+
   describe('update using toAQL()', function() {
     it('should return AQL', async function() {
       const ModelTest = orango.model('ModelTest')
@@ -190,7 +222,7 @@ describe('orango model', function() {
       expect(aql).to.equal(
         'LET modified = COUNT( FOR doc IN model_tests FILTER (doc.`_key` == "' +
           test._key +
-          '") UPDATE doc WITH {"name":"Test"} IN model_tests RETURN 1) RETURN { modified }'
+          '") UPDATE doc WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
       )
     })
   })
@@ -219,24 +251,151 @@ describe('orango model', function() {
 
       let result
       try {
-         await test.toAQL({
+        await test.toAQL({
           update: true
         })
-      } catch(e) {
+      } catch (e) {
         result = e
       }
-      
+
       expect(result).to.be.an('error')
       expect(result.message).to.equal('Missing required _key')
     })
   })
-  
 
   describe('printAQL on find', function() {
     it('print AQL query', async function() {
       const ModelTest = orango.model('ModelTest')
       let results = await ModelTest.find({}, { printAQL: 'color' })
       expect(results).to.not.be.undefined
+    })
+  })
+
+  describe('printAQL on find with options', function() {
+    it('print AQL query', async function() {
+      const ModelTest = orango.model('ModelTest')
+
+      await new ModelTest({
+        firstName: 'Geddy',
+        lastName: 'Lee'
+      }).save()
+
+      await new ModelTest({
+        firstName: 'Alex',
+        lastName: 'Lifeson'
+      }).save()
+
+      await new ModelTest({
+        firstName: 'Neal',
+        lastName: 'Peart'
+      }).save()
+
+      let results = await ModelTest.find()
+        .withDefaults(true)
+        .sort('firstName')
+        .offset(1)
+        .limit(2)
+        .computed(true)
+        .select('firstName')
+        .toAQL({
+          pretty: 'color'
+        })
+
+      expect(results).to.equal(
+        'FOR doc IN model_tests \n   SORT doc.firstName \n   LIMIT 1,2 \n   RETURN { _key : doc._key , firstName : doc.firstName }'
+      )
+    })
+  })
+
+  describe('find with options ', function() {
+    it('print AQL query', async function() {
+      const ModelTest = orango.model('ModelTest')
+
+      await ModelTest.deleteMany()
+
+      await new ModelTest({
+        firstName: 'Geddy',
+        lastName: 'Lee'
+      }).save()
+
+      await new ModelTest({
+        firstName: 'Alex',
+        lastName: 'Lifeson'
+      }).save()
+
+      await new ModelTest({
+        firstName: 'Neal',
+        lastName: 'Peart'
+      }).save()
+
+      let results = await ModelTest.find()
+        .withDefaults(true)
+        .sort('firstName')
+        .offset(1)
+        .limit(2)
+        .computed(true)
+        .select('firstName')
+
+      expect(results[0].greeting).to.deep.equal('I am Geddy')
+      expect(results[1].greeting).to.deep.equal('I am Neal')
+    })
+  })
+
+  describe('update', function() {
+    it('SHOULD UPDATE`', async function() {
+      const ModelTest = orango.model('ModelTest')
+
+      await ModelTest.deleteMany()
+
+      await new ModelTest({
+        firstName: 'Geddy',
+        lastName: 'Lee'
+      }).save()
+
+      await new ModelTest({
+        firstName: 'Alex',
+        lastName: 'Lifeson'
+      }).save()
+
+      await new ModelTest({
+        firstName: 'Neal',
+        lastName: 'Peart'
+      }).save()
+
+      let result = await ModelTest.updateMany({}, {
+        name: 'update'
+      })
+      expect(result.modified).to.be.equal(3)
+    })
+  })
+
+  describe('update', function() {
+    it('SHOULD UPDATE`', async function() {
+      const ModelTest = orango.model('ModelTest')
+
+      await ModelTest.deleteMany()
+
+      await new ModelTest({
+        firstName: 'Geddy',
+        lastName: 'Lee'
+      }).save()
+
+      await new ModelTest({
+        firstName: 'Alex',
+        lastName: 'Lifeson'
+      }).save()
+
+      await new ModelTest({
+        firstName: 'Neal',
+        lastName: 'Peart'
+      }).save()
+
+      let result = await ModelTest.updateMany({}, {
+        name: 'update'
+      }).options({
+        returnNew: true
+      })
+      expect(result.length).to.be.equal(3)
     })
   })
 
@@ -277,7 +436,7 @@ describe('orango model', function() {
     })
   })
 
-  describe('findByIdAndUpdate return new', function() {
+  describe('findByIdAndUpdate return new ### 1', function() {
     it('should have a name `Test`', async function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()

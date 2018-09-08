@@ -77,6 +77,18 @@ describe('edge connections', function() {
     })
   })
 
+  xdescribe('findByEdge to AQL', function() {
+    it('return an AQL', async function() {
+      let aql = await User.findByEdge(Like, post._key, {
+        noDefaults: true,
+      })
+      // .limit(1)
+      .toAQL()
+
+      expect(aql).to.match(`FOR doc IN INBOUND "posts/\w+" likes RETURN DISTINCT doc`)
+    })
+  })
+
   describe('findByEdge - find Post', function() {
     it('should use an edge collection to perform joins', async function() {
       await createDocs()
