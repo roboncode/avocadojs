@@ -1,6 +1,7 @@
 const orango = require('orango')
 const app = require('../app')
 const User = orango.model('User')
+const Post = orango.model('Post')
 
 app.get('/users', async (req, res) => {
   const users = await User.findMany()
