@@ -1,6 +1,37 @@
-const orango = require('../../lib')
-const objectToArray = require('../../lib/helpers/objectToArray')
-const Builder = require('tangjs/lib/Builder')
+const orango = require('orango')
+const { objectToArray } = orango.helpers
+
+async function importCategories() {
+  const Model = orango.model('Category')
+
+  let items = require('./data/categories')
+  items = objectToArray(items)
+
+  let docs = await orango
+    .builder()
+    .data(items)
+    .convertTo(Model)
+    .toObject({ noDefaults: true })
+    .build()
+
+  await Model.importMany(docs, true)
+}
+ 
+async function importDevices() {
+  const Model = orango.model('Device')
+
+  let items = require('./data/devices')
+  items = objectToArray(items)
+
+  let docs = await orango
+    .builder()
+    .data(items)
+    .convertTo(Model)
+    .toObject({ noDefaults: true })
+    .build()
+
+  await Model.importMany(docs, true)
+}
 
 async function importUsers() {
   const Model = orango.model('User')
@@ -8,7 +39,8 @@ async function importUsers() {
   let items = require('./data/users')
   items = objectToArray(items)
 
-  let docs = await Builder.getInstance()
+  let docs = await orango
+    .builder()
     .data(items)
     .convertTo(Model)
     .toObject({ noDefaults: true })
@@ -23,7 +55,8 @@ async function importFriends() {
   let items = require('./data/friends')
   items = objectToArray(items)
 
-  let docs = await Builder.getInstance()
+  let docs = await orango
+    .builder()
     .data(items)
     .convertTo(Model)
     .toObject({ noDefaults: true })
@@ -38,7 +71,8 @@ async function importPosts() {
   let items = require('./data/posts')
   items = objectToArray(items)
 
-  let docs = await Builder.getInstance()
+  let docs = await orango
+    .builder()
     .data(items)
     .convertTo(Model)
     .toObject({ noDefaults: true })
@@ -53,7 +87,8 @@ async function importLikes() {
   let items = require('./data/likes')
   items = objectToArray(items)
 
-  let docs = await Builder.getInstance()
+  let docs = await orango
+    .builder()
     .data(items)
     .convertTo(Model)
     .toObject({ noDefaults: true })
@@ -63,16 +98,20 @@ async function importLikes() {
 }
 
 async function importAllDocs() {
-  await importUsers()
+  await importCategories()
+  await importDevices()
   await importFriends()
-  await importPosts()
   await importLikes()
+  await importPosts()
+  await importUsers()
 }
 
 module.exports = {
   importAllDocs,
-  importUsers,
+  importCategories,
+  importDevices,
   importFriends,
+  importLikes,
   importPosts,
-  importLikes
+  importUsers
 }
