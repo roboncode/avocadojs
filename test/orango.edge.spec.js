@@ -65,17 +65,27 @@ describe('edge connections', function() {
       await createDocs()
 
       let likedUsers = await User.findByEdge(Like, post._key, {
-        noDefaults: true
-      })
+        noDefaults: true,
+      }).limit(1)
 
-      expect(likedUsers).to.deep.equal([
-        {
-          _key: jane._key,
-          _id: jane._id,
-          _rev: jane._rev,
-          name: jane.name
-        }
-      ])
+      expect(likedUsers).to.deep.equal({
+        _key: jane._key,
+        _id: jane._id,
+        _rev: jane._rev,
+        name: jane.name
+      })
+    })
+  })
+
+  xdescribe('findByEdge to AQL', function() {
+    it('return an AQL', async function() {
+      let aql = await User.findByEdge(Like, post._key, {
+        noDefaults: true,
+      })
+      // .limit(1)
+      .toAQL()
+
+      expect(aql).to.match(`FOR doc IN INBOUND "posts/\w+" likes RETURN DISTINCT doc`)
     })
   })
 
@@ -119,6 +129,14 @@ describe('edge connections', function() {
     it('should remove a single item', async function() {
       await createDocs()
       let result = await Like.removeFromEdge(jane)
+      expect(result.deleted).to.equal(1)
+    })
+  })
+
+  describe('remove from Like with user and post', function() {
+    it('should remove a single item', async function() {
+      await createDocs()
+      let result = await Like.removeFromEdge(jane, post)
       expect(result.deleted).to.equal(1)
     })
   })

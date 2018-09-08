@@ -2,16 +2,20 @@ require('coveralls')
 
 let http = require('http')
 let orango = require('../lib')
-let Orango = require('../lib/Orango')
+require('colors')
 
 async function connectToDefaultDb() {
+  let connected
   try {
     // connect to test db
     await orango.connect('test')
+
+    connected = true
+
     // connect to system db
-    await Orango.get('system').connect()
+    await orango.get('system').connect()
     // this db is used for the purpose of disconnecting test
-    await Orango.get('disconnect').connect()
+    await orango.get('disconnect').connect()
 
     // create Test model
     await orango.model('Test', {
@@ -26,7 +30,11 @@ async function connectToDefaultDb() {
     // run tests
     run()
   } catch (e) {
-    setTimeout(connectToDefaultDb, 1000)
+    if (connected) {
+      console.log('Cannot connect'.red)
+    } else {
+      setTimeout(connectToDefaultDb, 1000)
+    }
   }
 }
 
@@ -47,11 +55,22 @@ function checkConnection() {
 }
 
 after(async function() {
-  try {
-    await Orango.get('system').dropDatabase('test')
-    await Orango.get('system').dropDatabase('disconnect')
-  } catch (e) {
-    console.log('Ooops!', e.message)
+  let dbs = await orango.connection.db.listDatabases()
+
+  if (dbs.indexOf('test') !== -1) {
+    await orango.get('system').dropDatabase('test')
+  }
+
+  if (dbs.indexOf('disconnect') !== -1) {
+    await orango.get('system').dropDatabase('disconnect')
+  }
+
+  if (dbs.indexOf('custom') !== -1) {
+    await orango.get('system').dropDatabase('custom')
+  }
+
+  if (dbs.indexOf('edge') !== -1) {
+    await orango.get('system').dropDatabase('edge')
   }
 })
 
