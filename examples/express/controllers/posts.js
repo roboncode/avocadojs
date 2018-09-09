@@ -10,16 +10,19 @@ app.get('/posts', async (req, res) => {
 
 app.get('/posts/:id', async (req, res) => {
   let result = await Post.findByQuery(
-    `FOR user IN users
+    `FOR user IN @@User
         FILTER user._key == '${req.params.id}'
-          FOR post IN @@collection
+          FOR post IN @@Post
             FILTER post.user == user._key`,
 
     { noDefaults: false }
   )
     .return('MERGE(post, { user: KEEP(user, "firstName", "lastName") })')
-    .intercept(async (doc) => {
-      doc.user = await new User(doc.user).toObject({noDefaults: true, computed: true})
+    .intercept(async doc => {
+      doc.user = await new User(doc.user).toObject({
+        noDefaults: true,
+        computed: true
+      })
       return doc
     })
   // .toAQL()
