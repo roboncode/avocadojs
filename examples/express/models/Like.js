@@ -1,10 +1,8 @@
 const orango = require('orango')
+const pluralize = require('pluralize')
+const { convertToSnakecase } = orango.helpers
 
-let schema = orango.Schema(
-  {
-    _from: String,
-    _to: String
-  },
-  { edge: true }
-)
+let users = convertToSnakecase(pluralize('User'))
+let posts = convertToSnakecase(pluralize('Post'))
+let schema = orango.EdgeSchema(users, posts)
 module.exports = orango.model('Like', schema)
