@@ -16,12 +16,12 @@ schema.statics.getPostsByAuthor = function(userId) {
     try {
       const User = orango.model('User')
       let posts = await this.findMany({ user: userId }, { noDefaults: false })
-        .populate('user', User.documentId(userId), {
+        .populate('user', User, userId, {
           select: 'firstName lastName',
           computed: true,
           noDefaults: true
         })
-        .toAQL()
+        // .toAQL()
       return resolve(posts)
     } catch (e) {
       return reject(e)
