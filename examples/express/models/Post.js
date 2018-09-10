@@ -7,7 +7,13 @@ let schema = orango.Schema(
     content: String
   },
   {
-    strict: true
+    strict: true,
+    indexes: [
+      {
+        type: 'hash',
+        fields: ['user']
+      }
+    ]
   }
 )
 
@@ -16,7 +22,34 @@ schema.statics.getPostsByAuthor = function(userId) {
     try {
       const User = orango.model('User')
       let posts = await this.findMany({ user: userId }, { noDefaults: false })
-        .populate('user', User, userId, {
+        .populate('user', User, {
+          id: userId,
+          select: 'firstName lastName',
+          computed: true,
+          noDefaults: true
+        })
+        .toAQL()
+      return resolve(posts)
+    } catch (e) {
+      return reject(e)
+    }
+  })
+}
+
+schema.statics.getPostsByAuthor2 = function(userId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const User = orango.model('User')
+      let posts = await this.findMany({  }, { noDefaults: false })
+        // // known id
+        // .document('user', User, userId)
+        // .populate('user', 'user', {
+        //   select: 'firstName lastName',
+        //   computed: true,
+        //   noDefaults: true
+        // })
+        // unknown id
+        .populate('user', User, {
           select: 'firstName lastName',
           computed: true,
           noDefaults: true
