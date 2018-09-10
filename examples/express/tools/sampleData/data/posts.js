@@ -10,6 +10,12 @@ const posts = {
     user: 'rob',
     title: 'Yet another post',
     content: 'Not much here.'
+  },
+  other: {
+    _key: 'other',
+    user: 'chase',
+    title: 'Chase post',
+    content: 'I sell stuff'
   }
 }
 

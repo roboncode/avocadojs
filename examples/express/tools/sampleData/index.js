@@ -7,30 +7,16 @@ async function importCategories() {
   let items = require('./data/categories')
   items = objectToArray(items)
 
-  let docs = await orango
-    .builder()
-    .data(items)
-    .convertTo(Model)
-    .toObject({ noDefaults: true })
-    .build()
-
-  await Model.importMany(docs, true)
+  await orango.importDocs(Model, items, { truncate: true })
 }
- 
+
 async function importDevices() {
   const Model = orango.model('Device')
 
   let items = require('./data/devices')
   items = objectToArray(items)
 
-  let docs = await orango
-    .builder()
-    .data(items)
-    .convertTo(Model)
-    .toObject({ noDefaults: true })
-    .build()
-
-  await Model.importMany(docs, true)
+  await orango.importDocs(Model, items, { truncate: true })
 }
 
 async function importUsers() {
@@ -39,14 +25,7 @@ async function importUsers() {
   let items = require('./data/users')
   items = objectToArray(items)
 
-  let docs = await orango
-    .builder()
-    .data(items)
-    .convertTo(Model)
-    .toObject({ noDefaults: true })
-    .build()
-
-  await Model.importMany(docs, true)
+  await orango.importDocs(Model, items, { truncate: true })
 }
 
 async function importFriends() {
@@ -55,14 +34,7 @@ async function importFriends() {
   let items = require('./data/friends')
   items = objectToArray(items)
 
-  let docs = await orango
-    .builder()
-    .data(items)
-    .convertTo(Model)
-    .toObject({ noDefaults: true })
-    .build()
-
-  await Model.importMany(docs, true)
+  await orango.importDocs(Model, items, { truncate: true })
 }
 
 async function importPosts() {
@@ -71,14 +43,7 @@ async function importPosts() {
   let items = require('./data/posts')
   items = objectToArray(items)
 
-  let docs = await orango
-    .builder()
-    .data(items)
-    .convertTo(Model)
-    .toObject({ noDefaults: true })
-    .build()
-
-  await Model.importMany(docs, true)
+  await orango.importDocs(Model, items, { truncate: true })
 }
 
 async function importLikes() {
@@ -87,14 +52,7 @@ async function importLikes() {
   let items = require('./data/likes')
   items = objectToArray(items)
 
-  let docs = await orango
-    .builder()
-    .data(items)
-    .convertTo(Model)
-    .toObject({ noDefaults: true })
-    .build()
-
-  await Model.importMany(docs, true)
+  await orango.importDocs(Model, items, { truncate: true })
 }
 
 async function importAllDocs() {
