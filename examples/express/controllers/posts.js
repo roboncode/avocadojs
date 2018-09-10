@@ -4,26 +4,25 @@ const Post = orango.model('Post')
 const User = orango.model('User')
 
 app.get('/posts', async (req, res) => {
-  const authorId = req.query.author
-  if (authorId) {
-    try {
-      let posts = await Post.getPostsByAuthor(authorId)
-      res.send(posts)
-    } catch (e) {
-      res.send('error: ' + e.message)
-    }
-  } else {
-    const posts = await Post.findMany(req.query)
-    .populate('user', User)
-    res.send(posts)
+  let query = {}
+  if (req.query.author) {
+    query.user = req.query.author
   }
-})
-
-app.get('/posts/:id', async (req, res) => {
   try {
-    let posts = await Post.getPostsByAuthor(req.params.id)
+    let posts = await Post.findMany(query, { noDefaults: false })
+      .limit(req.query.limit)
+      .offset(req.query.offset)
+      .populate('user', User, {
+        select: 'firstName lastName',
+        computed: true,
+        noDefaults: true
+      })
     res.send(posts)
   } catch (e) {
     res.send('error: ' + e.message)
   }
+})
+
+app.get('/posts/:id', async (req, res) => {
+  
 })
