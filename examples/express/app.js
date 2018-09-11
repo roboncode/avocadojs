@@ -1,7 +1,8 @@
 require('app-module-path').addPath(__dirname)
 const express = require('express')
-const orango = require('orango')
+const bodyParser = require('body-parser')
 const cors = require('cors')
+const orango = require('orango')
 const app = express()
 const readFiles = require('helpers/readFiles')
 require('colors')
@@ -12,7 +13,6 @@ orango.events.on('connected', () => {
     'Connected to ArangoDB:'.green,
     orango.connection.url + '/' + orango.connection.name
   )
-  readFiles('controllers')
 })
 
 async function main() {
@@ -23,6 +23,15 @@ async function main() {
   await orango.connect('sample')
 
   app.use(cors())
+
+  // // parse application/x-www-form-urlencoded
+  app.use(bodyParser.urlencoded({ extended: false }))
+
+  // // parse application/json
+  app.use(bodyParser.json())
+
+  // import controllere
+  readFiles('controllers')
 
   app.listen(3000, () => console.log('Example app listening on port 3000!'))
 }
