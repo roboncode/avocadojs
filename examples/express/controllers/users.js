@@ -16,3 +16,12 @@ app.get('/users/:id', async (req, res) => {
     .select('firstName lastName')
   res.send(user)
 })
+
+
+Post.on('inserted', function (payload) {
+  User.findByIdAndUpdate(payload.data.user, {
+    stats: {
+      posts: '+=1'
+    }
+  }).exec()
+})
