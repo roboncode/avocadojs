@@ -18,6 +18,7 @@ async function connectToDefaultDb() {
     await orango.get('disconnect').connect()
 
     // create Test model
+    // const Test = 
     await orango.model('Test', {
       name: {
         type: String,
@@ -26,7 +27,7 @@ async function connectToDefaultDb() {
       comments: [{ $id: String, text: String }],
       tags: [String]
     }).ready
-
+// console.log('#TEST MODEL', Test)
     // run tests
     run()
   } catch (e) {

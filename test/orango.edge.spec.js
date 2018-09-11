@@ -16,6 +16,7 @@ describe('edge connections', function() {
       name: String
     })
     User = await orango.model('User', UserSchema).ready
+    console.log('#WHOIS USER', User)
 
     // :: POST :: //
     const PostSchema = orango.Schema({
@@ -30,17 +31,10 @@ describe('edge connections', function() {
   })
 
   async function createDocs() {
-    john = new User({ name: 'John' })
-    await john.save()
-
-    jane = new User({ name: 'Jane' })
-    await jane.save()
-
-    post = new Post({ author: john._key, text: 'Hello, world!' })
-    await post.save()
-
-    like = new Like(jane._key, post._key)
-    await like.save()
+    john = await new User({ name: 'John' }).save()
+    jane = await new User({ name: 'Jane' }).save()
+    post = await new Post({ author: john._key, text: 'Hello, world!' }).save()
+    like = await new Like(jane._key, post._key).save()
   }
 
   describe('creates an edge collection', function() {
@@ -109,7 +103,7 @@ describe('edge connections', function() {
     })
   })
 
-  describe('remove from user', function() {
+  describe.only('remove from user', function() {
     it('should remove a single item', async function() {
       await createDocs()
       let result = await post.removeFromEdge(Like, jane._key)
