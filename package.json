@@ -8,7 +8,8 @@
     "test-only": "mocha --delay",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "express": "cd examples/express && yarn serve"
   },
   "author": "Rob Taylor <roboncode@gmail.com> (https://www.linkedin.com/in/roboncode/)",
   "license": "MIT",
