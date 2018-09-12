@@ -15,26 +15,32 @@ describe('edge connections', function() {
     const UserSchema = orango.Schema({
       name: String
     })
-    User = await orango.model('User', UserSchema).ready
-    console.log('#WHOIS USER', User)
+    User = await orango.model('User', UserSchema).onConnected
 
     // :: POST :: //
     const PostSchema = orango.Schema({
       author: String,
       text: String
     })
-    Post = await orango.model('Post', PostSchema).ready
+    Post = await orango.model('Post', PostSchema).onConnected
 
     // :: LIKE :: //
     const LikeSchema = orango.EdgeSchema('users', 'posts')
-    Like = await orango.model('Like', LikeSchema).ready
+    Like = await orango.model('Like', LikeSchema).onConnected
   })
 
   async function createDocs() {
-    john = await new User({ name: 'John' }).save()
-    jane = await new User({ name: 'Jane' }).save()
-    post = await new Post({ author: john._key, text: 'Hello, world!' }).save()
-    like = await new Like(jane._key, post._key).save()
+    john = new User({ name: 'John' })
+    await john.save()
+
+    jane = await new User({ name: 'Jane' })
+    await jane.save()
+
+    post = await new Post({ author: john._key, text: 'Hello, world!' })
+    await post.save()
+
+    like = await new Like(jane._key, post._key)
+    await like.save()
   }
 
   describe('creates an edge collection', function() {
@@ -59,7 +65,7 @@ describe('edge connections', function() {
       await createDocs()
 
       let likedUsers = await User.findByEdge(Like, post._key, {
-        noDefaults: true,
+        noDefaults: true
       }).limit(1)
 
       expect(likedUsers).to.deep.equal({
@@ -71,15 +77,23 @@ describe('edge connections', function() {
     })
   })
 
-  xdescribe('findByEdge to AQL', function() {
+  describe('findByEdge to AQL', function() {
     it('return an AQL', async function() {
-      let aql = await User.findByEdge(Like, post._key, {
-        noDefaults: true,
-      })
-      // .limit(1)
-      .toAQL()
+      await createDocs()
 
-      expect(aql).to.match(`FOR doc IN INBOUND "posts/\w+" likes RETURN DISTINCT doc`)
+      let aql
+      try {
+        aql = await User.findByEdge(Like, post._key, {
+          noDefaults: true
+        })
+          // .limit(1)
+          .toAQL()
+      } catch (e) {
+        aql = e.message
+      }
+      expect(aql).to.match(
+        /FOR doc IN INBOUND "posts\/\w+" likes RETURN DISTINCT doc/
+      )
     })
   })
 
@@ -103,7 +117,7 @@ describe('edge connections', function() {
     })
   })
 
-  describe.only('remove from user', function() {
+  describe('remove from user', function() {
     it('should remove a single item', async function() {
       await createDocs()
       let result = await post.removeFromEdge(Like, jane._key)

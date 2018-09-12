@@ -62,6 +62,10 @@ after(async function() {
     await orango.get('system').dropDatabase('test')
   }
 
+  if (dbs.indexOf('model_tests') !== -1) {
+    await orango.get('system').dropDatabase('model_tests')
+  }
+
   if (dbs.indexOf('disconnect') !== -1) {
     await orango.get('system').dropDatabase('disconnect')
   }
