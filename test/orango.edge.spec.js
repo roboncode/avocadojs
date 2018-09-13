@@ -28,7 +28,6 @@ describe('edge connections', function() {
     const LikeSchema = orango.EdgeSchema('users', 'posts')
     Like = await orango.model('Like', LikeSchema).on('ready')
 
-    debugger
   })
 
   async function createDocs() {

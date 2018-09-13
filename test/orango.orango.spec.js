@@ -204,5 +204,16 @@ describe('orango', function() {
         })
       })
     })
+
+    describe('invoke a rawQuery', function() {
+      it('should make a raw query', async function() {
+        let customOrango = orango.get('custom')
+        customOrango.connect('custom')
+        const User = customOrango.model('user', { name: String })
+        await new User({ name: 'John' }).save()
+        results = await customOrango.rawQuery('FOR doc IN users RETURN doc')
+        expect(results[0]._id).to.not.be.undefined
+      })
+    })
   })
 })
