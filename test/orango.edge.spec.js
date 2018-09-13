@@ -15,46 +15,42 @@ describe('edge connections', function() {
     const UserSchema = orango.Schema({
       name: String
     })
-    User = await orango.model('User', UserSchema).onConnected
+    User = await orango.model('User', UserSchema).onReady
 
     // :: POST :: //
     const PostSchema = orango.Schema({
       author: String,
       text: String
     })
-    Post = await orango.model('Post', PostSchema).onConnected
+    Post = await orango.model('Post', PostSchema).onReady
 
     // :: LIKE :: //
     const LikeSchema = orango.EdgeSchema('users', 'posts')
-    Like = await orango.model('Like', LikeSchema).onConnected
+    Like = await orango.model('Like', LikeSchema).onReady
+
+    debugger
   })
 
   async function createDocs() {
     john = new User({ name: 'John' })
     await john.save()
 
-    jane = await new User({ name: 'Jane' })
+    jane = new User({ name: 'Jane' })
     await jane.save()
 
-    post = await new Post({ author: john._key, text: 'Hello, world!' })
+    post = new Post({ author: john._key, text: 'Hello, world!' })
     await post.save()
 
-    like = await new Like(jane._key, post._key)
+    like = new Like(jane._key, post._key)
     await like.save()
   }
 
   describe('creates an edge collection', function() {
     it('create an edge collection', async function() {
-      const schema = orango.Schema(
-        {
-          name: String
-        },
-        {
-          edge: true
-        }
-      )
-      await orango.model('EdgeTest', schema).ready
+      const schema = orango.EdgeSchema('a', 'b')
+      await orango.model('EdgeTest', schema).onReady
       const cols = await orango.connection.db.listCollections()
+//      [{"id":"281247","name":"tests","status":3,"type":2,"isSystem":false,"globallyUniqueId":"h85D8A936C6BC/281247"}]
       let str = JSON.stringify(cols)
       expect(str).to.contain('edge_tests')
     })

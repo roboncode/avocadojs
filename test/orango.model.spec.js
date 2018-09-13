@@ -21,7 +21,7 @@ describe('orango model', function() {
     schema.computed.greeting = function() {
       return 'I am ' + this.firstName
     }
-    await orango.model('ModelTest', schema).ready
+    await orango.model('ModelTest', schema).onReady
   })
 
   describe('create a new Model() with schema object', function() {
@@ -32,10 +32,10 @@ describe('orango model', function() {
   })
 
   describe('creates a new model with bogus name as object instead of string', function() {
-    it('should have a name `Test`', function() {
+    it('should have a name `Test`', async function() {
       let result
       try {
-        orango.model('Bogus', {}, {}).ready
+        await orango.model('Bogus', {}, {}).onReady
       } catch (e) {
         result = e
       }
@@ -70,7 +70,7 @@ describe('orango model', function() {
       schema.statics = {
         fullName() {}
       }
-      const ModelTest = await orango.model('Test' + Date.now(), schema).ready
+      const ModelTest = await orango.model('Test' + Date.now(), schema).onReady
       let modelTest = new ModelTest()
       modelTest.name = 'Test'
       expect(modelTest.name).to.equal('Test')
@@ -85,7 +85,7 @@ describe('orango model', function() {
       schema.statics = {
         fullName() {}
       }
-      const ModelTest = await orango.model('Test' + Date.now(), schema).ready
+      const ModelTest = await orango.model('Test' + Date.now(), schema).onReady
       ModelTest.fullName()
       expect(ModelTest.fullName).to.a('function')
     })
@@ -111,7 +111,7 @@ describe('orango model', function() {
         }
       )
 
-      let IndexModel = await orango.model('IndexTest', schema).ready
+      let IndexModel = await orango.model('IndexTest', schema).onReady
 
       const indexes = await IndexModel.getCollection().indexes()
       expect(indexes.length).to.equal(3)
@@ -129,7 +129,7 @@ describe('orango model', function() {
         statics: {
           fullName() {}
         }
-      }).ready
+      }).onReady
       expect(ModelTest.fullName).to.a('function')
     })
   })
