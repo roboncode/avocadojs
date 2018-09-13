@@ -26,7 +26,7 @@ async function connectToDefaultDb() {
       },
       comments: [{ $id: String, text: String }],
       tags: [String]
-    }).onReady
+    }).on('ready')
 // console.log('#TEST MODEL', Test)
     // run tests
     run()

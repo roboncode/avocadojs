@@ -128,7 +128,7 @@ describe('orango', function() {
     describe('definition', function() {
       it('to return instance of model class', async function() {
         let schema = orango.Schema({ name: String })
-        let Test = await orango.model('DefTest', schema).onReady
+        let Test = await orango.model('DefTest', schema).on('ready')
         expect(Test.name).to.equal('DefTest')
       })
     })
@@ -155,7 +155,7 @@ describe('orango', function() {
     describe('get model collection name', function() {
       it('to be pluralized version of name', async function() {
         const schema = orango.Schema({ name: String })
-        const MyTest = await orango.model('MyTest', schema).onReady
+        const MyTest = await orango.model('MyTest', schema).on('ready')
         expect(MyTest.collectionName).to.equal('my_tests')
       })
     })
