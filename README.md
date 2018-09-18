@@ -26,6 +26,8 @@ Official documentation can be found at **[orango.js.org](https://orango.js.org)*
 ### Project Status
 **I started Orango at the beginning of August 2018**. This project is in `pre-release` and the API is subject to change as functionality and workflow is being developed. Once the dust settles, I will move it into an `alpha`.
 
+**[19 Sept 2018]**  On vacation, thx for the feedback. I will be at it again once I am back.
+
 **[10 Sept 2018]**  I am currently working on an example project. The [example](https://github.com/roboncode/orango/tree/examples) branch will provide an initial use case in a "real-world" application using Express. It also allows me to find missing workflows that are needed for an initial release. One of those features coming down the pipeline is `populate()` - which provides the ability to populate properties from other collections when fetching data.
 
 **[04 Sept 2018]**  I have tests in place currently at [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  . I am testing out the API workflow on a test project and then I will working on the documentation. In the meantime, if you are eager to start using Orango, I would recommend looking at the test cases for examples. There are other items on the Roadmap but I am working on a stable 1.0 release
