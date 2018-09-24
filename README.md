@@ -19,6 +19,15 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 * Ability to pre-populate database with data
 * and more...
 
+### Why use an ODM? (*Draft*)
+
+* Ease of use
+* Focus on data instead of queries
+* Optimized queries
+* Validation prevent bad data from being injected into database
+* Cleaner interfaces
+* Single point of change for bugfixes, feeatures, etc
+
 ### Documentation
 
 Official documentation can be found at **[orango.js.org](https://orango.js.org)**. (*Work in progress and yes, I know, there is very little*)

@@ -21,7 +21,7 @@ describe('orango model', function() {
     schema.computed.greeting = function() {
       return 'I am ' + this.firstName
     }
-    await orango.model('ModelTest', schema).ready
+    await orango.model('ModelTest', schema).on('ready')
   })
 
   describe('create a new Model() with schema object', function() {
@@ -32,10 +32,10 @@ describe('orango model', function() {
   })
 
   describe('creates a new model with bogus name as object instead of string', function() {
-    it('should have a name `Test`', function() {
+    it('should have a name `Test`', async function() {
       let result
       try {
-        orango.model('Bogus', {}, {}).ready
+        await orango.model('Bogus', {}, {}).on('ready')
       } catch (e) {
         result = e
       }
@@ -70,7 +70,7 @@ describe('orango model', function() {
       schema.statics = {
         fullName() {}
       }
-      const ModelTest = await orango.model('Test' + Date.now(), schema).ready
+      const ModelTest = await orango.model('Test' + Date.now(), schema).on('ready')
       let modelTest = new ModelTest()
       modelTest.name = 'Test'
       expect(modelTest.name).to.equal('Test')
@@ -85,7 +85,7 @@ describe('orango model', function() {
       schema.statics = {
         fullName() {}
       }
-      const ModelTest = await orango.model('Test' + Date.now(), schema).ready
+      const ModelTest = await orango.model('Test' + Date.now(), schema).on('ready')
       ModelTest.fullName()
       expect(ModelTest.fullName).to.a('function')
     })
@@ -111,7 +111,7 @@ describe('orango model', function() {
         }
       )
 
-      let IndexModel = await orango.model('IndexTest', schema).ready
+      let IndexModel = await orango.model('IndexTest', schema).on('ready')
 
       const indexes = await IndexModel.getCollection().indexes()
       expect(indexes.length).to.equal(3)
@@ -129,7 +129,7 @@ describe('orango model', function() {
         statics: {
           fullName() {}
         }
-      }).ready
+      }).on('ready')
       expect(ModelTest.fullName).to.a('function')
     })
   })
@@ -195,7 +195,7 @@ describe('orango model', function() {
     })
   })
 
-  xdescribe('creating a doc with a duplicate key', function() {
+  describe('creating a doc with a duplicate key', function() {
     it('should throw an error', async function() {
       const ModelTest = orango.model('ModelTest')
       let result
@@ -205,9 +205,7 @@ describe('orango model', function() {
       } catch(e) {
         result = e
       }
-      console.log(result)
-      expect(result).to.be.an('error')
-      expect(result.message).to.equal('')
+      expect(result.message).to.equal('unique constraint violated - in index 0 of type primary over ["_key"]; conflicting key: dup')
     })
   })
 
@@ -495,7 +493,7 @@ describe('orango model', function() {
       try {
         result = await ModelTest.findByQuery(
           `FOR @@doc IN @@collection FILTER @@doc._key == '${modelTest._key}'`
-        )
+        ).id()
       } catch (e) {
         result = e
       }
@@ -536,7 +534,7 @@ describe('orango model', function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
       await test.save()
-      let result = await ModelTest.findById(test._key)
+      let result = await ModelTest.findById(test._key).id()
       expect(result.id).to.equal(test._key)
     })
   })
@@ -587,7 +585,6 @@ describe('orango model', function() {
       await test.save()
       expect(test._key).to.be.a('string')
       await test.remove()
-      console.log('#result', test._key)
       expect(test._key).to.be.undefined
     })
   })

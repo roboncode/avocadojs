@@ -18,6 +18,7 @@ async function connectToDefaultDb() {
     await orango.get('disconnect').connect()
 
     // create Test model
+    // const Test = 
     await orango.model('Test', {
       name: {
         type: String,
@@ -25,8 +26,8 @@ async function connectToDefaultDb() {
       },
       comments: [{ $id: String, text: String }],
       tags: [String]
-    }).ready
-
+    }).on('ready')
+// console.log('#TEST MODEL', Test)
     // run tests
     run()
   } catch (e) {
@@ -59,6 +60,10 @@ after(async function() {
 
   if (dbs.indexOf('test') !== -1) {
     await orango.get('system').dropDatabase('test')
+  }
+
+  if (dbs.indexOf('model_tests') !== -1) {
+    await orango.get('system').dropDatabase('model_tests')
   }
 
   if (dbs.indexOf('disconnect') !== -1) {

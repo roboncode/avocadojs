@@ -5,7 +5,7 @@ const likes = [
   },
   {
     _from: 'posts/first',
-    _to: 'users/john'
+    _to: 'users/chase'
   },
   {
     _from: 'posts/another',

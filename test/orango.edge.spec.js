@@ -15,18 +15,19 @@ describe('edge connections', function() {
     const UserSchema = orango.Schema({
       name: String
     })
-    User = await orango.model('User', UserSchema).ready
+    User = await orango.model('User', UserSchema).on('ready')
 
     // :: POST :: //
     const PostSchema = orango.Schema({
       author: String,
       text: String
     })
-    Post = await orango.model('Post', PostSchema).ready
+    Post = await orango.model('Post', PostSchema).on('ready')
 
     // :: LIKE :: //
     const LikeSchema = orango.EdgeSchema('users', 'posts')
-    Like = await orango.model('Like', LikeSchema).ready
+    Like = await orango.model('Like', LikeSchema).on('ready')
+
   })
 
   async function createDocs() {
@@ -45,16 +46,10 @@ describe('edge connections', function() {
 
   describe('creates an edge collection', function() {
     it('create an edge collection', async function() {
-      const schema = orango.Schema(
-        {
-          name: String
-        },
-        {
-          edge: true
-        }
-      )
-      await orango.model('EdgeTest', schema).ready
+      const schema = orango.EdgeSchema('a', 'b')
+      await orango.model('EdgeTest', schema).on('ready')
       const cols = await orango.connection.db.listCollections()
+//      [{"id":"281247","name":"tests","status":3,"type":2,"isSystem":false,"globallyUniqueId":"h85D8A936C6BC/281247"}]
       let str = JSON.stringify(cols)
       expect(str).to.contain('edge_tests')
     })
@@ -65,7 +60,7 @@ describe('edge connections', function() {
       await createDocs()
 
       let likedUsers = await User.findByEdge(Like, post._key, {
-        noDefaults: true,
+        noDefaults: true
       }).limit(1)
 
       expect(likedUsers).to.deep.equal({
@@ -77,15 +72,23 @@ describe('edge connections', function() {
     })
   })
 
-  xdescribe('findByEdge to AQL', function() {
+  describe('findByEdge to AQL', function() {
     it('return an AQL', async function() {
-      let aql = await User.findByEdge(Like, post._key, {
-        noDefaults: true,
-      })
-      // .limit(1)
-      .toAQL()
+      await createDocs()
 
-      expect(aql).to.match(`FOR doc IN INBOUND "posts/\w+" likes RETURN DISTINCT doc`)
+      let aql
+      try {
+        aql = await User.findByEdge(Like, post._key, {
+          noDefaults: true
+        })
+          // .limit(1)
+          .toAQL()
+      } catch (e) {
+        aql = e.message
+      }
+      expect(aql).to.match(
+        /FOR doc IN INBOUND "posts\/\w+" likes RETURN DISTINCT doc/
+      )
     })
   })
 

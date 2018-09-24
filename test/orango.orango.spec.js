@@ -93,10 +93,14 @@ describe('orango', function() {
       let result
       try {
         let importOrango = orango.get('import')
-        await importOrango.model('ImportTest', { name: String }).ready
-        result = await importOrango.importDocs('ImportTest', [{ name: 'One' }], {
-          truncate: true
-        })
+        importOrango.model('ImportTest', { name: String })
+        result = await importOrango.importDocs(
+          'ImportTest',
+          [{ name: 'One' }],
+          {
+            truncate: true
+          }
+        )
       } catch (e) {
         result = e
       }
@@ -124,7 +128,7 @@ describe('orango', function() {
     describe('definition', function() {
       it('to return instance of model class', async function() {
         let schema = orango.Schema({ name: String })
-        let Test = await orango.model('DefTest', schema).ready
+        let Test = await orango.model('DefTest', schema).on('ready')
         expect(Test.name).to.equal('DefTest')
       })
     })
@@ -151,7 +155,7 @@ describe('orango', function() {
     describe('get model collection name', function() {
       it('to be pluralized version of name', async function() {
         const schema = orango.Schema({ name: String })
-        const MyTest = await orango.model('MyTest', schema).ready
+        const MyTest = await orango.model('MyTest', schema).on('ready')
         expect(MyTest.collectionName).to.equal('my_tests')
       })
     })
@@ -179,10 +183,12 @@ describe('orango', function() {
     describe('create document models prior to connecting', function() {
       it('should create collections', async function() {
         let customOrango = orango.get('custom')
-        await customOrango.model('CustomModel', { name: String })
+        customOrango.model('CustomModel', { name: String })
         await customOrango.connect('custom')
-        let cols = await customOrango.connection.db.listCollections()
-        expect(JSON.stringify(cols)).to.include('custom_model')
+        customOrango.events.on('connected', async () => {
+          let cols = await customOrango.connection.db.listCollections()
+          expect(JSON.stringify(cols)).to.include('custom_model')
+        })
       })
     })
 
@@ -192,8 +198,28 @@ describe('orango', function() {
         const edgeSchema = orango.EdgeSchema('a', 'b')
         await customOrango.model('EdgeModel', edgeSchema)
         await customOrango.connect('edge')
-        let cols = await customOrango.connection.db.listCollections()
-        expect(JSON.stringify(cols)).to.include('edge_model')
+
+        customOrango.events.on('connected', async () => {
+          let cols = await customOrango.connection.db.listCollections()
+          expect(JSON.stringify(cols)).to.include('edge_model')
+        })
+      })
+    })
+
+    describe('invoke a rawQuery', function() {
+      it('should make a raw query', async function() {
+        // try {
+        let customOrango = orango.get('custom')
+        await customOrango.connect('custom')
+        const User = await customOrango
+          .model('user', { name: String })
+          .on('ready')
+        await new User({ name: 'Mikey' }).save()
+        results = await customOrango.rawQuery('FOR doc IN users RETURN doc')
+        expect(results[0]._id).to.not.be.undefined
+        // } catch(e) {
+        //   console.log('#whooops', e.message)
+        // }
       })
     })
   })

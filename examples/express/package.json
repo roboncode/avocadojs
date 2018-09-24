@@ -1,0 +1,16 @@
+{
+  "name": "orango-express-example",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "serve": "nodemon app.js",
+    "samples": "node samples.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "app-module-path": "^2.2.0",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3"
+  }
+}
