@@ -185,7 +185,7 @@ describe('orango', function() {
         let customOrango = orango.get('custom')
         customOrango.model('CustomModel', { name: String })
         await customOrango.connect('custom')
-        setTimeout(async () => {
+        customOrango.events.on('connected', async () => {
           let cols = await customOrango.connection.db.listCollections()
           expect(JSON.stringify(cols)).to.include('custom_model')
         })
@@ -198,7 +198,8 @@ describe('orango', function() {
         const edgeSchema = orango.EdgeSchema('a', 'b')
         await customOrango.model('EdgeModel', edgeSchema)
         await customOrango.connect('edge')
-        setTimeout(async () => {
+
+        customOrango.events.on('connected', async () => {
           let cols = await customOrango.connection.db.listCollections()
           expect(JSON.stringify(cols)).to.include('edge_model')
         })
@@ -207,12 +208,18 @@ describe('orango', function() {
 
     describe('invoke a rawQuery', function() {
       it('should make a raw query', async function() {
+        // try {
         let customOrango = orango.get('custom')
-        customOrango.connect('custom')
-        const User = customOrango.model('user', { name: String })
-        await new User({ name: 'John' }).save()
+        await customOrango.connect('custom')
+        const User = await customOrango
+          .model('user', { name: String })
+          .on('ready')
+        await new User({ name: 'Mikey' }).save()
         results = await customOrango.rawQuery('FOR doc IN users RETURN doc')
         expect(results[0]._id).to.not.be.undefined
+        // } catch(e) {
+        //   console.log('#whooops', e.message)
+        // }
       })
     })
   })
