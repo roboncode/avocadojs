@@ -21,7 +21,7 @@ describe('orango model', function() {
     schema.computed.greeting = function() {
       return 'I am ' + this.firstName
     }
-    await orango.model('ModelTest', schema).on('ready')
+    await orango.model('ModelTest', schema)
   })
 
   describe('create a new Model() with schema object', function() {
@@ -35,7 +35,7 @@ describe('orango model', function() {
     it('should have a name `Test`', async function() {
       let result
       try {
-        await orango.model('Bogus', {}, {}).on('ready')
+        await orango.model('Bogus', {}, {})
       } catch (e) {
         result = e
       }
@@ -70,7 +70,7 @@ describe('orango model', function() {
       schema.statics = {
         fullName() {}
       }
-      const ModelTest = await orango.model('Test' + Date.now(), schema).on('ready')
+      const ModelTest = await orango.model('Test' + Date.now(), schema)
       let modelTest = new ModelTest()
       modelTest.name = 'Test'
       expect(modelTest.name).to.equal('Test')
@@ -85,7 +85,7 @@ describe('orango model', function() {
       schema.statics = {
         fullName() {}
       }
-      const ModelTest = await orango.model('Test' + Date.now(), schema).on('ready')
+      const ModelTest = await orango.model('Test' + Date.now(), schema)
       ModelTest.fullName()
       expect(ModelTest.fullName).to.a('function')
     })
@@ -111,9 +111,9 @@ describe('orango model', function() {
         }
       )
 
-      let IndexModel = await orango.model('IndexTest', schema).on('ready')
-
+      let IndexModel = await orango.model('IndexTest', schema)
       const indexes = await IndexModel.getCollection().indexes()
+
       expect(indexes.length).to.equal(3)
       expect(indexes[1].type).to.equal('hash')
       expect(indexes[1].fields).to.deep.equal(['name'])
@@ -129,7 +129,7 @@ describe('orango model', function() {
         statics: {
           fullName() {}
         }
-      }).on('ready')
+      })
       expect(ModelTest.fullName).to.a('function')
     })
   })
@@ -179,7 +179,7 @@ describe('orango model', function() {
   describe('import', function() {
     it('should import data', async function() {
       const ModelTest = orango.model('ModelTest')
-      let result = await ModelTest.importMany(
+      let result = await orango.importDocs(ModelTest,
         [
           {
             name: 'Test1'
@@ -200,12 +200,14 @@ describe('orango model', function() {
       const ModelTest = orango.model('ModelTest')
       let result
       try {
-        await new ModelTest({_key: 'dup'}).save()
-        await new ModelTest({_key: 'dup'}).save()
-      } catch(e) {
+        await new ModelTest({ _key: 'dup' }).save()
+        await new ModelTest({ _key: 'dup' }).save()
+      } catch (e) {
         result = e
       }
-      expect(result.message).to.equal('unique constraint violated - in index 0 of type primary over ["_key"]; conflicting key: dup')
+      expect(result.message).to.equal(
+        'unique constraint violated - in index 0 of type primary over ["_key"]; conflicting key: dup'
+      )
     })
   })
 
@@ -333,8 +335,11 @@ describe('orango model', function() {
         .limit(2)
         .computed(true)
         .select('firstName')
+        .id()
 
       expect(results[0].greeting).to.deep.equal('I am Geddy')
+      expect(results[0].id).to.exist
+      expect(results[0]._key).to.not.exist
       expect(results[1].greeting).to.deep.equal('I am Neal')
     })
   })
@@ -360,9 +365,12 @@ describe('orango model', function() {
         lastName: 'Peart'
       }).save()
 
-      let result = await ModelTest.updateMany({}, {
-        name: 'update'
-      })
+      let result = await ModelTest.updateMany(
+        {},
+        {
+          name: 'update'
+        }
+      )
       expect(result.modified).to.be.equal(3)
     })
   })
@@ -388,9 +396,12 @@ describe('orango model', function() {
         lastName: 'Peart'
       }).save()
 
-      let result = await ModelTest.updateMany({}, {
-        name: 'update'
-      }).options({
+      let result = await ModelTest.updateMany(
+        {},
+        {
+          name: 'update'
+        }
+      ).options({
         returnNew: true
       })
       expect(result.length).to.be.equal(3)

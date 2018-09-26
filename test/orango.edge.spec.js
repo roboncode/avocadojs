@@ -15,19 +15,18 @@ describe('edge connections', function() {
     const UserSchema = orango.Schema({
       name: String
     })
-    User = await orango.model('User', UserSchema).on('ready')
+    User = await orango.model('User', UserSchema)
 
     // :: POST :: //
     const PostSchema = orango.Schema({
       author: String,
       text: String
     })
-    Post = await orango.model('Post', PostSchema).on('ready')
+    Post = await orango.model('Post', PostSchema)
 
     // :: LIKE :: //
     const LikeSchema = orango.EdgeSchema('users', 'posts')
-    Like = await orango.model('Like', LikeSchema).on('ready')
-
+    Like = await orango.model('Like', LikeSchema)
   })
 
   async function createDocs() {
@@ -47,9 +46,10 @@ describe('edge connections', function() {
   describe('creates an edge collection', function() {
     it('create an edge collection', async function() {
       const schema = orango.EdgeSchema('a', 'b')
-      await orango.model('EdgeTest', schema).on('ready')
+      await orango.model('EdgeTest', schema)
+
       const cols = await orango.connection.db.listCollections()
-//      [{"id":"281247","name":"tests","status":3,"type":2,"isSystem":false,"globallyUniqueId":"h85D8A936C6BC/281247"}]
+
       let str = JSON.stringify(cols)
       expect(str).to.contain('edge_tests')
     })
