@@ -1,5 +1,6 @@
 let expect = require('chai').expect
 let orango = require('../lib')
+const CONSTS = require('../lib/consts')
 
 describe('orango', function() {
   describe('get()', function() {
@@ -161,37 +162,39 @@ describe('orango', function() {
     })
 
     describe('create document models prior to connecting', function() {
-      it('should create collections', async function() {
+      it('should create collections', function(done) {
         let customOrango = orango.get('custom')
-        customOrango.model('CustomModel', { name: String })
-        await customOrango.connect('custom')
-        customOrango.events.on('connected', async () => {
+        customOrango.events.on(CONSTS.MODEL_READY, async () => {
           let cols = await customOrango.connection.db.listCollections()
           expect(JSON.stringify(cols)).to.include('custom_model')
+          done()
         })
+        customOrango.model('CustomModel', { name: String })
+        customOrango.connect('custom')
       })
     })
 
     describe('create edge models prior to connecting', function() {
-      it('should create collections', async function() {
-        let customOrango = orango.get('edge')
-        const edgeSchema = orango.EdgeSchema('a', 'b')
-        await customOrango.model('EdgeModel', edgeSchema)
-        await customOrango.connect('edge')
+      it('should create collections', function(done) {
+        let edgeOrango = orango.get('edge')
 
-        customOrango.events.on('connected', async () => {
-          let cols = await customOrango.connection.db.listCollections()
+        edgeOrango.events.on(CONSTS.MODEL_READY, async () => {
+          let cols = await edgeOrango.connection.db.listCollections()
           expect(JSON.stringify(cols)).to.include('edge_model')
+          done()
         })
+
+        const edgeSchema = orango.EdgeSchema('a', 'b')
+        edgeOrango.model('EdgeModel', edgeSchema)
+        edgeOrango.connect('edge')
       })
     })
 
     describe('invoke a rawQuery', function() {
       it('should make a raw query', async function() {
         let rawOrango = orango.get('raw')
-        const User = rawOrango.model('User', { name: String })
-
         await rawOrango.connect('custom')
+        const User = await rawOrango.model('User', { name: String })
 
         await new User({ name: 'Mikey' }).save()
         results = await rawOrango.rawQuery('FOR doc IN users RETURN doc')
