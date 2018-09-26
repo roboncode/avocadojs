@@ -5,38 +5,24 @@ let orango = require('../lib')
 require('colors')
 
 async function connectToDefaultDb() {
-  let connected
-  try {
-    // connect to test db
-    await orango.connect('test')
+  // connect to test db
+  await orango.connect('test')
+  // connect to system db
+  await orango.get('system').connect()
+  // this db is used for the purpose of disconnecting test
+  await orango.get('disconnect').connect()
 
-    connected = true
-
-    // connect to system db
-    await orango.get('system').connect()
-    // this db is used for the purpose of disconnecting test
-    await orango.get('disconnect').connect()
-
-    // create Test model
-    // const Test = 
-    await orango.model('Test', {
-      name: {
-        type: String,
-        default: 'test'
-      },
-      comments: [{ $id: String, text: String }],
-      tags: [String]
-    }).on('ready')
-// console.log('#TEST MODEL', Test)
-    // run tests
-    run()
-  } catch (e) {
-    if (connected) {
-      console.log('Cannot connect'.red)
-    } else {
-      setTimeout(connectToDefaultDb, 1000)
-    }
-  }
+  // create Test model
+  await orango.model('Test', {
+    name: {
+      type: String,
+      default: 'test'
+    },
+    comments: [{ $id: String, text: String }],
+    tags: [String]
+  })
+  // run tests
+  run()
 }
 
 function checkConnection() {

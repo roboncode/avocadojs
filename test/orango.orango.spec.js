@@ -26,34 +26,14 @@ describe('orango', function() {
   describe('connect to same database', function() {
     it('should return same connection', async function() {
       let conn = orango.connection
-      await orango.connect('test')
-      expect(orango.connection).to.equal(conn)
-    })
-  })
-
-  describe('connect to different database without connecting', function() {
-    it('throw an error', async function() {
       let result
       try {
-        await orango.connect()
-        result = orango.connection
-      } catch (e) {
-        result = e
-      }
-      expect(result).to.an('error')
-    })
-  })
-
-  describe('create collection when not connected', function() {
-    it('should throw an error', async function() {
-      let result
-      try {
-        let testOrango = orango.get('test-not-connected')
-        await testOrango.createCollection('test')
+        result = await orango.connect('test')
       } catch (e) {
         result = e
       }
       expect(result).to.be.an('error')
+      expect(result.message).to.equal('Connection already established')
     })
   })
 
@@ -88,7 +68,7 @@ describe('orango', function() {
     })
   })
 
-  describe('import docs without a connection', function() {
+  xdescribe('import docs without a connection', function() {
     it('throw an error', async function() {
       let result
       try {
@@ -128,7 +108,7 @@ describe('orango', function() {
     describe('definition', function() {
       it('to return instance of model class', async function() {
         let schema = orango.Schema({ name: String })
-        let Test = await orango.model('DefTest', schema).on('ready')
+        let Test = await orango.model('DefTest', schema)
         expect(Test.name).to.equal('DefTest')
       })
     })
@@ -155,7 +135,7 @@ describe('orango', function() {
     describe('get model collection name', function() {
       it('to be pluralized version of name', async function() {
         const schema = orango.Schema({ name: String })
-        const MyTest = await orango.model('MyTest', schema).on('ready')
+        const MyTest = await orango.model('MyTest', schema)
         expect(MyTest.collectionName).to.equal('my_tests')
       })
     })
@@ -208,18 +188,14 @@ describe('orango', function() {
 
     describe('invoke a rawQuery', function() {
       it('should make a raw query', async function() {
-        // try {
-        let customOrango = orango.get('custom')
-        await customOrango.connect('custom')
-        const User = await customOrango
-          .model('user', { name: String })
-          .on('ready')
+        let rawOrango = orango.get('raw')
+        const User = rawOrango.model('User', { name: String })
+
+        await rawOrango.connect('custom')
+
         await new User({ name: 'Mikey' }).save()
-        results = await customOrango.rawQuery('FOR doc IN users RETURN doc')
+        results = await rawOrango.rawQuery('FOR doc IN users RETURN doc')
         expect(results[0]._id).to.not.be.undefined
-        // } catch(e) {
-        //   console.log('#whooops', e.message)
-        // }
       })
     })
   })
