@@ -16,17 +16,17 @@
   "dependencies": {
     "arangojs": "6.6.0",
     "colors": "1.3.2",
-    "lodash": "^4.17.10",
+    "lodash": "4.17.11",
     "pluralize": "^7.0.0",
-    "tangjs": "0.1.4",
+    "tangjs": "0.1.5",
     "uniqid": "^5.0.3"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
+    "chai": "4.2.0",
     "coveralls": "^3.0.2",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1",
-    "vuepress": "^0.14.2"
+    "vuepress": "0.14.4"
   },
   "directories": {
     "test": "test"
