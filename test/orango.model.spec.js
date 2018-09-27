@@ -148,8 +148,8 @@ describe('orango model', function() {
     it('new key should exist', async function() {
       const ModelTest = orango.model('ModelTest')
       let modelTest = new ModelTest()
-      let result = await modelTest.save({ saveAsNew: true })
-      expect(result._key).to.be.a('string')
+      await modelTest.save({ saveAsNew: true })
+      expect(modelTest._key).to.be.a('string')
     })
   })
 
