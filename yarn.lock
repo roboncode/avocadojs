@@ -6212,9 +6212,9 @@ table@^4.0.3:
     slice-ansi "1.0.0"
     string-width "^2.1.1"
 
-tangjs@0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/tangjs/-/tangjs-0.1.6.tgz#409fd4e4ba68d76793ae0b2bf00910d0b5af6d36"
+tangjs@0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/tangjs/-/tangjs-0.1.7.tgz#8e572a14424cc8c6246418c5e063bdb1b82db44d"
   dependencies:
     colors "^1.3.0"
     joi "^13.4.0"
