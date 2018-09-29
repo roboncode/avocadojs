@@ -157,22 +157,8 @@ describe('orango model', function() {
     it('return AQL ', async function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
-      let result = await test.toAQL()
+      let result = await test.save().toAQL()
       expect(result).to.be.equal('NEW DOCUMENT')
-    })
-  })
-
-  describe('save force update but missing _key', function() {
-    it('throw an error ', async function() {
-      const ModelTest = orango.model('ModelTest')
-      let test = new ModelTest()
-      let result
-      try {
-        result = await test.save({ update: true })
-      } catch (e) {
-        result = e
-      }
-      expect(result).to.be.an('error')
     })
   })
 
@@ -195,22 +181,6 @@ describe('orango model', function() {
     })
   })
 
-  describe('creating a doc with a duplicate key', function() {
-    it('should throw an error', async function() {
-      const ModelTest = orango.model('ModelTest')
-      let result
-      try {
-        await new ModelTest({ _key: 'dup' }).save()
-        await new ModelTest({ _key: 'dup' }).save()
-      } catch (e) {
-        result = e
-      }
-      expect(result.message).to.equal(
-        'unique constraint violated - in index 0 of type primary over ["_key"]; conflicting key: dup'
-      )
-    })
-  })
-
   describe('update using toAQL()', function() {
     it('should return AQL', async function() {
       const ModelTest = orango.model('ModelTest')
@@ -218,7 +188,7 @@ describe('orango model', function() {
       await test.save()
       test.name = 'Test'
 
-      let aql = await test.toAQL()
+      let aql = await test.save().toAQL()
       expect(aql).to.equal(
         'LET modified = COUNT( FOR doc IN model_tests FILTER (doc.`_key` == "' +
           test._key +
@@ -237,29 +207,8 @@ describe('orango model', function() {
       test.name = 'Test'
       await test.save()
 
-      let aql = await test.toAQL({ saveAsNew: true })
+      let aql = await test.save({ saveAsNew: true }).toAQL()
       expect(aql).to.equal('NEW DOCUMENT')
-    })
-  })
-
-  describe('update using toAQL() marked as new without _key', function() {
-    it('should throw an error', async function() {
-      const ModelTest = orango.model('ModelTest')
-      let test = new ModelTest()
-      test.name = 'Test'
-      test.isNew = true
-
-      let result
-      try {
-        await test.toAQL({
-          update: true
-        })
-      } catch (e) {
-        result = e
-      }
-
-      expect(result).to.be.an('error')
-      expect(result.message).to.equal('Missing required _key')
     })
   })
 
@@ -291,7 +240,7 @@ describe('orango model', function() {
       }).save()
 
       let results = await ModelTest.find()
-        .withDefaults(true)
+        .defaults(true)
         .sort('firstName')
         .offset(1)
         .limit(2)
@@ -329,7 +278,7 @@ describe('orango model', function() {
       }).save()
 
       let results = await ModelTest.find()
-        .withDefaults(true)
+        .defaults(true)
         .sort('firstName')
         .offset(1)
         .limit(2)
