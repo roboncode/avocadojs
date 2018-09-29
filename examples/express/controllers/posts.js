@@ -84,10 +84,6 @@ app.get('/posts', async (req, res) => {
           noDefaults: true
         })
       // .toAQL() // RESULTS in the statement below
-      // LET user = DOCUMENT('users/rob')
-      // FOR doc IN posts
-      // FILTER (doc.`user` == "rob")
-      // RETURN MERGE(doc, { user: KEEP(user, '_key', 'firstName', 'lastName') })
     } else {
       // we use this when the user could be one or more users, but we dont know which user
       posts = await Post.findMany(query, {
@@ -104,9 +100,6 @@ app.get('/posts', async (req, res) => {
           noDefaults: true
         })
       // .toAQL() // RESULTS in the statement below
-      // FOR doc IN posts
-      // LET user = DOCUMENT(CONCAT('users/', doc.user))
-      // RETURN MERGE(doc, { user: KEEP(user, '_key', 'firstName', 'lastName') })
     }
     res.send(posts)
   } catch (e) {
