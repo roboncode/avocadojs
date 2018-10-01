@@ -1,6 +1,7 @@
 let expect = require('chai').expect
 let orango = require('../lib')
 let Model = require('../lib/Model')
+let ORM = require('../lib/ORM')
 let CONSTS = require('../lib/consts')
 
 describe('orango model', function() {
@@ -162,10 +163,43 @@ describe('orango model', function() {
     })
   })
 
+  describe.only('create document with sets', function() {
+    it('return AQL with', async function() {
+      const ModelTest = orango.model('ModelTest')
+      const Test = orango.model('Test')
+      let result = await ModelTest.findById('rob')
+      // .set('myObj', {abc: 123}, true)
+      // .set('myStr', "Hello, world!")
+      .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
+      // .set('test2', Test.find({name: 'rob'}).select('junk').id().computed(true))
+      .select('firstName lastName')
+      .toAQL()
+      console.log('#RESULT', result)
+      expect(result.split('LET').length - 1).to.be.equal(7)
+    })
+  })
+
+  describe('create documents with sets', function() {
+    it('return AQL with', async function() {
+      ORM.counter = 1
+      const ModelTest = orango.model('ModelTest')
+      const Test = orango.model('Test')
+      let result = await ModelTest.find({admin: true})
+      .set('myObj', {abc: 123}, true)
+      .set('myStr', "Hello, world!")
+      .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
+      .set('test2', Test.findById('@@parent.role').select('junk').id().computed(true))
+      .select('firstName lastName')
+      .toAQL()
+      expect(result.split('LET').length - 1).to.be.equal(6)
+    })
+  })
+
   describe('import', function() {
     it('should import data', async function() {
       const ModelTest = orango.model('ModelTest')
-      let result = await orango.importDocs(ModelTest,
+      let result = await orango.importDocs(
+        ModelTest,
         [
           {
             name: 'Test1'
@@ -215,7 +249,7 @@ describe('orango model', function() {
   describe('printAQL on find', function() {
     it('print AQL query', async function() {
       const ModelTest = orango.model('ModelTest')
-      let results = await ModelTest.find({}, { printAQL: 'color' })
+      let results = await ModelTest.find().toAQL()
       expect(results).to.not.be.undefined
     })
   })
@@ -246,12 +280,10 @@ describe('orango model', function() {
         .limit(2)
         .computed(true)
         .select('firstName')
-        .toAQL({
-          pretty: 'color'
-        })
+        .toAQL()
 
       expect(results).to.equal(
-        'FOR doc IN model_tests \n   SORT doc.firstName \n   LIMIT 1,2 \n   RETURN { _key : doc._key , firstName : doc.firstName }'
+        'FOR doc IN model_tests SORT doc.firstName LIMIT 1,2 RETURN KEEP(doc, "firstName")'
       )
     })
   })
@@ -283,7 +315,7 @@ describe('orango model', function() {
         .offset(1)
         .limit(2)
         .computed(true)
-        .select('firstName')
+        .select('_key firstName')
         .id()
 
       expect(results[0].greeting).to.deep.equal('I am Geddy')
@@ -494,7 +526,9 @@ describe('orango model', function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
       await test.save()
-      let result = await ModelTest.findById(test._key).id().select('_key')
+      let result = await ModelTest.findById(test._key)
+        .id()
+        .select('_key')
       expect(result.id).to.equal(test._key)
     })
   })
