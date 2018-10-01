@@ -494,7 +494,7 @@ describe('orango model', function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
       await test.save()
-      let result = await ModelTest.findById(test._key).id()
+      let result = await ModelTest.findById(test._key).id().select('_key')
       expect(result.id).to.equal(test._key)
     })
   })
