@@ -163,114 +163,6 @@ describe('orango model', function() {
     })
   })
 
-/*
-  //LET doc_sktwi1kmfjmq527ns = DOCUMENT('users/rob') 
-//LET permissions = (LET doc_sktwi1kmfjmq527nt = DOCUMENT(doc_sktwi1kmfjmq527ns.role) RETURN KEEP(doc_sktwi1kmfjmq527nt, "permissions")) 
-//RETURN MERGE(KEEP(doc_sktwi1kmfjmq527ns, "_key","email","firstName","lastName","role"), {})
-LET doc_sktwi1l07jmq6nili = KEEP(DOCUMENT('users/rob'), "_key","email","firstName","lastName","role")
-LET role = KEEP(DOCUMENT(CONCAT('user_roles/', doc_sktwi1l07jmq6nili.role)), "permissions")
-RETURN MERGE(doc_sktwi1l07jmq6nili, role)
-
-LET doc_sktwi1l65jmqeq0eg = DOCUMENT('model_tests/rob') 
-LET test = (
-    LET doc_sktwi1l65jmqeq0eh = DOCUMENT('tests/@@parent.role') 
-    RETURN KEEP(doc_sktwi1l65jmqeq0eh, "permissions")
-) 
-RETURN MERGE(KEEP(doc_sktwi1l65jmqeq0eg, "firstName","lastName"), test)
-
-
-LET doc_sktwi1l9yjmqewfkl = DOCUMENT('model_tests/rob') 
-LET test2 = (
-    FOR doc_sktwi1l9yjmqewfkm IN tests 
-    FILTER (doc_sktwi1l9yjmqewfkm.`name` == "rob") 
-    RETURN KEEP(doc_sktwi1l9yjmqewfkm, "junk")
-) 
-RETURN MERGE(KEEP(doc_sktwi1l9yjmqewfkl, "firstName","lastName"), {test2})
-
-
-LET doc_sktwi1lbdjmqf0qqc = DOCUMENT('model_tests/rob') 
-LET test = DOCUMENT('tests/@@parent.role') RETURN KEEP(test, "permissions")
-RETURN MERGE(KEEP(doc_sktwi1lbdjmqf0qqc, "firstName","lastName"), test)
-/*
-//LET doc = DOCUMENT('users/rob')
-FOR doc IN users
-    LET perm = (KEEP(DOCUMENT(CONCAT('user_roles/', doc.role || 'user')), 'permissions'))
-    LET cats = (FOR doc_1 in categories RETURN doc_1)
-    RETURN MERGE(doc, perm, {cats} )
-
-FOR doc IN model_tests FILTER (doc.`admin` == true) 
-    LET myObj = {"abc":123} 
-    LET myStr = "Hello, world!" 
-    LET test = (LET doc_1 = KEEP( DOCUMENT(doc.role) ,'permissions') RETURN doc_1) 
-    LET test2 = (LET doc_2 = KEEP( DOCUMENT(doc.role) ,'junk') RETURN doc_2) 
-    RETURN MERGE(KEEP(doc, "firstName","lastName"), myObj, {myStr}, test, {test2})
-
-LET doc_1 = DOCUMENT('model_tests/rob') 
-LET myObj = {"abc":123} LET myStr = "Hello, world!" 
-LET test = (LET doc_2 = DOCUMENT(doc_1.role) RETURN doc_2) 
-LET test2 = (LET doc_3 = DOCUMENT(doc_1.role) RETURN doc_3) 
-RETURN MERGE(KEEP(doc_1, "firstName","lastName"), myObj, {myStr}, test, {test2})
-
-FOR doc IN model_tests FILTER (doc.`admin` == true) 
-    LET myObj = {"abc":123} 
-    LET myStr = "Hello, world!" 
-    LET test = (LET doc_1 = DOCUMENT(doc.role) RETURN KEEP(doc_1, "permissions"))
-    LET test2 = (LET doc_2 = DOCUMENT(doc.role) RETURN KEEP(doc_2, "junk")) 
-    RETURN MERGE(KEEP(doc, "firstName","lastName"), myObj, {myStr}, test, {test2})
-
-/*
-LET doc_1 = DOCUMENT('model_tests/rob') 
-LET test = (LET doc_2 = KEEP( DOCUMENT(doc_1.role') ,'permissions) RETURN doc_2) 
-RETURN MERGE(doc_1, {test})
-
-LET doc_1 = DOCUMENT('model_tests/rob') 
-LET myObj = {"abc":123} 
-LET myStr = "Hello, world!" 
-LET test = (LET doc_2 = KEEP( DOCUMENT(doc_1.role) ,'permissions') RETURN doc_2) 
-LET test2 = (LET doc_3 = KEEP( DOCUMENT(doc_1.role) ,'junk') RETURN doc_3) 
-RETURN MERGE(doc_1, myObj, {myStr}, test, {test2})
-
-/*
-User.findById('rob')
-//.populate('permissions', UserRole.findById('@@doc.role'))
-.merge(UserRole.findById('@@doc.role').select('permissions'))
-.set('category', Categories.findById('movies').select('title content'))
-
-User.findById('rob')
-.var('category', Categories, 'movies')
-.populate('category', 'category', {select: 'title content'})
-
-User.findById('rob')
-.set('category', Categories.findById('movies').select('title content').id().computed(true))
-
-*/
-
-//RETURN KEEP(DOCUMENT('users/rob'), 'firstName', 'lastName')
-//RETURN KEEP( DOCUMENT('model_tests/12914')  'firstName', 'lastName')
-//RETURN KEEP( DOCUMENT('users/rob')  , 'junk')
-// var('role', UserRole')
-// join('permission', User_Role, )
-/*
-FOR doc IN users 
-    FILTER (doc.`_key` == "rob") 
-    LET role = KEEP(DOCUMENT(CONCAT('user_roles/', doc.role)), 'permissions')
-    LET category = DOCUMENT('categories/movies')
-    RETURN MERGE(doc, role, {category} )
-    
-let userRole = UserRole.find().toAQL()
-let comments = Comment.find().toAQL()
-User.find()
-.var(*userRole", userRole)
-.var(*comments", comments)
-User.find().join("permissions", "userRole")    
-    
-/*
-FOR doc IN user_roles FILTER (doc.`_key` == "admin") RETURN { _key : doc._key , permissions : doc.permissions }
-
-User.findById('rob')
-.merge(UserRole.findById('@@doc.role').select('permissions'), 'permissions')'
-*/
-
   xdescribe('create document with sets', function() {
     it('return AQL with', async function() {
       const ModelTest = orango.model('ModelTest')
@@ -332,10 +224,10 @@ User.findById('rob')
       test.name = 'Test'
 
       let aql = await test.save().toAQL()
-      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
-        'LET modified = COUNT( FOR doc IN model_tests FILTER (doc.`_key` == "' +
+      expect(aql).to.equal(
+        'LET modified = COUNT( FOR $model_test IN model_tests FILTER ($model_test.`_key` == "' +
           test._key +
-          '") UPDATE doc WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
+          '") UPDATE $model_test WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
       )
     })
   })
@@ -359,7 +251,7 @@ User.findById('rob')
     it('print AQL query', async function() {
       const ModelTest = orango.model('ModelTest')
       let aql = await ModelTest.find().toAQL()
-      expect(aql.replace(/doc_\w+/g, "doc")).to.not.be.undefined
+      expect(aql).to.not.be.undefined
     })
   })
 
@@ -391,8 +283,8 @@ User.findById('rob')
         .select('firstName')
         .toAQL()
 
-      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
-        'FOR doc IN model_tests SORT doc.firstName LIMIT 1,2 RETURN KEEP(doc, "firstName")'
+      expect(aql).to.equal(
+        'FOR $model_test IN model_tests SORT $model_test.firstName LIMIT 1,2 RETURN KEEP($model_test, "firstName")'
       )
     })
   })
