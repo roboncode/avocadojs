@@ -93,6 +93,8 @@ app.get('/posts', async (req, res) => {
         .id()
         .limit(req.query.limit)
         .offset(req.query.offset)
+        .join('foo', 'bar')
+        .join('another', {abc: 123})
         .join(
           'user',
           User.findById('@@parent.user')
@@ -102,6 +104,7 @@ app.get('/posts', async (req, res) => {
               UserRole.findById('@@parent.role || "user"').select(
                 'permissions'
               ),
+              // UserRole.find().select('permissions'),
               { merge: true }
             )
           // .computed(true)
