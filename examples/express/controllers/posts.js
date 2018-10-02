@@ -87,20 +87,11 @@ app.get('/posts', async (req, res) => {
       // .toAQL() // RESULTS in the statement below
     } else {
       // we use this when the user could be one or more users, but we dont know which user
-      posts = await Post.findMany(query, {
-        noDefaults: false
-      })
+      posts = await Post.findMany(query)
         .id()
         .limit(req.query.limit)
         .offset(req.query.offset)
-        .set(
-          'user',
-          User.findById('@@parent.user')
-            .select('_key firstName lastName')
-            // .set('permissions', UserRole.findById('@@parent.role').select('permissions'))
-            .computed(true)
-            .id()
-        )
+        .join('user', User.findById('@@parent.user').select('firstName lastName').computed(true).id(), { merge: false })
       // .populate('user', User, {
       //   // we are using the Model (as a lookup) in the 2nd param to auto populate
       //   id: true,
@@ -108,7 +99,7 @@ app.get('/posts', async (req, res) => {
       //   computed: true,
       //   noDefaults: true
       // })
-      // .toAQL() // RESULTS in the statement below
+      .toAQL() // RESULTS in the statement below
     }
     res.send(posts)
   } catch (e) {
