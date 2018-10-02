@@ -56,12 +56,12 @@ async function importLikes() {
 }
 
 async function importAllDocs() {
-  // await importCategories()
-  // await importDevices()
-  // await importFriends()
-  // await importLikes()
+  await importCategories()
+  await importDevices()
+  await importFriends()
+  await importLikes()
   await importPosts()
-  // await importUsers()
+  await importUsers()
 }
 
 module.exports = {
