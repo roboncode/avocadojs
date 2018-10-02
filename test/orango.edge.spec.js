@@ -86,8 +86,8 @@ describe('edge connections', function() {
       } catch (e) {
         aql = e.message
       }
-      console.log('#AQL', aql)
-      expect(aql).to.match(
+
+      expect(aql.replace(/doc_\w+/g, "doc")).to.match(
         /FOR doc IN INBOUND "posts\/\w+" likes RETURN DISTINCT doc/
       )
     })

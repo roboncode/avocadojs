@@ -271,15 +271,16 @@ User.findById('rob')
 .merge(UserRole.findById('@@doc.role').select('permissions'), 'permissions')'
 */
 
-  describe.only('create document with sets', function() {
+  xdescribe('create document with sets', function() {
     it('return AQL with', async function() {
       const ModelTest = orango.model('ModelTest')
       const Test = orango.model('Test')
       let result = await ModelTest.findById('rob')
-      // .set('myObj', {abc: 123}, true)
-      // .set('myStr', "Hello, world!")
+      .set('myObj', {abc: 123}, true)
+      .set('myStr', "Hello, world!")
       .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
-      // .set('test2', Test.find({name: 'rob'}).select('junk').id().computed(true))
+      // .set('test2', Test.find({role: 'admin'}).select('permissions').id().computed(true))
+      .set('test2', Test.find().select('permissions').id().computed(true))
       .select('firstName lastName')
       .toAQL()
       console.log('#RESULT', result)
@@ -287,7 +288,7 @@ User.findById('rob')
     })
   })
 
-  describe('create documents with sets', function() {
+  xdescribe('create documents with sets', function() {
     it('return AQL with', async function() {
       ORM.counter = 1
       const ModelTest = orango.model('ModelTest')
@@ -331,7 +332,7 @@ User.findById('rob')
       test.name = 'Test'
 
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN model_tests FILTER (doc.`_key` == "' +
           test._key +
           '") UPDATE doc WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
@@ -357,8 +358,8 @@ User.findById('rob')
   describe('printAQL on find', function() {
     it('print AQL query', async function() {
       const ModelTest = orango.model('ModelTest')
-      let results = await ModelTest.find().toAQL()
-      expect(results).to.not.be.undefined
+      let aql = await ModelTest.find().toAQL()
+      expect(aql.replace(/doc_\w+/g, "doc")).to.not.be.undefined
     })
   })
 
@@ -381,7 +382,7 @@ User.findById('rob')
         lastName: 'Peart'
       }).save()
 
-      let results = await ModelTest.find()
+      let aql = await ModelTest.find()
         .defaults(true)
         .sort('firstName')
         .offset(1)
@@ -390,7 +391,7 @@ User.findById('rob')
         .select('firstName')
         .toAQL()
 
-      expect(results).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'FOR doc IN model_tests SORT doc.firstName LIMIT 1,2 RETURN KEEP(doc, "firstName")'
       )
     })

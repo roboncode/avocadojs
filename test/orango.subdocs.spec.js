@@ -28,7 +28,7 @@ describe('orango subdocs', function() {
       const Test = orango.model('Test')
       let test = new Test({ _key: '1' })
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") UPDATE doc WITH {} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -38,8 +38,8 @@ describe('orango subdocs', function() {
     it('to have defaults', async function() {
       const Test = orango.model('Test')
       let test = new Test({ _key: '1' })
-      let result = await test.save().defaults(true).toAQL()
-      expect(result).to.equal(
+      let aql = await test.save().defaults(true).toAQL()
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") UPDATE doc WITH {"name":"test"} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -50,7 +50,7 @@ describe('orango subdocs', function() {
       const Test = orango.model('Test')
       let test = new Test({ _key: '1', tags: ['foo', 'bar'] })
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") UPDATE doc WITH {"tags":["foo","bar"]} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -62,7 +62,7 @@ describe('orango subdocs', function() {
       // no $id will be present because we are adding item WITHOUT directly
       let test = new Test({ _key: '1', comments: [{ text: 'test' }] })
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") UPDATE doc WITH {"comments":[{"text":"test"}]} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -77,7 +77,7 @@ describe('orango subdocs', function() {
         comments: [{ $id: 'test', text: 'test' }]
       })
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") UPDATE doc WITH {"comments":[{"$id":"test","text":"test"}]} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -91,7 +91,7 @@ describe('orango subdocs', function() {
         comments: [{ text: 'test' }]
       })
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") UPDATE doc WITH {"comments":[{"text":"test"}]} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -105,7 +105,7 @@ describe('orango subdocs', function() {
         comments: [{ $id: 'test', text: 'test' }]
       })
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") UPDATE doc WITH {"comments":[{"$id":"test","text":"test"}]} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -119,7 +119,7 @@ describe('orango subdocs', function() {
       })
       test.tags.push('foo', 'bar')
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") LET tags = APPEND(doc.tags, ["foo","bar"]) UPDATE doc WITH {"tags":tags} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -145,7 +145,7 @@ describe('orango subdocs', function() {
       })
       test.comments.pull('test')
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") LET comments = MINUS(doc.comments, ( FOR item IN doc.comments || [] FOR id IN ["test"] FILTER item.$id == id RETURN item)) UPDATE doc WITH {"comments":comments} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -175,7 +175,7 @@ describe('orango subdocs', function() {
         $pull: { $or: [{ $id: 'test' }, { user: '@test' }] }
       }
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") LET comments = MINUS(doc.comments, ( FOR item IN doc.comments FILTER ((item.$id == "test") OR (item.`user` == "@test")) RETURN item)) UPDATE doc WITH {"comments":comments} IN tests RETURN 1) RETURN { modified }'
       )
     })
@@ -191,7 +191,7 @@ describe('orango subdocs', function() {
         $pull: ['foo', 'bar']
       }
       let aql = await test.save().toAQL()
-      expect(aql).to.equal(
+      expect(aql.replace(/doc_\w+/g, "doc")).to.equal(
         'LET modified = COUNT( FOR doc IN tests FILTER (doc.`_key` == "1") LET comments = MINUS(doc.comments, ( FOR item IN doc.comments || [] FOR id IN ["foo","bar"] FILTER item.$id == id RETURN item)) UPDATE doc WITH {"comments":comments} IN tests RETURN 1) RETURN { modified }'
       )
     })

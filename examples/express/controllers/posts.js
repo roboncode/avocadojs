@@ -6,6 +6,7 @@ const orango = require('orango')
 const app = require('../app')
 const Post = orango.model('Post')
 const User = orango.model('User')
+const UserRole = orango.model('UserRole')
 
 /**
  * Create post
@@ -69,8 +70,8 @@ app.get('/posts', async (req, res) => {
       // this is more optimized when we know that user is only one user and we know which user
       query.user = req.query.user
       posts = await Post.findMany(query, {
-          noDefaults: false
-        })
+        noDefaults: false
+      })
         .id()
         .limit(req.query.limit)
         .offset(req.query.offset)
@@ -87,18 +88,26 @@ app.get('/posts', async (req, res) => {
     } else {
       // we use this when the user could be one or more users, but we dont know which user
       posts = await Post.findMany(query, {
-          noDefaults: false
-        })
+        noDefaults: false
+      })
         .id()
         .limit(req.query.limit)
         .offset(req.query.offset)
-        .populate('user', User, {
-          // we are using the Model (as a lookup) in the 2nd param to auto populate
-          id: true,
-          select: '_key firstName lastName',
-          computed: true,
-          noDefaults: true
-        })
+        .set(
+          'user',
+          User.findById('@@parent.user')
+            .select('_key firstName lastName')
+            // .set('permissions', UserRole.findById('@@parent.role').select('permissions'))
+            .computed(true)
+            .id()
+        )
+      // .populate('user', User, {
+      //   // we are using the Model (as a lookup) in the 2nd param to auto populate
+      //   id: true,
+      //   select: '_key firstName lastName',
+      //   computed: true,
+      //   noDefaults: true
+      // })
       // .toAQL() // RESULTS in the statement below
     }
     res.send(posts)
@@ -113,8 +122,8 @@ app.get('/posts', async (req, res) => {
 app.get('/posts/:id', async (req, res) => {
   try {
     let post = await Post.findById(req.params.id, {
-        noDefaults: false
-      })
+      noDefaults: false
+    })
       .id()
       .populate('user', User, {
         // we are using the var as the 2nd param in populate we declared above
