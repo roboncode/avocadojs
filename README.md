@@ -12,7 +12,7 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
   [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  
 
-**Orango** is the library built on top of Tang. It uses ArangoJS to interface with the [ArangoDB](https://www.arangodb.com/). It provides the following features:
+**Orango** is an Object Data Modeler (ODM) that provides the following features: (**Draft**)
 
 * Central connectivity to ArangoDB
 * Automated creation of databases, collections and indexing
@@ -26,7 +26,9 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 * Optimized queries
 * Validation prevent bad data from being injected into database
 * Cleaner interfaces
-* Single point of change for bugfixes, feeatures, etc
+* Single point of change for bug fixes, features, etc
+* Computed properties on return values
+* Default values for missing values
 
 ### Documentation
 
@@ -34,6 +36,8 @@ Official documentation can be found at **[orango.js.org](https://orango.js.org)*
 
 ### Project Status
 **I started Orango at the beginning of August 2018**. This project is in `pre-release` and the API is subject to change as functionality and workflow is being developed. Once the dust settles, I will move it into an `alpha`.
+
+**[03 Sep 2018]** 0.9.0 released. A second iteration of `populate()` is available. Look at the [post example](https://github.com/roboncode/orango/blob/master/examples/express/controllers/posts.js) for an example. In addition, `var()`, `append()` and `merge()` were added. The documentation and examples are really lacking at this point. I am still working on examples and then documentation will follow after the API feels a little less ephemeral. I would not recommend using Orango yet for any real development until I have completed the examples to test the workflow. I am still finding some parts that are missing / or needing refactoring as I am trying to use it.
 
 **[26 Sep 2018]** I am working on fixing the current issues and and continuing on example project. There is quite a bit of refactoring in the latest commits and API changes as the workflow is being evaluated.
 
