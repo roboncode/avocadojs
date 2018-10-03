@@ -70,8 +70,8 @@ app.get('/posts', async (req, res) => {
       // this is more optimized when we know that user is only one user and we know which user
       query.user = req.query.user
       posts = await Post.findMany(query, {
-        noDefaults: false
-      })
+          noDefaults: false
+        })
         .id()
         .limit(req.query.limit)
         .offset(req.query.offset)
@@ -91,25 +91,32 @@ app.get('/posts', async (req, res) => {
         .id()
         .limit(req.query.limit)
         .offset(req.query.offset)
-        // .var('abc', 123)
+        .var('rob', User.findById('rob'))//.select('screenName'))
         .populate('foo', 'bar')
-        .populate('another', {abc: 123})
+        .populate('another', {
+          abc: 123
+        })
         .populate(
           'user',
           User.findById('@@parent.user')
-            .select('firstName lastName')
-            .populate(
-              'permissions',
-              UserRole.findById('@@parent.role || "user"').select(
-                'permissions'
-              ),
-              // UserRole.find().select('permissions'),
-              { merge: true }
-            )
+          .select('firstName lastName')
+          .populate(
+            'permissions',
+            UserRole.findById('@@parent.role || "user"').select(
+              'permissions'
+            ),
+            // UserRole.find().select('permissions'),
+            {
+              merge: true
+            }
+          )
           // .computed(true)
           // .id()
         )
-        // .toAQL() // RESULTS in the statement below
+        .append('rob')
+        .append('screen', 'rob.screenName')
+        .merge('rob', 'screenName firstName')
+      // .toAQL() // RESULTS in the statement below
     }
     res.send(posts)
   } catch (e) {
@@ -123,8 +130,8 @@ app.get('/posts', async (req, res) => {
 app.get('/posts/:id', async (req, res) => {
   try {
     let post = await Post.findById(req.params.id, {
-      noDefaults: false
-    })
+        noDefaults: false
+      })
       .id()
       .populate('user', User, {
         // we are using the var as the 2nd param in populate we declared above
