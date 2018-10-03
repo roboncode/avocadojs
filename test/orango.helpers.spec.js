@@ -7,7 +7,6 @@ let mergeDefaultTree = require('../lib/helpers/mergeDefaultTree')
 let parseArrayPaths = require('../lib/helpers/parseArrayPaths')
 let setDefaultsToNull = require('../lib/helpers/setDefaultsToNull')
 let sortToAQL = require('../lib/helpers/sortToAQL')
-let returnToAQL = require('../lib/helpers/returnToAQL')
 let objectToArray = require('../lib/helpers/objectToArray')
 
 describe('orango helpers', function() {
@@ -144,15 +143,6 @@ describe('orango helpers', function() {
       let defaults = { foo: [], bar: { baz: [] } }
       mergeDefaultTree(model, defaults)
       expect(model).to.deep.equal({ foo: [], bar: { baz: [] } })
-    })
-  })
-
-  describe('returnToAQL', function() {
-    it('should return to aql', function() {
-      let aql = returnToAQL('id name createdAt', 'doc')
-      expect(aql).to.equal(
-        '{ _key : doc._key , id : doc.id , name : doc.name , createdAt : doc.createdAt }'
-      )
     })
   })
 

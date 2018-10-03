@@ -1,6 +1,7 @@
 let expect = require('chai').expect
 let orango = require('../lib')
 let Model = require('../lib/Model')
+let ORM = require('../lib/ORM')
 let CONSTS = require('../lib/consts')
 
 describe('orango model', function() {
@@ -162,10 +163,44 @@ describe('orango model', function() {
     })
   })
 
+  xdescribe('create document with sets', function() {
+    it('return AQL with', async function() {
+      const ModelTest = orango.model('ModelTest')
+      const Test = orango.model('Test')
+      let result = await ModelTest.findById('rob')
+      .set('myObj', {abc: 123}, true)
+      .set('myStr', "Hello, world!")
+      .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
+      // .set('test2', Test.find({role: 'admin'}).select('permissions').id().computed(true))
+      .set('test2', Test.find().select('permissions').id().computed(true))
+      .select('firstName lastName')
+      .toAQL()
+      console.log('#RESULT', result)
+      expect(result.split('LET').length - 1).to.be.equal(7)
+    })
+  })
+
+  xdescribe('create documents with sets', function() {
+    it('return AQL with', async function() {
+      ORM.counter = 1
+      const ModelTest = orango.model('ModelTest')
+      const Test = orango.model('Test')
+      let result = await ModelTest.find({admin: true})
+      .set('myObj', {abc: 123}, true)
+      .set('myStr', "Hello, world!")
+      .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
+      .set('test2', Test.findById('@@parent.role').select('junk').id().computed(true))
+      .select('firstName lastName')
+      .toAQL()
+      expect(result.split('LET').length - 1).to.be.equal(6)
+    })
+  })
+
   describe('import', function() {
     it('should import data', async function() {
       const ModelTest = orango.model('ModelTest')
-      let result = await orango.importDocs(ModelTest,
+      let result = await orango.importDocs(
+        ModelTest,
         [
           {
             name: 'Test1'
@@ -190,9 +225,9 @@ describe('orango model', function() {
 
       let aql = await test.save().toAQL()
       expect(aql).to.equal(
-        'LET modified = COUNT( FOR doc IN model_tests FILTER (doc.`_key` == "' +
+        'LET modified = COUNT( FOR $model_test IN model_tests FILTER ($model_test.`_key` == "' +
           test._key +
-          '") UPDATE doc WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
+          '") UPDATE $model_test WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
       )
     })
   })
@@ -215,8 +250,8 @@ describe('orango model', function() {
   describe('printAQL on find', function() {
     it('print AQL query', async function() {
       const ModelTest = orango.model('ModelTest')
-      let results = await ModelTest.find({}, { printAQL: 'color' })
-      expect(results).to.not.be.undefined
+      let aql = await ModelTest.find().toAQL()
+      expect(aql).to.not.be.undefined
     })
   })
 
@@ -239,19 +274,17 @@ describe('orango model', function() {
         lastName: 'Peart'
       }).save()
 
-      let results = await ModelTest.find()
+      let aql = await ModelTest.find()
         .defaults(true)
         .sort('firstName')
         .offset(1)
         .limit(2)
         .computed(true)
         .select('firstName')
-        .toAQL({
-          pretty: 'color'
-        })
+        .toAQL()
 
-      expect(results).to.equal(
-        'FOR doc IN model_tests \n   SORT doc.firstName \n   LIMIT 1,2 \n   RETURN { _key : doc._key , firstName : doc.firstName }'
+      expect(aql).to.equal(
+        'FOR $model_test IN model_tests SORT $model_test.firstName LIMIT 1,2 RETURN KEEP($model_test, "firstName")'
       )
     })
   })
@@ -283,7 +316,7 @@ describe('orango model', function() {
         .offset(1)
         .limit(2)
         .computed(true)
-        .select('firstName')
+        .select('_key firstName')
         .id()
 
       expect(results[0].greeting).to.deep.equal('I am Geddy')
@@ -494,7 +527,9 @@ describe('orango model', function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
       await test.save()
-      let result = await ModelTest.findById(test._key).id().select('_key')
+      let result = await ModelTest.findById(test._key)
+        .id()
+        .select('_key')
       expect(result.id).to.equal(test._key)
     })
   })
