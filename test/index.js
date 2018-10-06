@@ -5,6 +5,16 @@ let orango = require('../lib')
 require('colors')
 
 async function connectToDefaultDb() {
+  // connect to default database
+  await orango.connect()
+  // create databases
+  await orango.createDatabase('test')
+  await orango.createDatabase('model_tests')
+  await orango.createDatabase('disconnect')
+  await orango.createDatabase('custom')
+  await orango.createDatabase('edge')
+  // disconnect from default database
+  await orango.disconnect()
   // connect to test db
   await orango.connect('test')
   // connect to system db

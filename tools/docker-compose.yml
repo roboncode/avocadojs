@@ -1,9 +1,8 @@
-version: '3'
+version: '3.7'
 services: 
-  
   arangodb:
-    container_name: arango
-    image: arangodb:3.3.12
+    container_name: orango
+    image: arangodb
     ports: 
       - 8529:8529
     environment: 
@@ -12,5 +11,3 @@ services:
     volumes:
       - ./docker/orango/db:/var/lib/arangodb3
       - ./docker/orango/apps:/var/lib/arangodb3-apps
-
-  
