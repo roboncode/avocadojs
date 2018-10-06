@@ -6,6 +6,7 @@ const orango = require('orango')
 const app = require('../app')
 const Post = orango.model('Post')
 const User = orango.model('User')
+const UserRole = orango.model('UserRole')
 
 /**
  * Create post
@@ -84,29 +85,38 @@ app.get('/posts', async (req, res) => {
           noDefaults: true
         })
       // .toAQL() // RESULTS in the statement below
-      // LET user = DOCUMENT('users/rob')
-      // FOR doc IN posts
-      // FILTER (doc.`user` == "rob")
-      // RETURN MERGE(doc, { user: KEEP(user, '_key', 'firstName', 'lastName') })
     } else {
       // we use this when the user could be one or more users, but we dont know which user
-      posts = await Post.findMany(query, {
-          noDefaults: false
-        })
+      posts = await Post.findMany(query)
         .id()
         .limit(req.query.limit)
         .offset(req.query.offset)
-        .populate('user', User, {
-          // we are using the Model (as a lookup) in the 2nd param to auto populate
-          id: true,
-          select: '_key firstName lastName',
-          computed: true,
-          noDefaults: true
+        .var('rob', User.findById('rob'))//.select('screenName'))
+        .populate('foo', 'bar')
+        .populate('another', {
+          abc: 123
         })
+        .populate(
+          'user',
+          User.findById('@@parent.user')
+          .select('firstName lastName')
+          .populate(
+            'permissions',
+            UserRole.findById('@@parent.role || "user"').select(
+              'permissions'
+            ),
+            // UserRole.find().select('permissions'),
+            {
+              merge: true
+            }
+          )
+          // .computed(true)
+          // .id()
+        )
+        .append('rob')
+        .append('screen', 'rob.screenName')
+        .merge('rob', 'screenName firstName')
       // .toAQL() // RESULTS in the statement below
-      // FOR doc IN posts
-      // LET user = DOCUMENT(CONCAT('users/', doc.user))
-      // RETURN MERGE(doc, { user: KEEP(user, '_key', 'firstName', 'lastName') })
     }
     res.send(posts)
   } catch (e) {

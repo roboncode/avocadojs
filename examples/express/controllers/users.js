@@ -6,6 +6,7 @@ const Post = orango.model('Post')
 app.get('/users', async (req, res) => {
   const users = await User.findMany()
     .computed(true)
+    .defaults(true)
     .select('firstName lastName')
   res.send(users)
 })

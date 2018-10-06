@@ -78,16 +78,15 @@ describe('edge connections', function() {
 
       let aql
       try {
-        aql = await User.findByEdge(Like, post._key, {
-          noDefaults: true
-        })
+        aql = await User.findByEdge(Like, post._key)
           // .limit(1)
           .toAQL()
       } catch (e) {
         aql = e.message
       }
+
       expect(aql).to.match(
-        /FOR doc IN INBOUND "posts\/\w+" likes RETURN DISTINCT doc/
+        /FOR \$user IN INBOUND "posts\/\w+" likes RETURN DISTINCT \$user/
       )
     })
   })
