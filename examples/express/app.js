@@ -20,10 +20,7 @@ async function main() {
   readFiles('models')
 
   // connect to ArangoDB
-  await orango.connect('sample', {
-    username: 'root',
-    password: 'orangorocks'
-  })
+  await orango.connect('sample')
 
   app.use(cors())
 
