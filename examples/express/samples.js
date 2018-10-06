@@ -7,9 +7,7 @@ const {
 require('colors')
 
 async function main() {
-  await orango.connect('_system', {
-    password: 'orangorocks'
-  })
+  await orango.connect('_system')
   await orango.dropDatabase('sample')
   await orango.createDatabase('sample', [
     {
