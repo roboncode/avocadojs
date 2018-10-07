@@ -1,25 +1,18 @@
-const sources = {
-  tweet_1: {
-    _key: '1',
-    user: 'rob',
-    text: 'My first tweet'
-  },
-  tweet_2: {
-    _key: '2',
-    user: 'rob',
-    text: 'This is my second tweet'
-  },
-  tweet_3: {
-    _key: '3',
-    user: 'john',
-    text: 'Party @ my house!! #partyhouse'
-  }
-  ,
-  tweet_4: {
-    _key: '4',
-    user: 'jane',
-    text: 'Heading to New York, its a booked flight #iwantfirstclass'
+const textGen = require('txtgen')
+const randomDate = require('random-datetime')
+const users = ['rob', 'john', 'jane', 'mark', 'sam', 'bella', 'blake']
+const tweetsPerUser = 10
+const tweets = []
+const now = new Date()
+
+for (let i = 0; i < users.length; i++) {
+  for (let n = 0; n < tweetsPerUser; n++) {
+    tweets.push({
+      user: users[i],
+      text: textGen.sentence(),
+      created: randomDate({ year: now.getFullYear(), month: now.getMonth() })
+    })
   }
 }
 
-module.exports = sources
+module.exports = tweets

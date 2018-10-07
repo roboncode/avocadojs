@@ -27,7 +27,10 @@ app.post('/tweets', async (req, res) => {
  */
 app.put('/tweets/:id', async (req, res) => {
   try {
-    let result = await Tweet.findOneAndUpdate({ id: req.params.id, user: req.user.id })
+    let result = await Tweet.findOneAndUpdate({
+      id: req.params.id,
+      user: req.user.id
+    })
     if (result.modified) {
       res.status(200).send('Ok')
     } else {
@@ -45,7 +48,10 @@ app.put('/tweets/:id', async (req, res) => {
  */
 app.delete('/tweets/:id', async (req, res) => {
   try {
-    let result = await Tweet.findOneAndDelete({ id: req.params.id, user: req.user.id })
+    let result = await Tweet.findOneAndDelete({
+      id: req.params.id,
+      user: req.user.id
+    })
     if (result.deleted) {
       res.status(200).send('Ok')
     } else {
@@ -63,26 +69,25 @@ app.delete('/tweets/:id', async (req, res) => {
  */
 app.get('/tweets', async (req, res) => {
   try {
-    let tweets
     const limit = req.query.limit
     const offset = req.query.offset
 
-    delete req.query.limit
+    delete req.query.limit || 10
     delete req.query.offset
 
-    // we use this when the user could be one or more users, but we dont know which user
-    tweets = await Tweet.findMany(req.query)
-      // .id()
-      .defaults(true)
+    let tweets = await Tweet.findByQuery(
+      `FOR user IN OUTBOUND "@@User/rob" @@Follower  
+          FOR tweet IN @@Tweet 
+            FILTER tweet.user == user._key
+            SORT tweet.created DESC`
+    )
       .limit(limit)
       .offset(offset)
-      .populate(
-        'user',
-        User.findById('@@parent.user').select(
-          '_key screenName firstName lastName avatar'
-        )
+      .return(
+        'MERGE(tweet, {user: KEEP(user, "screenName", "avatar", "firstName", "lastName")})'
       )
-    // .toAQL() // RESULTS in the statement below
+      .id()
+    // .toAQL()
     res.send(tweets)
   } catch (e) {
     res.status(500).send(e)

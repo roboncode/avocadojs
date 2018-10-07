@@ -1,7 +1,7 @@
 const sources = {
   rob_recommend: {
-    user: 'rob',
-    source: 'ghostbusters'
+    User: 'rob',
+    Tweet: '3'
   }
 }
 

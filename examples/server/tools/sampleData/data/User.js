@@ -20,6 +20,30 @@ const users = {
     firstName: 'Jane',
     lastName: 'Doe',
     avatar: 'http://facetheforce.today/amidala/200'
+  },
+  mark: {
+    authId: 'mark',
+    screenName: 'ibmark',
+    firstName: 'Mark',
+    lastName: 'Price'
+  },
+  sam: {
+    authId: 'sam',
+    screenName: 'ibsam',
+    firstName: 'Sam',
+    lastName: 'Odel'
+  },
+  bella: {
+    authId: 'bella',
+    screenName: 'ibbella',
+    firstName: 'Bella',
+    lastName: 'O \'Reilly'
+  },
+  blake: {
+    authId: 'blake',
+    screenName: 'ibblake',
+    firstName: 'Blake',
+    lastName: 'Lively'
   }
 }
 

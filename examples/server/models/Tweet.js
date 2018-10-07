@@ -4,7 +4,8 @@ let schema = orango.Schema(
   {
     user: String,
     text: { type: String, max: 140 },
-    likes: { type: orango.Types.Any, default: 0 }
+    likes: { type: orango.Types.Any, default: 0 },
+    created: { type: Date }
   },
   {
     strict: true,
@@ -12,6 +13,10 @@ let schema = orango.Schema(
       {
         type: 'hash',
         fields: ['user']
+      },
+      {
+        type: 'hash',
+        fields: ['created']
       },
       {
         type: 'hash',
