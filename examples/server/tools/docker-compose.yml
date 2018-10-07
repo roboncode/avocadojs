@@ -1,0 +1,16 @@
+version: '3.7'
+services: 
+  
+  arangodb:
+    container_name: mendy-arangodb
+    image: arangodb
+    ports: 
+      - 8529:8529
+    environment: 
+      ARANGO_STORAGE_ENGINE: rocksdb
+      ARANGO_ROOT_PASSWORD: mendyrocks
+    volumes:
+      - ./docker/orango/db:/var/lib/arangodb3
+      - ./docker/orango/apps:/var/lib/arangodb3-apps
+
+  
