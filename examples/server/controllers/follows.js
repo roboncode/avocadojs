@@ -19,16 +19,14 @@ app.get('/followers', async (req, res) => {
     delete req.query.limit
     delete req.query.offset
 
-    let users = await User.findByEdge(Follower, 'rob', {
-      inbound: true
-    })
+    let users = await User.findByEdge(Follower, 'rob')
     .id()
-    .limit(2)
-    .select('_key screenName')
+    // .limit(2)
+    .select('_key screenName firstName')
     .intercept((item) => {
       console.log('item', item)
       item.abc = 123
-      // return item
+      return item
     })
     // .toAQL()
 
@@ -63,10 +61,10 @@ app.get('/following', async (req, res) => {
     delete req.query.offset
 
     let users = await User.findByEdge(Follower, 'rob', {
-      inbound: false
+      outbound: true
     })
-    // .select('screenName')
-    //.toAQL()
+    .select('screenName firstName')
+    // .toAQL()
 
     // followers = await Follower
 

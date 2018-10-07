@@ -1,7 +1,7 @@
 let expect = require('chai').expect
 let orango = require('../lib')
 
-describe('edge connections', function() {
+describe.only('edge connections', function() {
   let john
   let jane
   let post
@@ -25,19 +25,19 @@ describe('edge connections', function() {
     Post = await orango.model('Post', PostSchema)
 
     // :: LIKE :: //
-    const LikeSchema = orango.EdgeSchema('users', 'posts')
+    const LikeSchema = orango.EdgeSchema('User', 'Post')
     Like = await orango.model('Like', LikeSchema)
   })
 
   async function createDocs() {
-    john = new User({ name: 'John' })
-    await john.save()
+    john = new User({ /*_key: 'john',*/ name: 'John' })
+    await john.save({ isNew: true })
 
-    jane = new User({ name: 'Jane' })
-    await jane.save()
+    jane = new User({ /*_key: 'jane'*/ name: 'Jane' })
+    await jane.save({ isNew: true })
 
-    post = new Post({ author: john._key, text: 'Hello, world!' })
-    await post.save()
+    post = new Post({ /*_key: 'post',*/ author: john._key, text: 'Hello, world!' })
+    await post.save({ isNew: true })
 
     like = new Like(jane._key, post._key)
     await like.save()
@@ -59,9 +59,8 @@ describe('edge connections', function() {
     it('should use an edge collection to perform joins', async function() {
       await createDocs()
 
-      let likedUsers = await User.findByEdge(Like, post._key, {
-        noDefaults: true
-      }).limit(1)
+      let likedUsers = await User.findByEdge(Like, post._key)
+        .limit(1)
 
       expect(likedUsers).to.deep.equal({
         _key: jane._key,
@@ -95,9 +94,7 @@ describe('edge connections', function() {
     it('should use an edge collection to perform joins', async function() {
       await createDocs()
 
-      let likedPosts = await Post.findByEdge(Like, jane._key, {
-        noDefaults: true
-      })
+      let likedPosts = await Post.findByEdge(Like, jane._key)
 
       expect(likedPosts).to.deep.equal([
         {
