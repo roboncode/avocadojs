@@ -25,22 +25,21 @@ describe('edge connections', function() {
     Post = await orango.model('Post', PostSchema)
 
     // :: LIKE :: //
-    const LikeSchema = orango.EdgeSchema('users', 'posts')
+    const LikeSchema = orango.EdgeSchema('User', 'Post')
     Like = await orango.model('Like', LikeSchema)
   })
 
   async function createDocs() {
-    john = new User({ name: 'John' })
-    await john.save()
+    john = new User({ /*_key: 'john',*/ name: 'John' })
+    await john.save({ isNew: true })
 
-    jane = new User({ name: 'Jane' })
-    await jane.save()
+    jane = new User({ /*_key: 'jane'*/ name: 'Jane' })
+    await jane.save({ isNew: true })
 
-    post = new Post({ author: john._key, text: 'Hello, world!' })
-    await post.save()
+    post = new Post({ /*_key: 'post',*/ author: john._key, text: 'Hello, world!' })
+    await post.save({ isNew: true })
 
-    like = new Like(jane._key, post._key)
-    await like.save()
+    await Like.link(jane._key, post._key)
   }
 
   describe('creates an edge collection', function() {
@@ -59,9 +58,8 @@ describe('edge connections', function() {
     it('should use an edge collection to perform joins', async function() {
       await createDocs()
 
-      let likedUsers = await User.findByEdge(Like, post._key, {
-        noDefaults: true
-      }).limit(1)
+      let likedUsers = await User.findByEdge(Like, post._key)
+        .limit(1)
 
       expect(likedUsers).to.deep.equal({
         _key: jane._key,
@@ -95,9 +93,7 @@ describe('edge connections', function() {
     it('should use an edge collection to perform joins', async function() {
       await createDocs()
 
-      let likedPosts = await Post.findByEdge(Like, jane._key, {
-        noDefaults: true
-      })
+      let likedPosts = await Post.findByEdge(Like, jane._key)
 
       expect(likedPosts).to.deep.equal([
         {
@@ -111,18 +107,10 @@ describe('edge connections', function() {
     })
   })
 
-  describe('remove from user', function() {
-    it('should remove a single item', async function() {
-      await createDocs()
-      let result = await post.removeFromEdge(Like, jane._key)
-      expect(result.deleted).to.equal(1)
-    })
-  })
-
   describe('remove from Like with post', function() {
     it('should remove a single item', async function() {
       await createDocs()
-      let result = await Like.removeFromEdge(post)
+      let result = await Like.unlink(null, post._key)
       expect(result.deleted).to.equal(1)
     })
   })
@@ -130,15 +118,7 @@ describe('edge connections', function() {
   describe('remove from Like with user', function() {
     it('should remove a single item', async function() {
       await createDocs()
-      let result = await Like.removeFromEdge(jane)
-      expect(result.deleted).to.equal(1)
-    })
-  })
-
-  describe('remove from Like with user and post', function() {
-    it('should remove a single item', async function() {
-      await createDocs()
-      let result = await Like.removeFromEdge(jane, post)
+      let result = await Like.unlink(jane._key)
       expect(result.deleted).to.equal(1)
     })
   })
@@ -146,15 +126,7 @@ describe('edge connections', function() {
   describe('remove from Like with user id and post id', function() {
     it('should remove a single item', async function() {
       await createDocs()
-      let result = await Like.removeFromEdge(jane._key, post._key)
-      expect(result.deleted).to.equal(1)
-    })
-  })
-
-  describe('remove from post', function() {
-    it('should remove a single item', async function() {
-      await createDocs()
-      let result = await jane.removeFromEdge(Like, post._key)
+      let result = await Like.unlink(jane._key, post._key)
       expect(result.deleted).to.equal(1)
     })
   })
