@@ -28,6 +28,22 @@ schema.statics.login = async function(username, password) {
       let user = authUser.user
       user.id = user._key
       delete user._key
+      delete user._id
+      return user
+    })
+}
+
+schema.statics.getUser = async function(id) {
+  const User = orango.model('User')
+  const UserRole = orango.model('UserRole')
+  return await User.findById(id)
+    .populate('permissions', UserRole.findById('@@parent.role || "user"').select('permissions'), { merge: true })
+    .select('_key email firstName lastName role')
+    .each((user) => {
+      user.id = user._key
+      user.fullName = user.firstName + ' ' + user.lastName
+      delete user._key
+      delete user._id
       return user
     })
 }

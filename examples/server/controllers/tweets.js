@@ -40,9 +40,13 @@ app.get('/tweets/:id', async (req, res) => {
  */
 app.post('/tweets', async (req, res) => {
   try {
-    let tweet = new Tweet(req.body)
-    let doc = await tweet.save().id()
-    res.status(201).json(doc)
+    let tweet = new Tweet({
+      user: req.user.id,
+      text: req.body.text,
+      created: Date.now()
+    })
+    await tweet.save().id()
+    res.status(201).json(tweet)
   } catch (e) {
     res.status(500).json({
       error: e.message

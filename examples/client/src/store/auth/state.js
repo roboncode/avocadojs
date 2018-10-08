@@ -1,4 +1,4 @@
 export default {
-  accessToken: null,
+  accessToken: localStorage.getItem('app:token'),
   authUser: null
 }
