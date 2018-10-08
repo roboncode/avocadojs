@@ -12,40 +12,18 @@ const User = orango.model('User')
  */
 app.get('/followers', async (req, res) => {
   try {
-    let followers
     const limit = req.query.limit
     const offset = req.query.offset
 
-    delete req.query.limit
-    delete req.query.offset
-
-    let users = await User.findByEdge(Follower, 'rob')
+    let followers = await User.findByEdge(Follower, 'rob')
     .id()
-    // .limit(2)
-    .select('_key screenName firstName')
-    .intercept((item) => {
-      console.log('item', item)
-      item.abc = 123
-      return item
+    .limit(limit)
+    .offset(offset)
+    .select('_key screenName firstName lastName')
+    .each((item) => {
+      item.screenName = '@' + item.screenName
     })
-    // .toAQL()
-
-    // followers = await Follower
-
-    // we use this when the user could be one or more users, but we dont know which user
-    // followers = await Follower.findMany(req.query)
-    //   // .id()
-    //   .defaults(true)
-    //   .limit(limit)
-    //   .offset(offset)
-    //   .populate(
-    //     'user',
-    //     User.findById('@@parent.user').select(
-    //       '_key screenName firstName lastName avatar'
-    //     )
-    //   )
-    // .toAQL() // RESULTS in the statement below
-    res.send(users)
+    res.send(followers)
   } catch (e) {
     res.status(500).send(e)
   }

@@ -1,39 +1,20 @@
 const orango = require('orango')
 const jwt = require('jsonwebtoken')
 const app = require('../app')
-const User = orango.model('User')
-const UserRole = orango.model('UserRole')
+const config = require('../config')
+const Auth = orango.model('Auth')
 
-app.post('/id_token', async (req, res) => {
-  const {
-    id,
-    email,
-    firstName,
-    lastName,
-    role,
-    permissions
-  } = await User.findById(req.body.id)
-    .populate(
-      'permissions',
-      UserRole.findById('@@parent.role || "user"').select('permissions'),
-      {
-        merge: true
-      }
-    )
-    .id()
-    .select('_key email firstName lastName role')
-  const token = jwt.sign(
-    {
-      id,
-      email,
-      firstName,
-      lastName,
-      role,
-      permissions
-    },
-    'secret'
-  )
-  res.send(token)
+app.post('/login', async (req, res) => {
+  try {
+    const authUser = await Auth.login(req.body.username, req.body.password)
+    if (authUser) {
+      const token = jwt.sign(authUser, config.JWT_SECRET)
+      return res.send({ token })
+    }
+    return res.status(401).send('Unauthorized')
+  } catch (e) {
+    res.status(500).send(e.message)
+  }
 })
 
 app.get('/me', async (req, res) => {

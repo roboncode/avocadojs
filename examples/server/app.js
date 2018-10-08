@@ -6,6 +6,7 @@ const orango = require('orango')
 const cors = require('cors')
 const app = express()
 const readFiles = require('./helpers/readFiles')
+const config = require('./config')
 require('colors')
 
 // listen for connection to ArangoDB
@@ -24,7 +25,7 @@ async function main() {
   await orango.connect('sample')
 
   app.use(
-    jwt({ secret: 'secret' }).unless({ path: ['/id_token'] })
+    jwt({ secret: config.JWT_SECRET }).unless({ path: ['/login', '/id_token'] })
   )
 
   app.use((err, req, res, next) => {

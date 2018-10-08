@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import post from './post'
+import auth from './auth'
+import tweet from './tweet'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    post
+    auth,
+    tweet
   }
 })
