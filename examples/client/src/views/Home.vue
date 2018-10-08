@@ -9,10 +9,10 @@
             </v-avatar>
             <h4>{{tweet.user.fullName}}</h4>
             <v-spacer></v-spacer>
-          <v-btn flat icon color="pink">
-            <v-icon>favorite</v-icon>
+          <v-btn flat icon color="grey lighten-2">
+            <v-icon>favorite_outline</v-icon>
           </v-btn>
-          <v-btn flat icon color="pink">
+          <v-btn flat icon color="grey lighten-2">
             <v-icon>comment</v-icon>
           </v-btn>
           </v-layout>
@@ -26,6 +26,7 @@
         </v-card-actions> -->
         <v-divider></v-divider>
       </v-card>
+      <v-btn color="primary" depressed block round @click="getTweets(tweets.length)">Load more</v-btn>
     </v-flex>
   </v-layout>
 </template>
@@ -38,10 +39,13 @@ export default {
     ...mapState('tweet', ['tweets'])
   },
   methods: {
-    ...mapActions('tweet', ['getTweets'])
+    ...mapActions('tweet', ['getTweets', 'clearTweets'])
   },
   created() {
     this.getTweets()
+  },
+  destroyed() {
+    this.clearTweets()
   }
 }
 </script>

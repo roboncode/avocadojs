@@ -12,8 +12,8 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer> -->
-    <v-toolbar app flat :clipped-left="clipped">
-      <v-toolbar-side-icon v-if="authUser" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+    <v-toolbar app :clipped-left="clipped">
+      <!-- <v-toolbar-side-icon v-if="authUser" @click.stop="drawer = !drawer"></v-toolbar-side-icon> -->
       <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
       </v-btn>
@@ -23,14 +23,15 @@
       <v-btn icon @click.stop="fixed = !fixed">
         <v-icon>web</v-icon>
       </v-btn> -->
+      <Logo></Logo>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <!-- <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>menu</v-icon>
-      </v-btn> -->
-      <v-avatar v-if="authUser" color="primary">
+      <v-avatar v-if="authUser" color="primary" size="36">
         <span class="white--text headline">J</span>
       </v-avatar>
+      <v-btn round depressed color="primary" @click="tweet()">
+        Tweet
+      </v-btn>
     </v-toolbar>
     <v-content>
       <router-view />
@@ -48,14 +49,22 @@
     <!-- <v-footer :fixed="fixed" app>
       <span>&copy; 2017</span>
     </v-footer> -->
+
+    <TweetDialog ref="tweetDialog"></TweetDialog>
   </v-app>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
+import Logo from '@/components/Logo'
+import TweetDialog from '@/components/TweetDialog'
 
 export default {
   name: 'App',
+  components: {
+    Logo,
+    TweetDialog
+  },
   data() {
     return {
       clipped: true,
@@ -70,11 +79,11 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'Vuetify.js'
+      title: 'Bluebird'
     }
   },
   computed: {
-    ...mapState('auth', ['authUser']),
+    ...mapState('auth', ['accessToken', 'authUser']),
     showMenu() {
       return !!this.authUser
     }
@@ -83,6 +92,22 @@ export default {
     authUser() {
       this.drawer = true
     }
+  },
+  methods: {
+    ...mapActions('auth', ['getAuthUser']),
+    tweet() {
+      this.$refs.tweetDialog.open()
+    }
+  },
+  created() {
+    if (this.accessToken) {
+      this.getAuthUser()
+    }
   }
 }
 </script>
+
+<style lang="stylus">
+.theme--light.v-text-field--outline .v-input__slot
+  border-color #1976d2
+</style>

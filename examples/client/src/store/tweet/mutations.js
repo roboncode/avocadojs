@@ -1,8 +1,12 @@
 export default {
   setTweets(state, tweets) {
-    state.tweets = tweets
+    if(tweets === null) {
+      state.tweets.splice(0, state.tweets.length)
+    } else {
+      state.tweets = state.tweets.concat(tweets)
+    }
   },
-  // setPost(state, post) {
-  //   state.post = post
-  // }
+  addNewTweet(state, tweet) {
+    state.tweets.splice(0, 0, tweet)
+  }
 }

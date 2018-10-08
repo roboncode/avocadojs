@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const app = require('../app')
 const config = require('../config')
 const Auth = orango.model('Auth')
+const User = orango.model('User')
 
 app.post('/login', async (req, res) => {
   try {
@@ -18,5 +19,14 @@ app.post('/login', async (req, res) => {
 })
 
 app.get('/me', async (req, res) => {
-  res.send(req.user)
+  try {
+    const userProfile = await Auth.getUser(req.user.id)
+    if (userProfile) {
+      res.status(200).send(userProfile)
+    } else {
+      res.status(404).send('Not found')
+    }
+  } catch (e) {
+    res.status(500).send(e.message)
+  }
 })
