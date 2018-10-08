@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
 import Users from '@/views/Users.vue'
 import Post from '@/views/Post.vue'
 import PostMaster from '@/views/post/Master.vue'
@@ -15,6 +16,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
     },
     {
       path: '/users',

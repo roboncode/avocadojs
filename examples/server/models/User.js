@@ -64,6 +64,10 @@ let schema = orango.Schema(
   }
 )
 
+// schema.statics.getUser = async function(user) {
+//   return this.get
+// }
+
 schema.computed.fullName = function() {
   return this.firstName + ' ' + this.lastName
 }
