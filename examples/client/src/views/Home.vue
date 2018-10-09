@@ -1,7 +1,11 @@
 <template>
+<v-container grid-list-md>
   <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
-      <v-card tile v-for="tweet in tweets" :key="tweet.id">
+    <v-flex sm3>
+      <profile-card></profile-card>
+    </v-flex>
+    <v-flex xs12 sm6>
+      <v-card tile flat v-for="tweet in tweets" :key="tweet.id">
         <v-card-title>
           <v-layout align-center>
             <v-avatar color="primary" size="24">
@@ -31,12 +35,17 @@
       </v-layout>
     </v-flex>
   </v-layout>
+</v-container>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import ProfileCard from '@/components/ProfileCard'
 
 export default {
+  components: {
+    ProfileCard
+  },
   computed: {
     ...mapState('tweet', ['tweets'])
   },

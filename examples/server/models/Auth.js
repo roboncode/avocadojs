@@ -29,7 +29,7 @@ schema.statics.login = async function (username, password) {
   }
 }
 
-schema.statics.getUser = async function(id, select = '_key avatar email firstName lastName role stats', options = {}) {
+schema.statics.getUser = async function(id, select = '_key avatar screenName email firstName lastName role stats', options = {}) {
   const User = orango.model('User')
   const UserRole = orango.model('UserRole')
   return await User.findById(id)
