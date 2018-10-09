@@ -7,14 +7,14 @@
             <v-avatar color="primary" size="24">
               <span class="white--text headline">J</span>
             </v-avatar>
-            <h4>{{tweet.user.fullName}}</h4>
+            <h4>{{tweet.user.firstName}} {{tweet.user.lastName}}</h4>
             <v-spacer></v-spacer>
-          <v-btn flat icon color="grey lighten-2">
-            <v-icon>favorite_outline</v-icon>
-          </v-btn>
-          <v-btn flat icon color="grey lighten-2">
-            <v-icon>comment</v-icon>
-          </v-btn>
+            <v-btn flat icon color="grey">
+              <v-icon>favorite_outline</v-icon>
+            </v-btn>
+            <v-btn flat icon color="grey">
+              <v-icon>comment</v-icon>
+            </v-btn>
           </v-layout>
         </v-card-title>
 
@@ -26,7 +26,9 @@
         </v-card-actions> -->
         <v-divider></v-divider>
       </v-card>
-      <v-btn color="primary" depressed block round @click="getTweets(tweets.length)">Load more</v-btn>
+      <v-layout pa-4>
+        <v-btn color="primary" depressed block round @click="getTweets(tweets.length)">Load more</v-btn>
+      </v-layout>
     </v-flex>
   </v-layout>
 </template>
