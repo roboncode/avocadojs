@@ -49,6 +49,3 @@ Below are some examples of the app's interface
 
 <img src="https://dzwonsemrish7.cloudfront.net/items/343x3W1d3N0Z2S3m0L2S/%5B6710066b31e6ae7c9fd35a278bc86002%5D_bluebird.png" width="150">
 
-## This is just an example
-
-This application is just an example and does not provide a production ready environment, particularly within the realm of authentication. It is meant to just provide a means of understanding how to use Orango in your own application workflow.
