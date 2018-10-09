@@ -9,7 +9,11 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "serve": "cd examples/server && yarn serve"
+    "examples:arango": "cd tools && docker-compose up -d",
+    "examples:setup": "cd examples/server && yarn && cd ../client && yarn",
+    "examples:client": "cd examples/client && yarn serve",
+    "examples:server": "cd examples/server && yarn serve",
+    "examples:populate": "cd examples/server && yarn populate"
   },
   "author": "Rob Taylor <roboncode@gmail.com> (https://www.linkedin.com/in/roboncode/)",
   "license": "MIT",
