@@ -51,7 +51,11 @@ export default {
   methods: {
     ...mapActions('tweet', ['likeTweet', 'unlikeTweet']),
     toggleLike() {
-      console.log(this.tweet.stats.likes)
+      if(this.tweet.likes) {
+        this.unlikeTweet(this.tweet)
+      } else {
+        this.likeTweet(this.tweet)
+      }
     }
   }
 }

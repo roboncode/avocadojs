@@ -13,7 +13,11 @@ const CONSTS = orango.CONSTS
  */
 app.get('/tweets', async (req, res) => {
   try {
-    const tweets = await Tweet.getTweets(req.user.id, req.query.limit, req.query.offset)
+    const tweets = await Tweet.getTweets(
+      req.user.id,
+      req.query.limit,
+      req.query.offset
+    )
     res.send(tweets)
   } catch (e) {
     res.status(500).send(e.message)
@@ -97,15 +101,22 @@ app.delete('/tweets/:id', async (req, res) => {
   }
 })
 
-Like.on(CONSTS.EVENTS.CREATED, result => {
-  console.log('#result', result)
-  // Tweet.findByIdAndUpdate(result.data.user, {
-  //   stats: { likes: '++1' }
-  // }).exec()
+Like.on(CONSTS.EVENTS.CREATED, ({ data }) => {
+  console.log('whois_created', data)
+  Tweet.findByIdAndUpdate(data._to, {
+    stats: {
+      likes: '+=1'
+    }
+  }).exec()
 })
 
-Like.on(CONSTS.EVENTS.DELETED, async friend => {
-  // Tweet.findByIdAndUpdate(result.data.user, {
-  //   stats: { likes: '--1' }
-  // }).exec()
+Like.on(CONSTS.EVENTS.DELETED, async ({ data }) => {
+  console.log('whois_delete', data)
+  let result = await Tweet.findByIdAndUpdate(data._to, {
+    stats: {
+      likes: '-=1'
+    }
+  }).toAQL()
+  // .exec()
+  console.log('result', result)
 })

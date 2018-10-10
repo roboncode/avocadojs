@@ -11,7 +11,11 @@ const Tweet = orango.model('Tweet')
  */
 app.post('/likes', async (req, res) => {
   try {
-    Tweet.like(req.user.id, req.body.tweet)
+    if (req.body.like) {
+      Tweet.like(req.user.id, req.body.tweet)
+    } else {
+      Tweet.unlike(req.user.id, req.body.tweet)
+    }
     res.status(201).send('Created')
   } catch (e) {
     res.status(500).json({
@@ -20,23 +24,19 @@ app.post('/likes', async (req, res) => {
   }
 })
 
-
 /**
  * Unlike tweet
  */
-app.delete('/likes', async (req, res) => {
-  try {
-    Tweet.unlike(req.user.id, req.body.tweet)
-    res.status(200).send('Ok')
-  } catch (e) {
-    res.status(500).json({
-      error: e.message
-    })
-  }
-})
-
-
-
+// app.delete('/likes', async (req, res) => {
+//   try {
+//     Tweet.unlike(req.user.id, req.body.tweet)
+//     res.status(200).send('Ok')
+//   } catch (e) {
+//     res.status(500).json({
+//       error: e.message
+//     })
+//   }
+// })
 
 // /**
 //  * Get likes
@@ -65,7 +65,6 @@ app.delete('/likes', async (req, res) => {
 //     res.status(500).send(e)
 //   }
 // })
-
 
 // /**
 //  * Update like

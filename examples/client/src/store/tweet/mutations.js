@@ -9,6 +9,9 @@ export default {
   addNewTweet(state, tweet) {
     state.tweets.splice(0, 0, tweet)
   },
+  setTweetLikes(state, { tweet, likes }) {
+    tweet.likes = likes
+  },
   incStatsCount(state, { tweet, stat }) {
     tweet.stats[stat]++
   },
