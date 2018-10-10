@@ -47,7 +47,7 @@ The `client` will run on [http://localhost:8080](http://localhost:8080)
 
 Below are some examples of the app's interface
 
-<img src="https://dzwonsemrish7.cloudfront.net/items/343x3W1d3N0Z2S3m0L2S/%5B6710066b31e6ae7c9fd35a278bc86002%5D_bluebird.png" width="150">
+<img src="https://duaw26jehqd4r.cloudfront.net/items/2y2D202N1n3J3Z1M170s/Image%202018-10-10%20at%209.13.28%20AM.png" width="150">
 
 ## This is just an example
 
