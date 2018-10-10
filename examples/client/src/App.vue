@@ -27,7 +27,8 @@
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-avatar v-if="authUser" color="primary" size="36">
-        <span class="white--text headline">J</span>
+        <img v-if="authUser.avatar" :src="authUser.avatar" :alt="authUser.firstName">
+        <span v-else class="white--text headline">{{userInitial}}</span>
       </v-avatar>
       <v-btn round depressed color="primary" @click="tweet()">
         Tweet
@@ -86,6 +87,9 @@ export default {
     ...mapState('auth', ['accessToken', 'authUser']),
     showMenu() {
       return !!this.authUser
+    },
+    userInitial() {
+      return this.authUser.firstName.substr(0, 1)
     }
   },
   watch: {

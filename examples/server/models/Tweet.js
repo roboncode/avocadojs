@@ -5,6 +5,7 @@ let schema = orango.Schema(
     user: String,
     text: { type: String, max: 140 },
     likes: { type: orango.Types.Any, default: 0 },
+    comments: { type: orango.Types.Any, default: 0 },
     created: { type: Date }
   },
   {
@@ -26,24 +27,23 @@ let schema = orango.Schema(
   }
 )
 
-schema.statics.getTweets = async function(user, limit = 5, offset = 0) {
+/**
+ * Not all queries can be created through the ORM. This example shows a custom query still using the ODM
+ */
+schema.statics.getTweets = async function(user, limit = 10, offset = 0) {
   return await this.findByQuery(
-    `FOR user IN OUTBOUND "@@User/${user}" @@Follower  
-        FOR tweet IN @@Tweet 
-          FILTER tweet.user == user._key
-          SORT tweet.created DESC`
+    `LET followers = (FOR user IN OUTBOUND "users/${user}" followers RETURN user._key)
+    LET users = UNION(['${user}'], followers)
+    FOR tweet IN tweets 
+        FILTER POSITION( users, tweet.user )
+        SORT tweet.created DESC 
+        LET user = DOCUMENT(CONCAT('users/', tweet.user))`
   )
     .limit(limit)
     .offset(offset)
-    .return(
-      'MERGE(tweet, {user: KEEP(user, "screenName", "avatar", "firstName", "lastName")})'
-    )
+    .defaults(true)
+    .return(`MERGE(tweet, {user: UNSET(user, 'authId')})`)
     .id()
-    .each(item => {
-      let user = item.user
-      user.fullName = user.firstName + ' ' + user.lastName
-      return item
-    })
     // .toAQL()
 }
 
