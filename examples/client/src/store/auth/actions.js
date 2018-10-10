@@ -11,5 +11,14 @@ export default {
     return axios.get('/me').then(({ data }) => {
       commit('setAuthUser', data)
     })
+  },
+  incTweetCount({ commit }) {
+    commit('incStatsCount', 'tweets')
+  },
+  incFollowingCount({ commit }) {
+    commit('incStatsCount', 'following')
+  },
+  decFollowingCount({ commit }) {
+    commit('decStatsCount', 'following')
   }
 }

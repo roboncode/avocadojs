@@ -18,7 +18,7 @@ Tweet.on(CONSTS.EVENTS.CREATED, result => {
   }).exec()
 })
 
-Tweet.on('deleted', async friend => {
+Tweet.on(CONSTS.EVENTS.DELETED, async friend => {
   User.findByIdAndUpdate(result.data.user, {
     stats: { tweets: '--1' }
   }).exec()

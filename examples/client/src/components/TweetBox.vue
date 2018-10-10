@@ -2,10 +2,12 @@
   <v-card class="inputbox mb-2 pa-3">
     <v-layout align-center>
       <avatar size="48" class="avatar" :user="authUser"></avatar>
-      <v-layout class="box pa-3">
+      <v-layout class="box pa-2" align-center>
         <span class="title">What's happening?</span>
         <v-spacer></v-spacer>
-        <v-icon color="primary">image</v-icon>
+        <v-btn medium icon>
+          <v-icon color="primary">image</v-icon>
+        </v-btn>
       </v-layout>
     </v-layout>
   </v-card>

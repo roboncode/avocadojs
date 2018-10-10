@@ -15,7 +15,17 @@ export default {
     commit('addNewTweet', data)
   },
 
+  async likeTweet({ commit }, tweet) {
+    // await axios.post('/likes', { tweet: tweet.id })
+    commit('incLike', { tweet, stat: 'likes' })
+  },
+
+  async unlikeTweet({ commit }, tweet) {
+    // await axios.delete('/likes', { tweet: tweet.id })
+    commit('incStatsCount', { tweet, stat: 'likes' })
+  },
+
   clearTweets({ commit }) {
-    commit('setTweets', null)
+    commit('decStatsCount', null)
   }
 }

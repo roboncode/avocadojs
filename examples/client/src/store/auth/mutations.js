@@ -8,5 +8,11 @@ export default {
   },
   setAuthUser(state, authUser) {
     state.authUser = authUser
+  },
+  incStatsCount(state, target) {
+    state.authUser.stats[target]++
+  },
+  decStatsCount(state, target) {
+    state.authUser.stats[target]--
   }
 }

@@ -5,9 +5,19 @@ import tweet from './tweet'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   modules: {
     auth,
     tweet
   }
 })
+
+store.subscribe(mutation => {
+  switch (mutation.type) {
+    case 'tweet/addNewTweet':
+      store.dispatch('auth/incTweetCount')
+      break
+  }
+})
+
+export default store

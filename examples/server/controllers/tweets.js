@@ -5,7 +5,8 @@
 const orango = require('orango')
 const app = require('../app')
 const Tweet = orango.model('Tweet')
-const User = orango.model('User')
+const Like = orango.model('Like')
+const CONSTS = orango.CONSTS
 
 /**
  * Get tweets
@@ -94,4 +95,17 @@ app.delete('/tweets/:id', async (req, res) => {
       error: e.message
     })
   }
+})
+
+Like.on(CONSTS.EVENTS.CREATED, result => {
+  console.log('#result', result)
+  // Tweet.findByIdAndUpdate(result.data.user, {
+  //   stats: { likes: '++1' }
+  // }).exec()
+})
+
+Like.on(CONSTS.EVENTS.DELETED, async friend => {
+  // Tweet.findByIdAndUpdate(result.data.user, {
+  //   stats: { likes: '--1' }
+  // }).exec()
 })
