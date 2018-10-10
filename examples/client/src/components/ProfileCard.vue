@@ -1,8 +1,8 @@
 <template>
   <v-card flat class="profile-card" v-if="authUser">
     <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg" aspect-ratio="2.75"></v-img>
-    <avatar size="72" class="avatar" :user="authUser"></avatar>
     <v-layout column class="content">
+      <avatar size="72" class="avatar" :user="authUser"></avatar>
       <div class="name">{{authUser.firstName}} {{authUser.lastName}}</div>
       <div class="screenname">{{authUser.screenName}}</div>
     </v-layout>
@@ -51,10 +51,11 @@ export default {
 .profile-card
   .avatar
     position absolute
-    top 60px
+    top -40px
     left 10px
 
   .content
+    position relative
     padding-top 4px
     padding-left 100px
 

@@ -2,12 +2,12 @@
   <v-app>
     <!-- Toolbar -->
     <v-toolbar app flat dense clipped-left color="toolbar" class="elevation-1">
-      <Logo></Logo>
-      <v-spacer></v-spacer>
+      <logo class="hidden-sm-and-down"></logo>
+      <v-spacer class="hidden-sm-and-down"></v-spacer>
       <toolbar-link></toolbar-link>
       <v-spacer></v-spacer>
       <Avatar :user="authUser"></Avatar>
-      <v-btn round depressed color="primary" class="tweet-btn" @click="tweet()">
+      <v-btn round depressed color="primary" class="tweet-btn hidden-sm-and-down" @click="tweet()">
         Tweet
       </v-btn>
     </v-toolbar>
@@ -27,6 +27,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import bus from '@/helpers/bus'
 import Avatar from '@/components/Avatar'
 import Logo from '@/components/Logo'
 import ToolbarLink from '@/components/ToolbarLink'
@@ -61,6 +62,10 @@ export default {
     }
   },
   created() {
+    bus.$on('tweet', () => {
+      this.tweet()
+    })
+
     if (this.accessToken) {
       this.getAuthUser()
     }
@@ -69,6 +74,10 @@ export default {
 </script>
 
 <style lang="stylus">
+a {
+  text-decoration none
+}
+
 .v-toolbar__title
   color #1da1f2
 

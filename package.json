@@ -11,7 +11,7 @@
     "docs:build": "vuepress build docs",
     "examples:arango": "cd tools && docker-compose up -d",
     "examples:setup": "cd examples/server && yarn && cd ../client && yarn",
-    "examples:client": "cd examples/client && yarn serve",
+    "examples:client": "cd examples/client && yarn serve --disable-host-check",
     "examples:server": "cd examples/server && yarn serve",
     "examples:populate": "cd examples/server && yarn populate"
   },

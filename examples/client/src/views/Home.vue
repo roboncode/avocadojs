@@ -1,11 +1,11 @@
 <template>
 <v-container grid-list-md>
   <v-layout row>
-    <v-flex sm3 hidden-sm-and-down>
-      <profile-card></profile-card>
+    <v-flex sm4 hidden-sm-and-down>
+      <profile-card v-sticky="{ zIndex: 10, stickyTop: 50}"></profile-card>
     </v-flex>
-    <v-flex xs12 sm6>
-      <input-box></input-box>
+    <v-flex xs12 md7>
+      <input-box v-sticky="{ zIndex: 10, stickyTop: 50}" @click.native="tweet"></input-box>
       <v-card tile flat v-for="tweet in tweets" :key="tweet.id">
         <v-card-title>
           <v-layout align-center>
@@ -41,19 +41,27 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import bus from '@/helpers/bus'
 import InputBox from '@/components/InputBox'
 import ProfileCard from '@/components/ProfileCard'
+import VueSticky from 'vue-sticky'
 
 export default {
   components: {
     InputBox,
     ProfileCard
   },
+  directives: {
+    sticky: VueSticky
+  },
   computed: {
     ...mapState('tweet', ['tweets'])
   },
   methods: {
-    ...mapActions('tweet', ['getTweets', 'clearTweets'])
+    ...mapActions('tweet', ['getTweets', 'clearTweets']),
+    tweet() {
+      bus.$emit('tweet')
+    }
   },
   created() {
     this.getTweets()
