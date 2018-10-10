@@ -1,12 +1,12 @@
 <template>
-  <v-card flat class="profile-card">
+  <v-card flat class="profile-card" v-if="authUser">
     <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg" aspect-ratio="2.75"></v-img>
     <avatar size="72" class="avatar" :user="authUser"></avatar>
     <v-layout column class="content">
       <div class="name">{{authUser.firstName}} {{authUser.lastName}}</div>
       <div class="screenname">{{authUser.screenName}}</div>
     </v-layout>
-    <v-card-content>
+    <v-card-text>
       <v-container grid-list-md text-xs-center pa-2>
         <v-layout row wrap>
           <v-flex>
@@ -16,20 +16,20 @@
             </router-link>
           </v-flex>
           <v-flex>
-            <router-link to="following" class="link">
+            <router-link :to="{ name: 'following', params: { user: authUser.screenName }}" class="link">
               <div class="stats-title">Following</div>
               <div class="stats-count">{{authUser.stats.following}}</div>
             </router-link>
           </v-flex>
           <v-flex>
-            <router-link to="followers" class="link">
+            <router-link :to="{ name: 'followers', params: { user: authUser.screenName }}" class="link">
               <div class="stats-title">Followers</div>
               <div class="stats-count">{{authUser.stats.followers}}</div>
             </router-link>
           </v-flex>
         </v-layout>
       </v-container>
-    </v-card-content>
+    </v-card-text>
   </v-card>
 </template>
 

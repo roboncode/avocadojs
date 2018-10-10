@@ -1,10 +1,11 @@
 <template>
 <v-container grid-list-md>
   <v-layout row>
-    <v-flex sm3>
+    <v-flex sm3 hidden-sm-and-down>
       <profile-card></profile-card>
     </v-flex>
     <v-flex xs12 sm6>
+      <input-box></input-box>
       <v-card tile flat v-for="tweet in tweets" :key="tweet.id">
         <v-card-title>
           <v-layout align-center>
@@ -40,10 +41,12 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import InputBox from '@/components/InputBox'
 import ProfileCard from '@/components/ProfileCard'
 
 export default {
   components: {
+    InputBox,
     ProfileCard
   },
   computed: {

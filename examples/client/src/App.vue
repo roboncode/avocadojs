@@ -14,7 +14,9 @@
 
     <!-- Views -->
     <v-content>
-      <router-view />
+      <transition name="slide">
+        <router-view />
+      </transition>
     </v-content>
 
     <!-- Dialogs -->
@@ -75,4 +77,16 @@ export default {
 
 .tweet-btn
   font-weight 800 !important
+
+.slide-enter-active, .slide-leave-active
+  transition-property opacity, transform
+  transition-duration 0.25s
+  // transform: translate(0, -2em);
+
+.slide-enter-active
+  transition-delay 0.25s
+
+.slide-enter, .slide-leave-active
+  opacity 0
+  transform translate(0, -1em)
 </style>
