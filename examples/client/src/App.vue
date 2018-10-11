@@ -1,87 +1,48 @@
 <template>
   <v-app>
-    <!-- <v-navigation-drawer persistent :mini-variant="miniVariant" :clipped="clipped" v-model="drawer" enable-resize-watcher fixed app>
-      <v-list>
-        <v-list-tile value="true" v-for="(item, i) in items" :key="i">
-          <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer> -->
-    <v-toolbar app :clipped-left="clipped">
-      <!-- <v-toolbar-side-icon v-if="authUser" @click.stop="drawer = !drawer"></v-toolbar-side-icon> -->
-      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>web</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>web</v-icon>
-      </v-btn> -->
-      <Logo></Logo>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
+    <!-- Toolbar -->
+    <v-toolbar app flat dense clipped-left color="toolbar" class="elevation-1">
+      <logo class="hidden-sm-and-down"></logo>
+      <v-spacer class="hidden-sm-and-down"></v-spacer>
+      <toolbar-link></toolbar-link>
       <v-spacer></v-spacer>
-      <v-avatar v-if="authUser" color="primary" size="36">
-        <img v-if="authUser.avatar" :src="authUser.avatar" :alt="authUser.firstName">
-        <span v-else class="white--text headline">{{userInitial}}</span>
-      </v-avatar>
-      <v-btn round depressed color="primary" @click="tweet()">
+      <Avatar :user="authUser"></Avatar>
+      <v-btn round depressed color="primary" class="tweet-btn hidden-sm-and-down" @click="tweet()">
         Tweet
       </v-btn>
     </v-toolbar>
-    <v-content>
-      <router-view />
-    </v-content>
-    <v-navigation-drawer temporary :right="right" v-model="rightDrawer" fixed app>
-      <v-list>
-        <v-list-tile @click="right = !right">
-          <v-list-tile-action>
-            <v-icon>compare_arrows</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
-    <!-- <v-footer :fixed="fixed" app>
-      <span>&copy; 2017</span>
-    </v-footer> -->
 
+    <!-- Views -->
+    <v-content>
+      <transition name="slide">
+        <router-view />
+      </transition>
+    </v-content>
+
+    <!-- Dialogs -->
     <TweetDialog ref="tweetDialog"></TweetDialog>
+    <CommentDialog ref="commentDialog"></CommentDialog>
+
   </v-app>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import bus from '@/helpers/bus'
+import Avatar from '@/components/Avatar'
 import Logo from '@/components/Logo'
+import ToolbarLink from '@/components/ToolbarLink'
 import TweetDialog from '@/components/TweetDialog'
+import CommentDialog from '@/components/CommentDialog'
 
 export default {
   name: 'App',
   components: {
+    Avatar,
+    CommentDialog,
     Logo,
+    ToolbarLink,
     TweetDialog
-  },
-  data() {
-    return {
-      clipped: true,
-      drawer: false,
-      fixed: false,
-      items: [
-        {
-          icon: 'bubble_chart',
-          title: 'Inspire'
-        }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Bluebird'
-    }
   },
   computed: {
     ...mapState('auth', ['accessToken', 'authUser']),
@@ -101,9 +62,20 @@ export default {
     ...mapActions('auth', ['getAuthUser']),
     tweet() {
       this.$refs.tweetDialog.open()
+    },
+    comment(tweet) {
+      this.$refs.commentDialog.open(tweet)
     }
   },
   created() {
+    bus.$on('tweet', () => {
+      this.tweet()
+    })
+
+    bus.$on('comment', tweet => {
+      this.comment(tweet)
+    })
+
     if (this.accessToken) {
       this.getAuthUser()
     }
@@ -112,6 +84,34 @@ export default {
 </script>
 
 <style lang="stylus">
+a
+  text-decoration none
+
+.v-dialog
+  margin 0 !important
+  // margin-top 5px !important
+
+.v-dialog__content
+  align-items flex-start !important
+
+.v-toolbar__title
+  color #1da1f2
+
 .theme--light.v-text-field--outline .v-input__slot
   border-color #1976d2
+
+.tweet-btn
+  font-weight 800 !important
+
+.slide-enter-active, .slide-leave-active
+  transition-property opacity, transform
+  transition-duration 0.25s
+  // transform: translate(0, -2em);
+
+.slide-enter-active
+  transition-delay 0.25s
+
+.slide-enter, .slide-leave-active
+  opacity 0
+  transform translate(0, -1em)
 </style>

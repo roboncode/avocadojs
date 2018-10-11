@@ -2,46 +2,27 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
-import Users from '@/views/Users.vue'
-import Post from '@/views/Post.vue'
-import PostMaster from '@/views/post/Master.vue'
-import PostDetails from '@/views/post/Details.vue'
+import Profile from '@/views/Profile.vue'
+import Followers from '@/views/Followers.vue'
+import Following from '@/views/Following.vue'
+
+import authGuard from './guards/authGuard'
 
 Vue.use(Router)
 
-
 export default new Router({
   mode: 'history',
-  routes: [{
+  routes: [
+    {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      beforeEnter: authGuard
     },
     {
       path: '/login',
       name: 'login',
       component: Login
-    },
-    {
-      path: '/users',
-      name: 'users',
-      component: Users
-    },
-    {
-      path: '/posts',
-      name: 'post',
-      component: Post,
-      children: [{
-          path: '',
-          name: 'post-master',
-          component: PostMaster
-        },
-        {
-          path: ':id',
-          name: 'post-details',
-          component: PostDetails
-        }
-      ]
     },
     {
       path: '/about',
@@ -50,7 +31,22 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () =>
-        import( /* webpackChunkName: "about" */ '@/views/About.vue')
+        import(/* webpackChunkName: "about" */ '@/views/About.vue')
+    },
+    {
+      path: '/:user',
+      name: 'profile',
+      component: Profile
+    },
+    {
+      path: '/:user/following',
+      name: 'following',
+      component: Following
+    },
+    {
+      path: '/:user/followers',
+      name: 'followers',
+      component: Followers
     }
   ]
 })

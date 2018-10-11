@@ -1,37 +1,39 @@
 <template>
   <v-layout row justify-center>
     <v-dialog v-model="dialog" max-width="500px">
-      <v-card>
+      <v-card v-if="tweet">
         <v-toolbar color="white" flat dense>
-          <v-toolbar-title>Compose new tweet</v-toolbar-title>
+          <v-toolbar-title>Reply to {{tweet.user.firstName}} {{tweet.user.lastName}}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="dialog = false">
             <v-icon>close</v-icon>
           </v-btn>
         </v-toolbar>
         <v-card-text class="text">
-          <v-textarea autofocus outline no-resize counter="140" label="What's happening?" v-model="text"></v-textarea>
+          <v-textarea autofocus outline no-resize counter="140" label="Your comment..." v-model="text"></v-textarea>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark depressed round @click="send">Tweet</v-btn>
+          <v-btn color="primary" dark depressed round @click="send">Reply</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-layout>
-</template>
+</template>0
 
 <script>
 import { mapActions } from 'vuex'
 
 export default {
   data: () => ({
+    tweet: null,
     dialog: false,
     text: ''
   }),
   methods: {
-    ...mapActions('tweet', ['postTweet']),
-    open() {
+    ...mapActions('tweet', ['postComment']),
+    open(tweet) {
+      this.tweet = tweet
       this.dialog = true
     },
     close() {
@@ -39,7 +41,10 @@ export default {
       this.dialog = false
     },
     send() {
-      this.postTweet(this.text)
+      this.postComment({
+        tweet: this.tweet,
+        text: this.text
+      })
       this.close()
     }
   }

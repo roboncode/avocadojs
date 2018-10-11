@@ -10,9 +10,12 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0-rc.1",
     "axios": "^0.18.0",
+    "jwt-decode": "^2.2.0",
     "register-service-worker": "^1.0.0",
     "vue": "^2.5.17",
+    "vue-moment": "^4.0.0",
     "vue-router": "^3.0.1",
+    "vue-sticky": "^3.3.4",
     "vuetify": "^1.2.5",
     "vuex": "^3.0.1"
   },

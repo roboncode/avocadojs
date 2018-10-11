@@ -5,14 +5,20 @@
 const orango = require('orango')
 const app = require('../app')
 const Tweet = orango.model('Tweet')
-const User = orango.model('User')
+const Like = orango.model('Like')
+const Comment = orango.model('Comment')
+const CONSTS = orango.CONSTS
 
 /**
  * Get tweets
  */
 app.get('/tweets', async (req, res) => {
   try {
-    const tweets = await Tweet.getTweets(req.user.id, req.query.limit, req.query.offset)
+    const tweets = await Tweet.getTweets(
+      req.user.id,
+      req.query.limit,
+      req.query.offset
+    )
     res.send(tweets)
   } catch (e) {
     res.status(500).send(e.message)
@@ -45,7 +51,10 @@ app.post('/tweets', async (req, res) => {
       text: req.body.text,
       created: Date.now()
     })
-    await tweet.save().id()
+    await tweet
+      .save({ returnNew: true })
+      .id()
+      .defaults(true)
     res.status(201).json(tweet)
   } catch (e) {
     res.status(500).json({
@@ -95,3 +104,36 @@ app.delete('/tweets/:id', async (req, res) => {
     })
   }
 })
+
+Like.on(CONSTS.EVENTS.LINKED, ({ data }) => {
+  Tweet.findByIdAndUpdate(data.to, {
+    stats: {
+      likes: '++1'
+    }
+  }).exec()
+})
+
+Like.on(CONSTS.EVENTS.UNLINKED, ({ data }) => {
+  Tweet.findByIdAndUpdate(data.to, {
+    stats: {
+      likes: '--1'
+    }
+  }).exec()
+})
+
+Comment.on(CONSTS.EVENTS.CREATED, ({data}) => {
+  Tweet.findByIdAndUpdate(data.tweet, {
+    stats: {
+      comments: '++1'
+    }
+  }).exec()
+})
+
+Comment.on(CONSTS.EVENTS.DELETED, ({data}) => {
+  Tweet.findByIdAndUpdate(data.tweet, {
+    stats: {
+      comments: '--1'
+    }
+  }).exec()
+})
+

@@ -5,6 +5,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './registerServiceWorker'
+import './stylus/main.styl'
+import moment from 'vue-moment'
+
+Vue.use(moment)
 
 Vue.config.productionTip = false
 

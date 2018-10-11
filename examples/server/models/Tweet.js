@@ -4,8 +4,10 @@ let schema = orango.Schema(
   {
     user: String,
     text: { type: String, max: 140 },
-    likes: { type: orango.Types.Any, default: 0 },
-    comments: { type: orango.Types.Any, default: 0 },
+    stats: {
+      likes: { type: orango.Types.Any, default: 0 },
+      comments: { type: orango.Types.Any, default: 0 }
+    },
     created: { type: Date }
   },
   {
@@ -37,24 +39,36 @@ schema.statics.getTweets = async function(user, limit = 10, offset = 0) {
     FOR tweet IN tweets 
         FILTER POSITION( users, tweet.user )
         SORT tweet.created DESC 
+        LET tweet_id = CONCAT('tweets/', tweet._key)
+        LET likes = FIRST(FOR doc in likes FILTER doc._from == "users/${user}" && doc._to == tweet_id RETURN doc != null)
         LET user = DOCUMENT(CONCAT('users/', tweet.user))`
   )
     .limit(limit)
     .offset(offset)
     .defaults(true)
-    .return(`MERGE(tweet, {user: UNSET(user, 'authId')})`)
+    .return(`MERGE(tweet, {user: UNSET(user, 'authId'), likes})`)
     .id()
     // .toAQL()
 }
 
-schema.statics.getTweet = async function(id) {
+schema.statics.getTweet = async function(tweetId) {
   const User = orango.model('User')
-  return await this.findById(id).populate(
+  return await this.findById(tweetId).populate(
     'user',
     User.findById('@@parent.user').select(
       '_key screenName firstName lastName avatar'
     )
   )
+}
+
+schema.statics.like = async function(userId, tweetId) {
+  const Like = orango.model('Like')
+  return await Like.link(userId, tweetId)
+}
+
+schema.statics.unlike = async function(userId, tweetId) {
+  const Like = orango.model('Like')
+  return await Like.unlink(userId, tweetId)
 }
 
 module.exports = orango.model('Tweet', schema)

@@ -3,13 +3,18 @@ const jwt = require('jsonwebtoken')
 const app = require('../app')
 const config = require('../config')
 const Auth = orango.model('Auth')
-const User = orango.model('User')
 
 app.post('/login', async (req, res) => {
   try {
-    const authUser = await Auth.login(req.body.username, req.body.password)
+    const authUser = await Auth.login(
+      req.body.username,
+      req.body.password
+    )
     if (authUser) {
-      const token = jwt.sign(authUser, config.JWT_SECRET)
+      const token = jwt.sign(authUser, config.JWT_SECRET, {
+        issuer: 'bluebird',
+        expiresIn: '24h'
+      })
       return res.send({ token })
     }
     return res.status(401).send('Unauthorized')
@@ -20,7 +25,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/me', async (req, res) => {
   try {
-    const userProfile = await Auth.getUser(req.user.id)
+    const userProfile = await Auth.getUser(req.user.id, { defaults: true })
     if (userProfile) {
       res.status(200).send(userProfile)
     } else {
