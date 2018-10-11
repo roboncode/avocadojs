@@ -41,7 +41,7 @@ Official documentation can be found at **[orango.js.org](https://orango.js.org)*
 
 *Screenshot of example application (in progress)*
 
-<img src="https://dzwonsemrish7.cloudfront.net/items/343x3W1d3N0Z2S3m0L2S/%5B6710066b31e6ae7c9fd35a278bc86002%5D_bluebird.png" width="150">
+<img src="https://duaw26jehqd4r.cloudfront.net/items/2y2D202N1n3J3Z1M170s/Image%202018-10-10%20at%209.13.28%20AM.png" width="150">
 
 
 **[03 Oct 2018]** 0.9.0 released. A second iteration of `populate()` is available. Look at the [post example](https://github.com/roboncode/orango/blob/master/examples/express/controllers/posts.js) for an example. In addition, `var()`, `append()` and `merge()` were added. The documentation and examples are really lacking at this point. I am still working on examples and then documentation will follow after the API feels a little less ephemeral. I would not recommend using Orango yet for any real development until I have completed the examples to test the workflow. I am still finding some parts that are missing / or needing refactoring as I am trying to use it.
