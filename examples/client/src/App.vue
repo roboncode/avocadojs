@@ -21,6 +21,7 @@
 
     <!-- Dialogs -->
     <TweetDialog ref="tweetDialog"></TweetDialog>
+    <CommentDialog ref="commentDialog"></CommentDialog>
 
   </v-app>
 </template>
@@ -32,11 +33,13 @@ import Avatar from '@/components/Avatar'
 import Logo from '@/components/Logo'
 import ToolbarLink from '@/components/ToolbarLink'
 import TweetDialog from '@/components/TweetDialog'
+import CommentDialog from '@/components/CommentDialog'
 
 export default {
   name: 'App',
   components: {
     Avatar,
+    CommentDialog,
     Logo,
     ToolbarLink,
     TweetDialog
@@ -59,11 +62,18 @@ export default {
     ...mapActions('auth', ['getAuthUser']),
     tweet() {
       this.$refs.tweetDialog.open()
+    },
+    comment(tweet) {
+      this.$refs.commentDialog.open(tweet)
     }
   },
   created() {
     bus.$on('tweet', () => {
       this.tweet()
+    })
+
+    bus.$on('comment', tweet => {
+      this.comment(tweet)
     })
 
     if (this.accessToken) {
@@ -74,9 +84,15 @@ export default {
 </script>
 
 <style lang="stylus">
-a {
+a
   text-decoration none
-}
+
+.v-dialog
+  margin 0 !important
+  // margin-top 5px !important
+
+.v-dialog__content
+  align-items flex-start !important
 
 .v-toolbar__title
   color #1da1f2

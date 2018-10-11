@@ -6,6 +6,7 @@ const orango = require('orango')
 const app = require('../app')
 const Tweet = orango.model('Tweet')
 const Like = orango.model('Like')
+const Comment = orango.model('Comment')
 const CONSTS = orango.CONSTS
 
 /**
@@ -119,3 +120,20 @@ Like.on(CONSTS.EVENTS.UNLINKED, ({ data }) => {
     }
   }).exec()
 })
+
+Comment.on(CONSTS.EVENTS.CREATED, ({data}) => {
+  Tweet.findByIdAndUpdate(data.tweet, {
+    stats: {
+      comments: '++1'
+    }
+  }).exec()
+})
+
+Comment.on(CONSTS.EVENTS.DELETED, ({data}) => {
+  Tweet.findByIdAndUpdate(data.tweet, {
+    stats: {
+      comments: '--1'
+    }
+  }).exec()
+})
+

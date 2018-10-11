@@ -24,7 +24,7 @@
         {{tweet.stats.likes}}
       </v-btn>
 
-      <v-btn flat color="grey">
+      <v-btn flat color="grey" @click="comment">
         <v-icon class="material-icons-outlined">comment</v-icon>
         {{tweet.stats.comments}}
       </v-btn>
@@ -37,6 +37,7 @@
 <script>
 import { mapActions } from 'vuex'
 import Avatar from '@/components/Avatar'
+import bus from '@/helpers/bus'
 
 export default {
   components: {
@@ -49,13 +50,16 @@ export default {
     }
   },
   methods: {
-    ...mapActions('tweet', ['likeTweet', 'unlikeTweet']),
+    ...mapActions('tweet', ['postComment', 'likeTweet', 'unlikeTweet']),
     toggleLike() {
       if(this.tweet.likes) {
         this.unlikeTweet(this.tweet)
       } else {
         this.likeTweet(this.tweet)
       }
+    },
+    comment() {
+      bus.$emit('comment', this.tweet)
     }
   }
 }

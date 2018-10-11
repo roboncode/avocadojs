@@ -14,7 +14,7 @@ let schema = orango.Schema({
     },
     {
       type: 'hash',
-      fields: ['source']
+      fields: ['tweet']
     }
   ]
 })

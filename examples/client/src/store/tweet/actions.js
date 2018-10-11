@@ -19,6 +19,18 @@ export default {
     commit('addNewTweet', data)
   },
 
+  async postComment({commit}, {tweet, text}) {
+    await axios.post('/comments', {
+      tweet: tweet.id,
+      text
+    })
+    // data.user = rootState.auth.authUser
+    commit('incStatsCount', {
+      tweet,
+      stat: 'comments'
+    })
+  },
+
   async likeTweet({ commit }, tweet) {
     await axios.post('/likes', { tweet: tweet.id, like: true })
     commit('setTweetLikes', {
