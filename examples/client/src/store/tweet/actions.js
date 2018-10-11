@@ -44,6 +44,6 @@ export default {
   },
 
   clearTweets({ commit }) {
-    commit('decStatsCount', null)
+    commit('setTweets', null)
   }
 }

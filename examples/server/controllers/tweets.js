@@ -50,7 +50,10 @@ app.post('/tweets', async (req, res) => {
       text: req.body.text,
       created: Date.now()
     })
-    await tweet.save().id()
+    await tweet
+      .save({ returnNew: true })
+      .id()
+      .defaults(true)
     res.status(201).json(tweet)
   } catch (e) {
     res.status(500).json({

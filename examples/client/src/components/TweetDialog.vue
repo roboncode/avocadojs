@@ -14,7 +14,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark depressed round @click="postTweet(text)">Tweet</v-btn>
+          <v-btn color="primary" dark depressed round @click="send">Tweet</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -33,6 +33,14 @@ export default {
     ...mapActions('tweet', ['postTweet']),
     open() {
       this.dialog = true
+    },
+    close() {
+      this.text = ''
+      this.dialog = false
+    },
+    send() {
+      this.postTweet(this.text)
+      this.close()
     }
   }
 }

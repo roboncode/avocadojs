@@ -6,7 +6,7 @@
     </v-flex>
     <v-flex xs12 md7>
       <tweet-box v-sticky="{ zIndex: 10, stickyTop: 50}" @click.native="tweet"></tweet-box>
-      <tweet-card v-for="tweet in tweets" :key="tweet.id" :tweet="tweet"></tweet-card>
+      <tweet-card v-for="(tweet, index) in tweets" :key="index" :tweet="tweet"></tweet-card>
       <v-layout pa-4>
         <v-btn color="primary" depressed block round @click="getTweets(tweets.length)">Load more</v-btn>
       </v-layout>
