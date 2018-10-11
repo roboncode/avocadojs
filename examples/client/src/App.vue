@@ -2,7 +2,7 @@
   <v-app>
     <!-- Toolbar -->
     <v-toolbar app flat dense clipped-left color="toolbar" class="elevation-1">
-      <logo class="hidden-sm-and-down"></logo>
+      <logo class="clickable hidden-sm-and-down" @click.native="$router.push({name: 'home'})"></logo>
       <v-spacer class="hidden-sm-and-down"></v-spacer>
       <toolbar-link></toolbar-link>
       <v-spacer></v-spacer>
@@ -114,4 +114,7 @@ a
 .slide-enter, .slide-leave-active
   opacity 0
   transform translate(0, -1em)
+
+.clickable
+  cursor pointer
 </style>

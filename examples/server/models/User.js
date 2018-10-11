@@ -28,6 +28,11 @@ let schema = orango.Schema(
         type: orango.Types.Any,
         default: 0
       }
+      ,
+      likes: {
+        type: orango.Types.Any,
+        default: 0
+      }
     },
     created: Date,
     updated: { type: Date, default: Date.now }

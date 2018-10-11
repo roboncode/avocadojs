@@ -3,8 +3,12 @@
     <v-img src="https://cdn.player.one/sites/player.one/files/2016/09/20/yodas-hut-star-wars-episode-8.jpeg" aspect-ratio="2.75"></v-img>
     <v-layout column class="content">
       <avatar size="72" class="avatar" :user="authUser"></avatar>
-      <div class="name">{{authUser.firstName}} {{authUser.lastName}}</div>
-      <div class="screenname">{{authUser.screenName}}</div>
+      <router-link :to="{ name: 'tweets', params: { user: authUser.screenName }}" class="link active">
+        <div class="name">{{authUser.firstName}} {{authUser.lastName}}</div>
+      </router-link>
+      <router-link :to="{ name: 'tweets', params: { user: authUser.screenName }}" class="link active">
+        <div class="screenname">{{authUser.screenName}}</div>
+      </router-link>
     </v-layout>
     <v-card-text>
       <v-container grid-list-md text-xs-center pa-2>
@@ -60,12 +64,20 @@ export default {
     padding-left 100px
 
   .name
+    color: #666
     font-weight bold
     font-size 20px
 
+  .name:hover
+    text-decoration underline
+
   .screenname
+    color: #666
     font-size 15px
     margin-top -4px
+
+  .screenname:hover
+    text-decoration underline
 
   .screenname:before
     content '@'

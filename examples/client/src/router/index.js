@@ -5,6 +5,8 @@ import Login from '@/views/Login.vue'
 import Profile from '@/views/Profile.vue'
 import Followers from '@/views/Followers.vue'
 import Following from '@/views/Following.vue'
+import Tweets from '@/views/Tweets.vue'
+import Likes from '@/views/Likes.vue'
 
 import authGuard from './guards/authGuard'
 
@@ -36,17 +38,30 @@ export default new Router({
     {
       path: '/:user',
       name: 'profile',
-      component: Profile
-    },
-    {
-      path: '/:user/following',
-      name: 'following',
-      component: Following
-    },
-    {
-      path: '/:user/followers',
-      name: 'followers',
-      component: Followers
+      component: Profile,
+      children: [
+        {
+          path: '',
+          name: 'tweets',
+          component: Tweets
+        },
+        {
+          path: 'following',
+          name: 'following',
+          component: Following
+        },
+        {
+          path: 'followers',
+          name: 'followers',
+          component: Followers
+        }
+        ,
+        {
+          path: 'likes',
+          name: 'likes',
+          component: Likes
+        }
+      ]
     }
   ]
 })

@@ -1,5 +1,20 @@
 <template>
   <div class="profile">
-    <h1>This is an profile page</h1>
+    <profile-banner></profile-banner>
+    <router-view />
   </div>
 </template>
+
+<script>
+  import ProfileBanner from "@/components/ProfileBanner"
+
+  export default {
+    components: {
+      ProfileBanner
+    }
+  }
+</script>
+
+<style lang="stylus" scoped>
+
+</style>
