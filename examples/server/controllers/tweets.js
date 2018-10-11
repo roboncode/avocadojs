@@ -101,22 +101,18 @@ app.delete('/tweets/:id', async (req, res) => {
   }
 })
 
-Like.on(CONSTS.EVENTS.CREATED, ({ data }) => {
-  console.log('whois_created', data)
-  Tweet.findByIdAndUpdate(data._to, {
+Like.on(CONSTS.EVENTS.LINKED, ({ data }) => {
+  Tweet.findByIdAndUpdate(data.to, {
     stats: {
-      likes: '+=1'
+      likes: '++1'
     }
   }).exec()
 })
 
-Like.on(CONSTS.EVENTS.DELETED, async ({ data }) => {
-  console.log('whois_delete', data)
-  let result = await Tweet.findByIdAndUpdate(data._to, {
+Like.on(CONSTS.EVENTS.UNLINKED, ({ data }) => {
+  Tweet.findByIdAndUpdate(data.to, {
     stats: {
-      likes: '-=1'
+      likes: '--1'
     }
-  }).toAQL()
-  // .exec()
-  console.log('result', result)
+  }).exec()
 })
