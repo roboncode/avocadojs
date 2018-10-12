@@ -2,7 +2,9 @@
   <v-card tile flat v-if="tweet" class="tweet-card">
     <v-card-title>
       <v-layout>
+        <router-link :to="{name: 'tweets', params: {handle: tweet.user.screenName}}">
         <avatar size="48" class="avatar" :user="tweet.user"></avatar>
+        </router-link>
         <div class="details">
           <router-link :to="{name: 'tweets', params: {handle: tweet.user.screenName}}" class="details">
             <span class="name">{{tweet.user.firstName}} {{tweet.user.lastName}}</span>
