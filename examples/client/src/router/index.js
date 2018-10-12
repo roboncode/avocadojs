@@ -9,6 +9,7 @@ import Tweets from '@/views/Tweets.vue'
 import Likes from '@/views/Likes.vue'
 
 import authGuard from './guards/authGuard'
+import store from '@/store'
 
 Vue.use(Router)
 
@@ -36,12 +37,20 @@ export default new Router({
         import(/* webpackChunkName: "about" */ '@/views/About.vue')
     },
     {
-      path: '/:user',
+      path: '/:handle',
       name: 'profile',
       component: Profile,
+      async beforeEnter(to, from, next) {
+        try {
+          await store.dispatch('user/getUser', to.params.handle)
+          next()
+        } catch (e) {
+          next()
+        }
+      },
       children: [
         {
-          path: '',
+          path: 'tweets',
           name: 'tweets',
           component: Tweets
         },
@@ -54,12 +63,15 @@ export default new Router({
           path: 'followers',
           name: 'followers',
           component: Followers
-        }
-        ,
+        },
         {
           path: 'likes',
           name: 'likes',
           component: Likes
+        },
+        {
+          path: '',
+          redirect: 'tweets'
         }
       ]
     }

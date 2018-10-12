@@ -6,6 +6,7 @@ const orango = require('orango')
 const app = require('../app')
 const Tweet = orango.model('Tweet')
 const Like = orango.model('Like')
+const User = orango.model('User')
 const Comment = orango.model('Comment')
 const CONSTS = orango.CONSTS
 
@@ -14,11 +15,16 @@ const CONSTS = orango.CONSTS
  */
 app.get('/tweets', async (req, res) => {
   try {
-    const tweets = await Tweet.getTweets(
-      req.user.id,
-      req.query.limit,
-      req.query.offset
-    )
+    let tweets
+    if (req.query.user) {
+      tweets = await Tweet.getUserTweets(req.query.user)
+    } else {
+      tweets = await Tweet.getTweets(
+        req.query.user || req.user.id,
+        req.query.limit,
+        req.query.offset
+      )
+    }
     res.send(tweets)
   } catch (e) {
     res.status(500).send(e.message)
@@ -121,7 +127,7 @@ Like.on(CONSTS.EVENTS.UNLINKED, ({ data }) => {
   }).exec()
 })
 
-Comment.on(CONSTS.EVENTS.CREATED, ({data}) => {
+Comment.on(CONSTS.EVENTS.CREATED, ({ data }) => {
   Tweet.findByIdAndUpdate(data.tweet, {
     stats: {
       comments: '++1'
@@ -129,11 +135,10 @@ Comment.on(CONSTS.EVENTS.CREATED, ({data}) => {
   }).exec()
 })
 
-Comment.on(CONSTS.EVENTS.DELETED, ({data}) => {
+Comment.on(CONSTS.EVENTS.DELETED, ({ data }) => {
   Tweet.findByIdAndUpdate(data.tweet, {
     stats: {
       comments: '--1'
     }
   }).exec()
 })
-

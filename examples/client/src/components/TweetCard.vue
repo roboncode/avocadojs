@@ -4,7 +4,7 @@
       <v-layout>
         <avatar size="48" class="avatar" :user="tweet.user"></avatar>
         <div class="details">
-          <router-link :to="tweet.user.screenName" class="details">
+          <router-link :to="{name: 'tweets', params: {handle: tweet.user.screenName}}" class="details">
             <span class="name">{{tweet.user.firstName}} {{tweet.user.lastName}}</span>
             <span class="screenname">{{tweet.user.screenName}}</span>
             <router-link :to="link" class="time">{{tweet.created | moment("YYYY MMM YYYY")}}</router-link>

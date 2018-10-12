@@ -6,15 +6,21 @@
 </template>
 
 <script>
-  import ProfileBanner from "@/components/ProfileBanner"
+import { mapActions } from 'vuex'
+import ProfileBanner from '@/components/ProfileBanner'
 
-  export default {
-    components: {
-      ProfileBanner
-    }
+export default {
+  components: {
+    ProfileBanner
+  },
+  methods: {
+    ...mapActions('tweet', ['clearTweets'])
+  },
+  destroyed() {
+    this.clearTweets()
   }
+}
 </script>
 
 <style lang="stylus" scoped>
-
 </style>

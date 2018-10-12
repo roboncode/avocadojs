@@ -48,17 +48,22 @@ schema.statics.getTweets = async function(user, limit = 10, offset = 0) {
     .defaults(true)
     .return(`MERGE(tweet, {user: UNSET(user, 'authId'), likes})`)
     .id()
-    // .toAQL()
+  // .toAQL()
 }
 
-schema.statics.getTweet = async function(tweetId) {
+schema.statics.getUserTweets = async function(user, limit = 10, offset = 0) {
   const User = orango.model('User')
-  return await this.findById(tweetId).populate(
-    'user',
-    User.findById('@@parent.user').select(
-      '_key screenName firstName lastName avatar'
+  return await this.find({ user })
+    .populate(
+      'user',
+      User.findById('@@parent.user').select(
+        '_key screenName firstName lastName avatar'
+      )
     )
-  )
+    .limit(limit)
+    .offset(offset)
+    .defaults(true)
+    .id()
 }
 
 schema.statics.like = async function(userId, tweetId) {

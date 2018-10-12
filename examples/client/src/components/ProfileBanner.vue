@@ -1,34 +1,34 @@
 <template>
-  <v-card class="profile-card" v-if="authUser">
+  <v-card class="profile-card" v-if="currentUser">
     <div class="background">
       <v-img src="https://cdn.player.one/sites/player.one/files/2016/09/20/yodas-hut-star-wars-episode-8.jpeg" aspect-ratio="3.75"></v-img>
-      <avatar size="148" class="avatar centered hidden-md-and-up hidden-xs-only" :user="authUser"></avatar>
-      <avatar size="70" class="avatar centered hidden-sm-and-up" :user="authUser"></avatar>
+      <avatar size="148" class="avatar centered hidden-md-and-up hidden-xs-only" :user="currentUser"></avatar>
+      <avatar size="70" class="avatar centered hidden-sm-and-up" :user="currentUser"></avatar>
 
       <v-btn color="white" fab small class="edit-btn hidden-md-and-up">
         <v-icon>edit</v-icon>
       </v-btn>
     </div>
     <v-layout column class="content hidden-sm-and-down">
-      <avatar size="148" class="avatar" :user="authUser"></avatar>
+      <avatar size="148" class="avatar" :user="currentUser"></avatar>
     </v-layout>
     <v-layout row>
       <v-spacer></v-spacer>
-      <router-link :to="{ name: 'tweets', params: { user: authUser.screenName }}" class="link active">
+      <router-link :to="{ name: 'tweets', params: { user: currentUser.screenName }}" class="link active">
         <div class="stats-title">Tweets</div>
-        <div class="stats-count">{{authUser.stats.tweets}}</div>
+        <div class="stats-count">{{currentUser.stats.tweets}}</div>
       </router-link>
-      <router-link :to="{ name: 'following', params: { user: authUser.screenName }}" class="link">
+      <router-link :to="{ name: 'following', params: { user: currentUser.screenName }}" class="link">
         <div class="stats-title">Following</div>
-        <div class="stats-count">{{authUser.stats.following}}</div>
+        <div class="stats-count">{{currentUser.stats.following}}</div>
       </router-link>
-      <router-link :to="{ name: 'followers', params: { user: authUser.screenName }}" class="link">
+      <router-link :to="{ name: 'followers', params: { user: currentUser.screenName }}" class="link">
         <div class="stats-title">Followers</div>
-        <div class="stats-count">{{authUser.stats.followers}}</div>
+        <div class="stats-count">{{currentUser.stats.followers}}</div>
       </router-link>
-      <router-link :to="{ name: 'likes', params: { user: authUser.screenName }}" class="link">
+      <router-link :to="{ name: 'likes', params: { user: currentUser.screenName }}" class="link">
         <div class="stats-title">Likes</div>
-        <div class="stats-count">{{authUser.stats.likes}}</div>
+        <div class="stats-count">{{currentUser.stats.likes}}</div>
       </router-link>
       <v-spacer></v-spacer>
 
@@ -47,7 +47,7 @@ export default {
     Avatar
   },
   computed: {
-    ...mapState('auth', ['authUser'])
+    ...mapState('user', ['currentUser'])
   }
 }
 </script>

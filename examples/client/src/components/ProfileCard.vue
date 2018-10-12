@@ -3,10 +3,10 @@
     <v-img src="https://cdn.player.one/sites/player.one/files/2016/09/20/yodas-hut-star-wars-episode-8.jpeg" aspect-ratio="2.75"></v-img>
     <v-layout column class="content">
       <avatar size="72" class="avatar" :user="authUser"></avatar>
-      <router-link :to="{ name: 'tweets', params: { user: authUser.screenName }}" class="link active">
+      <router-link :to="{ name: 'tweets', params: { handle: authUser.screenName }}" class="link active">
         <div class="name">{{authUser.firstName}} {{authUser.lastName}}</div>
       </router-link>
-      <router-link :to="{ name: 'tweets', params: { user: authUser.screenName }}" class="link active">
+      <router-link :to="{ name: 'tweets', params: { handle: authUser.screenName }}" class="link active">
         <div class="screenname">{{authUser.screenName}}</div>
       </router-link>
     </v-layout>
@@ -20,13 +20,13 @@
             </router-link>
           </v-flex>
           <v-flex>
-            <router-link :to="{ name: 'following', params: { user: authUser.screenName }}" class="link">
+            <router-link :to="{ name: 'following', params: { handle: authUser.screenName }}" class="link">
               <div class="stats-title">Following</div>
               <div class="stats-count">{{authUser.stats.following}}</div>
             </router-link>
           </v-flex>
           <v-flex>
-            <router-link :to="{ name: 'followers', params: { user: authUser.screenName }}" class="link">
+            <router-link :to="{ name: 'followers', params: { handle: authUser.screenName }}" class="link">
               <div class="stats-title">Followers</div>
               <div class="stats-count">{{authUser.stats.followers}}</div>
             </router-link>

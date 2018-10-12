@@ -12,7 +12,7 @@ app.post('/login', async (req, res) => {
     )
     if (authUser) {
       const token = jwt.sign(authUser, config.JWT_SECRET, {
-        issuer: 'bluebird',
+        issuer: 'chirpie',
         expiresIn: '24h'
       })
       return res.send({ token })
