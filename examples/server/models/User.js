@@ -9,6 +9,7 @@ let schema = orango.Schema(
     firstName: String,
     lastName: String,
     avatar: String, // URL to avatar image
+    desc: String,
     settings: {
       banner: String, // URL to background image
       theme: String, // #FF0000,

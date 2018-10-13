@@ -1,3 +1,5 @@
 export default {
-  currentUser: null
+  currentUser: null,
+  following: null,
+  followers: null
 }

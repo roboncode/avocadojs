@@ -17,6 +17,7 @@ const users = {
     firstName: 'John',
     lastName: 'Doe',
     avatar: 'http://facetheforce.today/greedo/200',
+    desc: '#golang #jobs only. Bringing companies and developers together that like #go. 99% Go jobs tweets and 1% other stuff. Created by @EdlinOrg',
     settings: {
       banner:
         'https://milnersblog.files.wordpress.com/2016/02/disneyland-60-star-wars-land-new-concept-art-hi-res-milnersblog-12.jpg'

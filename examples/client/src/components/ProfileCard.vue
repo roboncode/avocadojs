@@ -1,6 +1,6 @@
 <template>
   <v-card flat class="profile-card" v-if="authUser">
-    <v-img src="https://cdn.player.one/sites/player.one/files/2016/09/20/yodas-hut-star-wars-episode-8.jpeg" aspect-ratio="2.75"></v-img>
+    <v-img :src="authUser.settings.banner" aspect-ratio="2.75"></v-img>
     <v-layout column class="content">
       <avatar size="72" class="avatar" :user="authUser"></avatar>
       <router-link :to="{ name: 'tweets', params: { handle: authUser.screenName }}" class="link active">

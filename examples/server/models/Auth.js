@@ -37,7 +37,6 @@ schema.statics.getUser = async function(id, options = {}) {
   return await User.findById(id)
     .id()
     .defaults(options.defaults)
-    .select(options.select || '_key avatar screenName email firstName lastName role stats')
     .populate('permissions', UserRole.findById('@@parent.role || "user"').select('permissions'), { merge: true })
 }
 

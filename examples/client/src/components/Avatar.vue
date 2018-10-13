@@ -36,6 +36,7 @@ export default {
 
 <style lang="stylus" scoped>
 .avatar
+  background-color: #1976d2
   border 3px solid white
   border-radius 50% !important
 </style>
