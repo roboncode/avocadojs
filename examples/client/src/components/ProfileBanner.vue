@@ -14,7 +14,7 @@
     </v-layout>
     <v-layout row>
       <v-spacer></v-spacer>
-      <router-link :to="{ name: 'tweets', params: { user: currentUser.screenName }}" class="link active">
+      <router-link :to="{ name: 'tweets', params: { user: currentUser.screenName }}" class="link">
         <div class="stats-title">Tweets</div>
         <div class="stats-count">{{currentUser.stats.tweets}}</div>
       </router-link>
@@ -107,7 +107,7 @@ export default {
     text-align center
     text-decoration none
 
-  .link.active
+  .link.router-link-active
     border-bottom 3px solid #1DA1F2
 
   .link:hover
