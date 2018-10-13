@@ -1,7 +1,7 @@
 <template>
   <v-card class="profile-card" v-if="currentUser">
     <div class="background">
-      <v-img src="https://cdn.player.one/sites/player.one/files/2016/09/20/yodas-hut-star-wars-episode-8.jpeg" aspect-ratio="3.75"></v-img>
+      <v-img :src="currentUser.settings.banner" aspect-ratio="3.75"></v-img>
       <avatar size="148" class="avatar centered hidden-md-and-up hidden-xs-only" :user="currentUser"></avatar>
       <avatar size="70" class="avatar centered hidden-sm-and-up" :user="currentUser"></avatar>
 
