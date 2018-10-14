@@ -2,12 +2,12 @@ import axios from '@/helpers/axios'
 
 export default {
   async getTweets({ commit }, params) {
-    try {
-      let { data } = await axios.get('/tweets', { params })
-      commit('setTweets', data)
-      return data
-    } catch (e) {
-    }
+    // try {
+    let { data } = await axios.get('/tweets', { params })
+    commit('setTweets', data)
+    return data
+    // } catch (e) {
+    // }
   },
 
   async postTweet({ commit, rootState }, text) {

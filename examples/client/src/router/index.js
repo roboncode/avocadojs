@@ -7,16 +7,17 @@ import Followers from '@/views/Followers.vue'
 import Following from '@/views/Following.vue'
 import Tweets from '@/views/Tweets.vue'
 import Likes from '@/views/Likes.vue'
+import NotFound from '@/views/NotFound.vue'
 
 import authGuard from './guards/authGuard'
 import store from '@/store'
+import bus from '@/helpers/bus'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
-  routes: [
-    {
+  routes: [{
       path: '/',
       name: 'home',
       component: Home,
@@ -27,30 +28,21 @@ export default new Router({
       name: 'login',
       component: Login
     },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ '@/views/About.vue')
-    },
+    // {
+    //   path: '/about',
+    //   name: 'about',
+    //   // route level code-splitting
+    //   // this generates a separate chunk (about.[hash].js) for this route
+    //   // which is lazy-loaded when the route is visited.
+    //   component: () =>
+    //     import( /* webpackChunkName: "about" */ '@/views/About.vue')
+    // },
     {
       path: '/:handle',
       name: 'profile',
       component: Profile,
-      async beforeEnter(to, from, next) {
-        try {
-          await store.dispatch('user/getUser', to.params.handle)
-          next()
-        } catch (e) {
-          next()
-        }
-      },
-      children: [
-        {
-          path: 'tweets',
+      children: [{
+          path: '',
           name: 'tweets',
           component: Tweets
         },
@@ -68,12 +60,38 @@ export default new Router({
           path: 'likes',
           name: 'likes',
           component: Likes
-        },
-        {
-          path: '',
-          redirect: 'tweets'
         }
       ]
+    },
+    {
+      path: '/hashtag/:hashtag',
+      name: 'hashtag',
+      beforeEnter(to, from, next) {
+        bus.$emit('beyondScope')
+        next(false)
+      }
+    },
+    {
+      name: 'notFound',
+      path: '/404',
+      component: NotFound
     }
   ]
 })
+
+router.beforeEach(async (to, from, next) => {
+  if (to.params.handle) {
+    if (to.params.handle !== from.params.handle) {
+      try {
+        await store.dispatch('user/getUser', to.params.handle)
+      } catch (e) {
+        return next({
+          name: 'notFound'
+        })
+      }
+    }
+  }
+  next()
+})
+
+export default router

@@ -14,19 +14,19 @@
     </v-layout>
     <v-layout row>
       <v-spacer></v-spacer>
-      <router-link :to="{ name: 'tweets', params: { user: currentUser.screenName }}" class="link">
+      <router-link :to="{ name: 'tweets' }" class="link">
         <div class="stats-title">Tweets</div>
         <div class="stats-count">{{currentUser.stats.tweets}}</div>
       </router-link>
-      <router-link :to="{ name: 'following', params: { user: currentUser.screenName }}" class="link">
+      <router-link :to="{ name: 'following' }" class="link">
         <div class="stats-title">Following</div>
         <div class="stats-count">{{currentUser.stats.following}}</div>
       </router-link>
-      <router-link :to="{ name: 'followers', params: { user: currentUser.screenName }}" class="link">
+      <router-link :to="{ name: 'followers' }" class="link">
         <div class="stats-title">Followers</div>
         <div class="stats-count">{{currentUser.stats.followers}}</div>
       </router-link>
-      <router-link :to="{ name: 'likes', params: { user: currentUser.screenName }}" class="link">
+      <router-link :to="{ name: 'likes' }" class="link">
         <div class="stats-title">Likes</div>
         <div class="stats-count">{{currentUser.stats.likes}}</div>
       </router-link>
@@ -107,7 +107,7 @@ export default {
     text-align center
     text-decoration none
 
-  .link.router-link-active
+  .router-link-exact-active
     border-bottom 3px solid #1DA1F2
 
   .link:hover

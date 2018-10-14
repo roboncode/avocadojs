@@ -15,7 +15,8 @@
     <!-- Views -->
     <v-content>
       <transition name="slide">
-        <router-view />
+        <!-- "key" forces refresh when accessing same component -->
+        <router-view :key="$route.fullPath" />
       </transition>
     </v-content>
 
@@ -23,6 +24,13 @@
     <TweetDialog ref="tweetDialog"></TweetDialog>
     <CommentDialog ref="commentDialog"></CommentDialog>
 
+    <!-- Snackbar -->
+    <v-snackbar v-model="snackbar" bottom right multi-line>
+      {{ snackbarText }}
+      <v-btn color="primary" flat @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -43,6 +51,12 @@ export default {
     Logo,
     ToolbarLink,
     TweetDialog
+  },
+  data() {
+    return {
+      snackbar: false,
+      snackbarText: 'Hello, world!'
+    }
   },
   computed: {
     ...mapState('auth', ['accessToken', 'authUser']),
@@ -74,6 +88,11 @@ export default {
 
     bus.$on('comment', tweet => {
       this.comment(tweet)
+    })  
+
+    bus.$on('beyondScope', () => {
+      this.snackbarText = 'This is beyond the scope of this demo.'
+      this.snackbar = true
     })
 
     if (this.accessToken) {

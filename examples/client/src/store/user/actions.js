@@ -8,6 +8,7 @@ export default {
       data
     } = await axios.get('/users/' + handle)
     commit('setCurrentUser', data)
+    return data
   },
 
   async clearFollowers({

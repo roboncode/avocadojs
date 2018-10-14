@@ -1,7 +1,8 @@
 <template>
   <div class="profile">
     <profile-banner></profile-banner>
-    <router-view />
+    <!-- "key" forces refresh when accessing same component -->
+    <router-view :key="$route.fullPath" />
   </div>
 </template>
 
