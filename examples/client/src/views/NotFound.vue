@@ -113,6 +113,7 @@
   position absolute
   transform translateX(-50px)
   top 75%
+  width 100px
   pointer-events none
   animation rocket-movement 200s linear infinite both running
 

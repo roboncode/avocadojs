@@ -25,7 +25,7 @@
     <CommentDialog ref="commentDialog"></CommentDialog>
 
     <!-- Snackbar -->
-    <v-snackbar v-model="snackbar" bottom right multi-line>
+    <v-snackbar v-model="snackbar" bottom right>
       {{ snackbarText }}
       <v-btn color="primary" flat @click="snackbar = false">
         Close
@@ -90,8 +90,8 @@ export default {
       this.comment(tweet)
     })  
 
-    bus.$on('beyondScope', () => {
-      this.snackbarText = 'This is beyond the scope of this demo.'
+    bus.$on('notImplemented', () => {
+      this.snackbarText = 'Not implemented.'
       this.snackbar = true
     })
 

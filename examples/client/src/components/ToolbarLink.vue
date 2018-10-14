@@ -7,21 +7,33 @@
       </v-layout>
     </router-link>
 
-    <router-link to="roboncode">
+    <span @click="notImplemented">
       <v-layout class="toolbar-link" align-center>
         <v-icon class="icon">search</v-icon>
         <div class="subheading hidden-sm-and-down">Search</div>
       </v-layout>
-    </router-link>
+    </span>
 
-    <router-link to="roboncode">
+    <span @click="notImplemented">
       <v-layout class="toolbar-link" align-center>
         <v-icon class="icon">explore</v-icon>
         <div class="subheading hidden-sm-and-down">Discover</div>
       </v-layout>
-    </router-link>
+    </span>
   </v-layout>
 </template>
+
+<script>
+import bus from '@/helpers/bus'
+export default {
+  methods: {
+    notImplemented() {
+      bus.$emit('notImplemented')
+    }
+  }
+}
+</script>
+
 
 <style lang="stylus" scoped>
 .toolbar-link

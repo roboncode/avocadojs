@@ -67,7 +67,7 @@ const router = new Router({
       path: '/hashtag/:hashtag',
       name: 'hashtag',
       beforeEnter(to, from, next) {
-        bus.$emit('beyondScope')
+        bus.$emit('notImplemented')
         next(false)
       }
     },
