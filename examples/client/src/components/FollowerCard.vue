@@ -1,7 +1,9 @@
 <template>
   <v-card flat class="profile-card" v-if="user" height="100%">
     <v-img v-if="user.settings.banner" :src="user.settings.banner" aspect-ratio="2.75" max-height="90" class="banner"></v-img>
-    <geo-pattern v-else :value="user.screenName"></geo-pattern>
+    <v-responsive v-else aspect-ratio="2.75" max-height="90">
+      <geo-pattern :value="user.screenName"></geo-pattern>
+    </v-responsive>
     <v-layout class="content" align-center>
       <avatar size="70" class="avatar" :user="user"></avatar>
       <v-spacer></v-spacer>

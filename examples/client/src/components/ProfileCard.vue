@@ -1,6 +1,7 @@
 <template>
   <v-card flat class="profile-card" v-if="authUser">
-    <v-img :src="authUser.settings.banner" aspect-ratio="2.75"></v-img>
+    <v-img v-if="authUser.settings.banner" :src="authUser.settings.banner" aspect-ratio="2.75"></v-img>
+    <geo-pattern v-else :value="authUser.screenName"></geo-pattern>
     <v-layout column class="content">
       <avatar size="72" class="avatar" :user="authUser"></avatar>
       <router-link :to="{ name: 'tweets', params: { handle: authUser.screenName }}" class="link active">
@@ -40,10 +41,12 @@
 <script>
 import { mapState } from 'vuex'
 import Avatar from '@/components/Avatar'
+import GeoPattern from '@/components/GeoPattern'
 
 export default {
   components: {
-    Avatar
+    Avatar,
+    GeoPattern
   },
   computed: {
     ...mapState('auth', ['authUser'])
@@ -64,7 +67,7 @@ export default {
     padding-left 100px
 
   .name
-    color: #666
+    color #666
     font-weight bold
     font-size 20px
 
@@ -72,7 +75,7 @@ export default {
     text-decoration underline
 
   .screenname
-    color: #666
+    color #666
     font-size 15px
     margin-top -4px
 
@@ -99,5 +102,3 @@ export default {
     .stats-title
       color #1DA1F2
 </style>
-
-

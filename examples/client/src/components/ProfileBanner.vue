@@ -1,8 +1,14 @@
 <template>
   <v-card class="profile-card" v-if="currentUser">
     <div class="background">
-      <v-img :src="currentUser.settings.banner" aspect-ratio="3.75"></v-img>
-      <avatar size="148" class="avatar centered hidden-md-and-up hidden-xs-only" :user="currentUser"></avatar>
+      <!-- <v-responsive :aspect-ratio="3.75" max-height="300" class="banner"> -->
+      <!-- <v-parallax :src="currentUser.settings.banner" height="300"></v-parallax> -->
+      <!-- </v-responsive> -->
+      <v-img v-if="currentUser.settings.banner" :src="currentUser.settings.banner" aspect-ratio="3.75"></v-img>
+      <v-responsive v-else :aspect-ratio="3.75" class="banner">
+        <geo-pattern :value="currentUser.screenName"></geo-pattern>
+      </v-responsive>
+      <avatar size="148" font-size="big" class="avatar centered hidden-md-and-up hidden-xs-only" :user="currentUser"></avatar>
       <avatar size="70" class="avatar centered hidden-sm-and-up" :user="currentUser"></avatar>
 
       <v-btn color="white" fab small class="edit-btn hidden-md-and-up">
@@ -10,7 +16,7 @@
       </v-btn>
     </div>
     <v-layout column class="content hidden-sm-and-down">
-      <avatar size="148" class="avatar" :user="currentUser"></avatar>
+      <avatar size="148" font-size="big" class="avatar" :user="currentUser"></avatar>
     </v-layout>
     <v-layout row>
       <v-spacer></v-spacer>
@@ -41,10 +47,12 @@
 <script>
 import { mapState } from 'vuex'
 import Avatar from '@/components/Avatar'
+import GeoPattern from '@/components/GeoPattern'
 
 export default {
   components: {
-    Avatar
+    Avatar,
+    GeoPattern
   },
   computed: {
     ...mapState('user', ['currentUser'])
@@ -55,6 +63,9 @@ export default {
 <style lang="stylus" scoped>
 .profile-card
   width 100%
+
+  .banner
+    overflow hidden
 
   .background
     position relative
@@ -114,5 +125,3 @@ export default {
     .stats-title
       color #1DA1F2
 </style>
-
-
