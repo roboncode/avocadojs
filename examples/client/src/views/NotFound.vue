@@ -115,7 +115,9 @@
   transform rotate(-3600deg) !important
 
 .not-found
-  position relative
+  position fixed
+  height 100%
+  width 100%
   overflow hidden
 
 .bg-purple
@@ -127,8 +129,10 @@
   overflow hidden
 
 .central-body
-  /* width: 100%; */
-  padding 17% 5% 10% 5%
+  position absolute
+  top 50%
+  left 50%
+  transform translate(-50%, -50%)
   text-align center
 
 .objects img
