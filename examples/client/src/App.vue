@@ -1,36 +1,29 @@
 <template>
   <v-app>
     <!-- Toolbar -->
-    <v-toolbar app flat dense clipped-left color="toolbar" class="elevation-1">
-      <logo class="clickable hidden-sm-and-down" @click.native="$router.push({name: 'home'})"></logo>
-      <v-spacer class="hidden-sm-and-down"></v-spacer>
-      <toolbar-link></toolbar-link>
-      <v-spacer></v-spacer>
-      <Avatar :user="authUser"></Avatar>
-      <v-btn round depressed color="primary" class="tweet-btn hidden-sm-and-down" @click="tweet()">
-        Tweet
-      </v-btn>
-    </v-toolbar>
+    <toolbar></toolbar>
 
     <!-- Views -->
     <v-content>
       <transition name="slide">
         <!-- "key" forces refresh when accessing same component -->
-        <router-view :key="$route.fullPath" />
+        <router-view :key="$route.fullPath"></router-view>
       </transition>
     </v-content>
 
-    <!-- Dialogs -->
-    <TweetDialog ref="tweetDialog"></TweetDialog>
-    <CommentDialog ref="commentDialog"></CommentDialog>
+    <div>
+      <!-- Dialogs -->
+      <tweet-dialog ref="tweetDialog"></tweet-dialog>
+      <comment-dialog ref="commentDialog"></comment-dialog>
 
-    <!-- Snackbar -->
-    <v-snackbar v-model="snackbar" bottom right>
-      {{ snackbarText }}
-      <v-btn color="primary" flat @click="snackbar = false">
-        Close
-      </v-btn>
-    </v-snackbar>
+      <!-- Snackbar -->
+      <v-snackbar v-model="snackbar" bottom right>
+        {{ snackbarText }}
+        <v-btn color="primary" flat @click="snackbar = false">
+          Close
+        </v-btn>
+      </v-snackbar>
+    </div>
   </v-app>
 </template>
 
@@ -39,7 +32,7 @@ import { mapActions, mapState } from 'vuex'
 import bus from '@/helpers/bus'
 import Avatar from '@/components/Avatar'
 import Logo from '@/components/Logo'
-import ToolbarLink from '@/components/ToolbarLink'
+import Toolbar from '@/components/Toolbar'
 import TweetDialog from '@/components/TweetDialog'
 import CommentDialog from '@/components/CommentDialog'
 
@@ -49,28 +42,18 @@ export default {
     Avatar,
     CommentDialog,
     Logo,
-    ToolbarLink,
+    Toolbar,
     TweetDialog
   },
+  props: ['noToolbar'],
   data() {
     return {
       snackbar: false,
-      snackbarText: 'Hello, world!'
+      snackbarText: ''
     }
   },
   computed: {
-    ...mapState('auth', ['accessToken', 'authUser']),
-    showMenu() {
-      return !!this.authUser
-    },
-    userInitial() {
-      return this.authUser.firstName.substr(0, 1)
-    }
-  },
-  watch: {
-    authUser() {
-      this.drawer = true
-    }
+    ...mapState('auth', ['accessToken'])
   },
   methods: {
     ...mapActions('auth', ['getAuthUser']),
@@ -88,7 +71,7 @@ export default {
 
     bus.$on('comment', tweet => {
       this.comment(tweet)
-    })  
+    })
 
     bus.$on('notImplemented', () => {
       this.snackbarText = 'Not implemented.'

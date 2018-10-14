@@ -16,7 +16,7 @@
         <v-layout row wrap>
           <v-flex>
             <router-link to="roboncode" class="link">
-              <div class="stats-title">Tweets</div>
+              <div class="stats-title">Chirps</div>
               <div class="stats-count">{{authUser.stats.tweets}}</div>
             </router-link>
           </v-flex>

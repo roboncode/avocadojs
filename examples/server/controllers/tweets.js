@@ -3,7 +3,9 @@
  * The Tweet model is in "strict" mode and will filter out all undeclared.
  */
 const orango = require('orango')
+const checkJWT = require('express-jwt')
 const app = require('../app')
+const config = require('../config')
 const Tweet = orango.model('Tweet')
 const Like = orango.model('Like')
 const User = orango.model('User')
@@ -13,14 +15,14 @@ const CONSTS = orango.CONSTS
 /**
  * Get tweets
  */
-app.get('/tweets', async (req, res) => {
+app.get('/tweets', checkJWT({ secret: config.JWT_SECRET }), async (req, res) => {
   try {
     let tweets
     if (req.query.user) {
       tweets = await Tweet.getUserTweets(req.query.user)
     } else {
       tweets = await Tweet.getTweets(
-        req.query.user || req.user.id,
+        req.user.id,
         req.query.limit,
         req.query.offset
       )

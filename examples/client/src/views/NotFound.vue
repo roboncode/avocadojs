@@ -1,5 +1,10 @@
 <template>
   <div class="not-found bg-purple">
+    <v-toolbar flat dense dark color="rgba(0, 0, 0, 0.2)">
+      <logo class="clickable" @click.native="$router.push({name: 'home'})"></logo>
+      <v-spacer></v-spacer>
+      <v-btn flat round :to="{name: 'home'}"><v-icon>arrow_back</v-icon> Back Home</v-btn>
+    </v-toolbar>
     <div class="stars">
       <div class="central-body">
         <img class="image-404" src="/img/404/404.svg" width="300px">
@@ -22,7 +27,22 @@
   </div>
 </template>
 
+<script>
+import Logo from '@/components/Logo'
+
+export default {
+  components: {
+    Logo
+  }
+}
+</script>
+
+
 <style lang="stylus" scoped>
+.v-icon
+  margin-right 5px
+
+
 @keyframes rocket-movement
   100%
     -moz-transform translate(1200px, -600px)
@@ -84,9 +104,9 @@
   transform rotate(-3600deg) !important
 
 .not-found
-  position fixed
-  height 100%
-  width 100%
+  // position fixed
+  // height 100%
+  // width 100%
   overflow hidden
 
 .bg-purple

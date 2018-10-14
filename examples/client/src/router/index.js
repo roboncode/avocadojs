@@ -26,7 +26,10 @@ const router = new Router({
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
+      meta: {
+        hideToolbar: true
+      }
     },
     // {
     //   path: '/about',
@@ -39,7 +42,6 @@ const router = new Router({
     // },
     {
       path: '/:handle',
-      name: 'profile',
       component: Profile,
       children: [{
           path: '',
@@ -74,7 +76,10 @@ const router = new Router({
     {
       name: 'notFound',
       path: '/404',
-      component: NotFound
+      component: NotFound,
+      meta: {
+        hideToolbar: true
+      }
     }
   ]
 })

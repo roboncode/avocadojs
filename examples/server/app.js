@@ -24,9 +24,9 @@ async function main() {
   // connect to ArangoDB
   await orango.connect('sample')
 
-  app.use(
-    jwt({ secret: config.JWT_SECRET }).unless({ path: ['/login', '/id_token'] })
-  )
+  // app.use(
+  //   jwt({ secret: config.JWT_SECRET }).unless({ path: ['/login', '/id_token'] })
+  // )
 
   app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {

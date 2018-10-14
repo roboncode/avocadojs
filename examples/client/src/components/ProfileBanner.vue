@@ -21,7 +21,7 @@
     <v-layout row>
       <v-spacer></v-spacer>
       <router-link :to="{ name: 'tweets' }" class="link">
-        <div class="stats-title">Tweets</div>
+        <div class="stats-title">Chirps</div>
         <div class="stats-count">{{currentUser.stats.tweets}}</div>
       </router-link>
       <router-link :to="{ name: 'following' }" class="link">

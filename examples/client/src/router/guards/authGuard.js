@@ -11,6 +11,5 @@ export default (to, from, next) => {
       return next()
     }
   }
-
   next({ name: 'login' })
 }
