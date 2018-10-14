@@ -1,19 +1,15 @@
 <template>
   <div class="not-found bg-purple">
-    <!-- https://codepen.io/salehriaz/pen/erJrZM -->
     <div class="stars">
       <div class="central-body">
-        <img class="image-404" src="http://salehriaz.com/404Page/img/404.svg" width="300px">
+        <img class="image-404" src="/img/404/404.svg" width="300px">
       </div>
       <div class="objects">
-        <img class="object_rocket" src="http://salehriaz.com/404Page/img/rocket.svg" width="40px">
+        <img class="object_rocket" src="/img/404/rocket.svg" width="40px">
         <div class="earth-moon">
-          <img class="object_earth" src="http://salehriaz.com/404Page/img/earth.svg" width="100px">
-          <img class="object_moon" src="http://salehriaz.com/404Page/img/moon.svg" width="80px">
+          <img class="object_earth" src="/img/404/earth.svg" width="100px">
+          <img class="object_moon" src="/img/404/moon.svg" width="80px">
         </div>
-        <!-- <div class="box_astronaut">
-          <img class="object_astronaut" src="http://salehriaz.com/404Page/img/astronaut.svg" width="140px">
-        </div> -->
       </div>
       <div class="glowing_stars">
         <div class="star"></div>
@@ -27,7 +23,6 @@
 </template>
 
 <style lang="stylus" scoped>
-// @import url('https://fonts.googleapis.com/css?family=Dosis:300,400,500')
 @keyframes rocket-movement
   100%
     -moz-transform translate(1200px, -600px)
@@ -55,32 +50,6 @@
     -webkit-transform rotate(-360deg)
     transform rotate(-360deg)
     transition transform 20s
-
-@keyframes move-astronaut
-  100%
-    -moz-transform translate(-160px, -160px)
-
-@keyframes move-astronaut
-  100%
-    -webkit-transform translate(-160px, -160px)
-
-@keyframes move-astronaut
-  100%
-    -webkit-transform translate(-160px, -160px)
-    transform translate(-160px, -160px)
-
-@keyframes rotate-astronaut
-  100%
-    -moz-transform rotate(-720deg)
-
-@keyframes rotate-astronaut
-  100%
-    -webkit-transform rotate(-720deg)
-
-@keyframes rotate-astronaut
-  100%
-    -webkit-transform rotate(-720deg)
-    transform rotate(-720deg)
 
 @keyframes glow-star
   40%
@@ -121,7 +90,7 @@
   overflow hidden
 
 .bg-purple
-  background url('http://salehriaz.com/404Page/img/bg_purple.png') // salehriaz.com/404Page/img/bg_purple.png);
+  background url('/img/404/bg_purple.png')
   background-repeat repeat-x
   background-size cover
   background-position left top
@@ -152,16 +121,11 @@
   top 20%
   left 15%
   z-index 90
-  /* animation: spin-earth 100s infinite linear both; */
 
 .object_moon
   position absolute
   top 12%
   left 25%
-  /*
-      transform: rotate(0deg);
-      transition: transform ease-in 99999999999s;
-  */
 
 .object_astronaut
   animation rotate-astronaut 200s infinite linear both alternate
@@ -180,7 +144,7 @@
   pointer-events none
 
 .stars
-  background url('http://salehriaz.com/404Page/img/overlay_stars.svg') // salehriaz.com/404Page/img/overlay_stars.svg);
+  background url('/img/404/overlay_stars.svg')
   background-repeat repeat
   background-size contain
   background-position left top
