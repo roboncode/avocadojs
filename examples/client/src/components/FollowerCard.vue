@@ -5,11 +5,16 @@
       <geo-pattern :value="user.screenName"></geo-pattern>
     </v-responsive>
     <v-layout class="content" align-center>
-      <avatar size="70" class="avatar" :user="user"></avatar>
+      <router-link :to="{name: 'tweets', params: {handle: user.screenName}}">
+        <avatar size="70" class="avatar" :user="user"></avatar>
+      </router-link>
       <v-spacer></v-spacer>
-      <v-btn round depressed small color="primary">Following</v-btn>
+      <v-btn class="following" round depressed small color="primary">
+        <span class="up">Following</span>
+        <span class="over">Unfollow</span>
+      </v-btn>
       <v-btn icon>
-        <v-icon>more_vert</v-icon>
+        <v-icon class="more">more_vert</v-icon>
       </v-btn>
     </v-layout>
     <v-card-text>
@@ -76,6 +81,22 @@ export default {
   .link:hover
     .stats-title
       color #1DA1F2
+
+
+  .over
+    display none
+
+  .following:hover
+    background-color #b00020 !important
+
+    .up
+      display none
+    .over
+      display: inline-block
+
+  .more
+    color rgba(0, 0, 0, 0.3) !important
+    
 </style>
 
 

@@ -1,8 +1,8 @@
 <template>
-  <div class="profile">
+  <div class="profile" :class="$vuetify.breakpoint.name">
     <profile-banner></profile-banner>
     <!-- "key" forces refresh when accessing same component -->
-    <router-view :key="$route.fullPath" />
+    <router-view class="view" :key="$route.fullPath" />
   </div>
 </template>
 
@@ -24,4 +24,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.lg, .md
+  .view 
+    padding-top 50px
 </style>

@@ -3,7 +3,7 @@
     <v-card-title>
       <v-layout>
         <router-link :to="{name: 'tweets', params: {handle: tweet.user.screenName}}">
-        <avatar size="48" class="avatar" :user="tweet.user"></avatar>
+          <avatar size="48" class="avatar" :user="tweet.user"></avatar>
         </router-link>
         <div class="details">
           <router-link :to="{name: 'tweets', params: {handle: tweet.user.screenName}}" class="details">
@@ -54,7 +54,7 @@ export default {
   methods: {
     ...mapActions('tweet', ['postComment', 'likeTweet', 'unlikeTweet']),
     toggleLike() {
-      if(this.tweet.likes) {
+      if (this.tweet.likes) {
         this.unlikeTweet(this.tweet)
       } else {
         this.likeTweet(this.tweet)

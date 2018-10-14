@@ -27,6 +27,9 @@ export default {
   created() {
     this.clearTweets()
     this.getTweets({ user: this.currentUser.id })
+  },
+  mounted() {
+    this.$vuetify.goTo(0)
   }
 }
 </script>
