@@ -26,7 +26,12 @@
         {{tweet.stats.likes}}
       </v-btn>
 
-      <v-btn flat color="grey" @click="comment">
+      <v-btn v-if="tweet.comments" flat color="primary" @click="comment">
+        <v-icon class="material-icons-outlined">comment</v-icon>
+        {{tweet.stats.comments}}
+      </v-btn>
+
+      <v-btn v-else flat color="grey" @click="comment">
         <v-icon class="material-icons-outlined">comment</v-icon>
         {{tweet.stats.comments}}
       </v-btn>

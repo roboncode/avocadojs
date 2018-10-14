@@ -41,12 +41,13 @@ schema.statics.getTweets = async function(user, limit = 10, offset = 0) {
         SORT tweet.created DESC 
         LET tweet_id = CONCAT('tweets/', tweet._key)
         LET likes = FIRST(FOR doc in likes FILTER doc._from == "users/${user}" && doc._to == tweet_id RETURN doc != null)
+        LET comments = FIRST(FOR doc in comments FILTER doc.user == "${user}" && doc.tweet == tweet._key RETURN doc != null)
         LET user = DOCUMENT(CONCAT('users/', tweet.user))`
   )
     .limit(limit)
     .offset(offset)
     .defaults(true)
-    .return(`MERGE(tweet, {user: UNSET(user, 'authId'), likes})`)
+    .return(`MERGE(tweet, {user: UNSET(user, 'authId'), likes, comments})`)
     .id()
   // .toAQL()
 }
