@@ -8,8 +8,7 @@ export default {
     })
   },
   logout({commit}) {
-    commit('setAccessToken', null)
-    commit('setAuthUser', null)
+    commit('clearAuthUser')
   },
   getAuthUser({ commit }) {
     return axios.get('/me').then(({ data }) => {
