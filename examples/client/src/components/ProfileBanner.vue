@@ -4,8 +4,8 @@
       <!-- <v-responsive :aspect-ratio="3.75" max-height="300" class="banner"> -->
       <!-- <v-parallax :src="currentUser.settings.banner" height="300"></v-parallax> -->
       <!-- </v-responsive> -->
-      <v-img v-if="currentUser.settings.banner" :src="currentUser.settings.banner" aspect-ratio="3.75"></v-img>
-      <v-responsive v-else :aspect-ratio="3.75" class="banner">
+      <v-img v-if="currentUser.settings.banner" :src="currentUser.settings.banner" aspect-ratio="3.75" max-height="285"></v-img>
+      <v-responsive v-else :aspect-ratio="3.75" class="banner" max-height="285">
         <geo-pattern :value="currentUser.screenName"></geo-pattern>
       </v-responsive>
       <avatar size="148" font-size="big" class="avatar centered hidden-md-and-up hidden-xs-only" :user="currentUser"></avatar>

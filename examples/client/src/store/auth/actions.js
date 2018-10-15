@@ -7,6 +7,10 @@ export default {
       dispatch('getAuthUser')
     })
   },
+  logout({commit}) {
+    commit('setAccessToken', null)
+    commit('setAuthUser', null)
+  },
   getAuthUser({ commit }) {
     return axios.get('/me').then(({ data }) => {
       commit('setAuthUser', data)

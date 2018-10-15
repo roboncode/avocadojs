@@ -8,14 +8,20 @@ const app = require('../app')
 const config = require('../config')
 const Tweet = orango.model('Tweet')
 const Like = orango.model('Like')
-const User = orango.model('User')
 const Comment = orango.model('Comment')
 const CONSTS = orango.CONSTS
 
 /**
  * Get tweets
  */
-app.get('/tweets', checkJWT({ secret: config.JWT_SECRET }), async (req, res) => {
+app.get('/tweets', (req, res, next) => {
+  // if no specific user is rested auth user and return their tweets
+  if(!req.query.user) {
+    checkJWT({ secret: config.JWT_SECRET })(req, res, next)
+  } else {
+    next()
+  }
+}, async (req, res) => {
   try {
     let tweets
     if (req.query.user) {

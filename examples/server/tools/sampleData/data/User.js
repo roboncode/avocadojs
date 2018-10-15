@@ -9,7 +9,8 @@ const users = {
     settings: {
       banner:
         'https://cdn.player.one/sites/player.one/files/2016/09/20/yodas-hut-star-wars-episode-8.jpeg'
-    }
+    },
+    created: Date.now()
   },
   john: {
     authId: 'john',
@@ -21,7 +22,8 @@ const users = {
     settings: {
       banner:
         'https://milnersblog.files.wordpress.com/2016/02/disneyland-60-star-wars-land-new-concept-art-hi-res-milnersblog-12.jpg'
-    }
+    },
+    created: Date.now()
   },
   jane: {
     authId: 'jane',
@@ -32,31 +34,36 @@ const users = {
     settings: {
       banner:
         'http://1.bp.blogspot.com/-QujDR96QWaE/Utx2fORgDTI/AAAAAAAAClM/x1qqvTTCFT8/s1600/Palais+de+Theed.jpg'
-    }
+    },
+    created: Date.now()
   },
   mark: {
     authId: 'mark',
     screenName: 'ibmark',
     firstName: 'Mark',
-    lastName: 'Price'
+    lastName: 'Price',
+    created: Date.now()
   },
   sam: {
     authId: 'sam',
     screenName: 'ibsam',
     firstName: 'Sam',
-    lastName: 'Odel'
+    lastName: 'Odel',
+    created: Date.now()
   },
   bella: {
     authId: 'bella',
     screenName: 'ibbella',
     firstName: 'Bella',
-    lastName: "O 'Reilly"
+    lastName: "O 'Reilly",
+    created: Date.now()
   },
   blake: {
     authId: 'blake',
     screenName: 'ibblake',
     firstName: 'Blake',
-    lastName: 'Lively'
+    lastName: 'Lively',
+    created: Date.now()
   }
 }
 
