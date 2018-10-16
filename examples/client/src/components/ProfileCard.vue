@@ -1,9 +1,13 @@
 <template>
   <v-card flat class="profile-card" v-if="authUser">
     <v-img v-if="authUser.settings.banner" :src="authUser.settings.banner" aspect-ratio="2.75"></v-img>
-    <geo-pattern v-else :value="authUser.screenName"></geo-pattern>
+    <v-responsive v-else aspect-ratio="2.75" max-height="90">
+      <geo-pattern :value="authUser.screenName"></geo-pattern>
+    </v-responsive>
     <v-layout column class="content">
-      <avatar size="72" class="avatar" :user="authUser"></avatar>
+      <router-link :to="{ name: 'tweets', params: { handle: authUser.screenName }}">
+        <avatar size="72" class="avatar" :user="authUser"></avatar>
+      </router-link>
       <router-link :to="{ name: 'tweets', params: { handle: authUser.screenName }}" class="link active">
         <div class="name">{{authUser.firstName}} {{authUser.lastName}}</div>
       </router-link>

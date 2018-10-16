@@ -1,13 +1,14 @@
 <template>
   <v-app>
     <!-- Toolbar -->
-    <toolbar></toolbar>
+    <toolbar v-if="!$route.meta.hideToolbar"></toolbar>
 
     <!-- Views -->
     <v-content>
-      <transition name="slide">
+      <router-view v-if="$route.meta.hideToolbar" :key="$route.fullPath"></router-view>
+      <transition v-else name="slide">
         <!-- "key" forces refresh when accessing same component -->
-        <router-view :key="$route.fullPath"></router-view>
+        <router-view></router-view>
       </transition>
     </v-content>
 
@@ -15,6 +16,7 @@
       <!-- Dialogs -->
       <tweet-dialog ref="tweetDialog"></tweet-dialog>
       <comment-dialog ref="commentDialog"></comment-dialog>
+      <signup-dialog ref="signupDialog"></signup-dialog>
 
       <!-- Snackbar -->
       <v-snackbar v-model="snackbar" bottom right>
@@ -35,6 +37,7 @@ import Logo from '@/components/Logo'
 import Toolbar from '@/components/Toolbar'
 import TweetDialog from '@/components/TweetDialog'
 import CommentDialog from '@/components/CommentDialog'
+import SignupDialog from '@/components/SignupDialog'
 
 export default {
   name: 'App',
@@ -42,6 +45,7 @@ export default {
     Avatar,
     CommentDialog,
     Logo,
+    SignupDialog,
     Toolbar,
     TweetDialog
   },
@@ -53,7 +57,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('auth', ['accessToken'])
+    ...mapState('auth', ['accessToken']),
+    transition() {
+      return ''
+    }
   },
   methods: {
     ...mapActions('auth', ['getAuthUser']),
@@ -62,6 +69,9 @@ export default {
     },
     comment(tweet) {
       this.$refs.commentDialog.open(tweet)
+    },
+    signup() {
+      this.$refs.signupDialog.open()
     }
   },
   created() {
@@ -71,6 +81,10 @@ export default {
 
     bus.$on('comment', tweet => {
       this.comment(tweet)
+    })
+
+    bus.$on('signup', () => {
+      this.signup()
     })
 
     bus.$on('notImplemented', () => {
@@ -104,6 +118,7 @@ a
 
 .tweet-btn
   font-weight 800 !important
+
 
 .slide-enter-active, .slide-leave-active
   transition-property opacity, transform

@@ -2,7 +2,9 @@
   <div class="profile" :class="$vuetify.breakpoint.name">
     <profile-banner></profile-banner>
     <!-- "key" forces refresh when accessing same component -->
-    <router-view class="view" :key="$route.fullPath" />
+    <transition name="slide">
+      <router-view class="view" :key="$route.fullPath" />
+    </transition>
   </div>
 </template>
 

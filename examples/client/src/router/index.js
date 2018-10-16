@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
+import Signup from '@/views/Signup.vue'
 import Profile from '@/views/Profile.vue'
 import Followers from '@/views/Followers.vue'
 import Following from '@/views/Following.vue'
@@ -10,6 +11,7 @@ import Likes from '@/views/Likes.vue'
 import NotFound from '@/views/NotFound.vue'
 
 import authGuard from './guards/authGuard'
+import signupGuard from './guards/signupGuard'
 import store from '@/store'
 import bus from '@/helpers/bus'
 
@@ -27,6 +29,14 @@ const router = new Router({
       path: '/login',
       name: 'login',
       component: Login,
+      meta: {
+        hideToolbar: true
+      }
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: Signup,
       meta: {
         hideToolbar: true
       }
@@ -51,17 +61,20 @@ const router = new Router({
         {
           path: 'following',
           name: 'following',
-          component: Following
+          component: Following,
+          beforeEnter: signupGuard
         },
         {
           path: 'followers',
           name: 'followers',
-          component: Followers
+          component: Followers,
+          beforeEnter: signupGuard
         },
         {
           path: 'likes',
           name: 'likes',
-          component: Likes
+          component: Likes,
+          beforeEnter: signupGuard
         }
       ]
     },
@@ -89,6 +102,8 @@ router.beforeEach(async (to, from, next) => {
     if (to.params.handle !== from.params.handle) {
       try {
         await store.dispatch('user/getUser', to.params.handle)
+        const currentUser = store.state.user.currentUser
+        document.title = currentUser.firstName + ' ' + currentUser.lastName + '(@' + currentUser.screenName + ') | Chirpy'
       } catch (e) {
         return next({
           name: 'notFound'

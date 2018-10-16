@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar v-if="!$route.meta.hideToolbar" app flat dense clipped-left color="toolbar" class="elevation-1">
+  <v-toolbar app flat dense clipped-left color="toolbar" class="elevation-1">
     <logo class="clickable hidden-sm-and-down" @click.native="$router.push({name: 'home'})"></logo>
     <v-spacer class="hidden-sm-and-down"></v-spacer>
     <toolbar-link></toolbar-link>

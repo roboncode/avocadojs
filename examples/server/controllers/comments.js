@@ -3,47 +3,14 @@
  * The Comment model is in "strict" mode and will filter out all undeclared.
  */
 const orango = require('orango')
+const checkJWT = require('express-jwt')
 const app = require('../app')
+const config = require('../config')
 const Comment = orango.model('Comment')
-const Like = orango.model('Like')
-const CONSTS = orango.CONSTS
 
-// /**
-//  * Get comments
-//  */
-// app.get('/comments', async (req, res) => {
-//   try {
-//     const comments = await Comment.getComments(
-//       req.user.id,
-//       req.query.limit,
-//       req.query.offset
-//     )
-//     res.send(comments)
-//   } catch (e) {
-//     res.status(500).send(e.message)
-//   }
-// })
-
-// /**
-//  * Get comment
-//  */
-// app.get('/comments/:id', async (req, res) => {
-//   try {
-//     let comment = Comment.getComment(req.params.id)
-//     if (comment) {
-//       res.status(200).send(comment)
-//     } else {
-//       res.status(404).send('Not found')
-//     }
-//   } catch (e) {
-//     res.status(500).send(e)
-//   }
-// })
-
-/**
- * Create comment
- */
-app.post('/comments', async (req, res) => {
+app.post('/comments', checkJWT({
+  secret: config.JWT_SECRET
+}), async (req, res) => {
   try {
     let comment = new Comment({
       user: req.user.id,
@@ -52,7 +19,9 @@ app.post('/comments', async (req, res) => {
       created: Date.now()
     })
     await comment
-      .save({ returnNew: true })
+      .save({
+        returnNew: true
+      })
       .id()
       .defaults(true)
     res.status(201).json(comment)
@@ -62,61 +31,3 @@ app.post('/comments', async (req, res) => {
     })
   }
 })
-
-// /**
-//  * Update comment
-//  */
-// app.put('/comments/:id', async (req, res) => {
-//   try {
-//     let result = await Comment.findOneAndUpdate({
-//       id: req.params.id,
-//       user: req.user.id
-//     })
-//     if (result.modified) {
-//       res.status(200).send('Ok')
-//     } else {
-//       res.status(404).send('Not found')
-//     }
-//   } catch (e) {
-//     res.status(500).json({
-//       error: e.message
-//     })
-//   }
-// })
-
-// /**
-//  * Delete comment
-//  */
-// app.delete('/comments/:id', async (req, res) => {
-//   try {
-//     let result = await Comment.findOneAndDelete({
-//       id: req.params.id,
-//       user: req.user.id
-//     })
-//     if (result.deleted) {
-//       res.status(200).send('Ok')
-//     } else {
-//       res.status(404).send('Not found')
-//     }
-//   } catch (e) {
-//     res.status(500).json({
-//       error: e.message
-//     })
-//   }
-// })
-
-// Like.on(CONSTS.EVENTS.LINKED, ({ data }) => {
-//   Comment.findByIdAndUpdate(data.to, {
-//     stats: {
-//       likes: '++1'
-//     }
-//   }).exec()
-// })
-
-// Like.on(CONSTS.EVENTS.UNLINKED, ({ data }) => {
-//   Comment.findByIdAndUpdate(data.to, {
-//     stats: {
-//       likes: '--1'
-//     }
-//   }).exec()
-// })

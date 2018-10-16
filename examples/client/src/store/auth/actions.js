@@ -1,6 +1,12 @@
 import axios from '@/helpers/axios'
 
 export default {
+  signup({commit, dispatch}, credentials) {
+    return axios.post('/signup', credentials).then(({data}) => {
+      commit('setAccessToken', data.token)
+      dispatch('getAuthUser')
+    })
+  },
   login({ commit, dispatch }, credentials) {
     return axios.post('/login', credentials).then(({ data }) => {
       commit('setAccessToken', data.token)
