@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
+    "setup": "node setup.js",
     "serve": "nodemon app.js",
     "populate": "node tools/sampleData/index.js"
   },

@@ -1,6 +1,6 @@
 ## Example
 
-The following example showcases a workflow Orango can provide in a Twitter knockoff called "Bluebird". It is composed of a client built with [Vue.js](https://vuejs.org/) and a server built on [Express](https://expressjs.com/).
+The following example showcases a workflow Orango can provide in a Twitter knockoff called "Chirpy". It is composed of a client built with [Vue.js](https://vuejs.org/) and a server built on [Express](https://expressjs.com/).
 
 ### Pre-requisites
 
@@ -26,12 +26,12 @@ yarn examples:setup
 ```
 
 
-#### Run an instance of the server
+#### Run setup
 
 Open a new terminal in the project directory.
 
 ```
-yarn examples:server
+yarn examples:setup
 ```
 
 #### Run an instance of the client

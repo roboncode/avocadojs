@@ -58,7 +58,6 @@ schema.statics.login = async function (username, password) {
   }).id()
   if (authUser) {
     const timestamp = new Date(authUser.created).getTime()
-    console.log('#you are here', password, timestamp)
     const isMatch = await bcrypt.compare(password + timestamp, authUser.passwordHash)
     if (isMatch) {
       return await this.getUser(authUser.id, {
