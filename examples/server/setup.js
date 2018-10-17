@@ -14,25 +14,24 @@ async function main() {
   // connect to ArangoDB as root
   await orango.connect(
     '_system',
-    { username: 'root', password: 'orangorocks' }
+    {
+      url: config.DB_URL,
+      username: config.DB_ROOT_USER,
+      password: config.DB_ROOT_PASS
+    }
   )
   // create db with credentials
   await orango.createDatabase(config.DB_NAME, [
-    { username: config.DB_ADMIN_USER, password: config.DB_ADMIN_PASS }
+    {
+      url: config.DB_URL,
+      username: config.DB_ADMIN_USER,
+      password: config.DB_ADMIN_PASS
+    }
   ])
   // disconnect from db
   await orango.disconnect()
 
   console.log('Database created:'.green, config.DB_NAME)
-
-  try {
-    await orango.connect(
-      config.DB_NAME,
-      { username: config.DB_ADMIN_USER, password: config.DB_ADMIN_PASS }
-    )
-  } catch(e) {
-    console.log('error', e.message)
-  }
 }
 
 main()
