@@ -2,11 +2,11 @@ cd server/tools
 docker-compose up -d
 cd -
 
-sleep 10
+sleep 5
 
 cd server
 yarn
-node setup.js
+yarn populate
 cd -
 
 cd client

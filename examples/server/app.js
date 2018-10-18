@@ -23,7 +23,11 @@ async function main() {
   // connect to ArangoDB
   await orango.connect(
     config.DB_NAME,
-    { username: config.DB_ADMIN_USER, password: config.DB_ADMIN_PASS }
+    {
+      url: config.DB_URL,
+      username: config.DB_ADMIN_USER,
+      password: config.DB_ADMIN_PASS
+    }
   )
 
   app.use((err, req, res, next) => {

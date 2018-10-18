@@ -14,7 +14,6 @@ const Tweet = orango.model('Tweet')
 app.post('/likes', checkJWT({
   secret: config.JWT_SECRET
 }), async (req, res) => {
-  console.log('#likes', req.user)
   try {
     if (req.body.like) {
       Tweet.like(req.user.id, req.body.tweet)

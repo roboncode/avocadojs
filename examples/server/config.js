@@ -1,4 +1,5 @@
 module.exports = {
+  DB_URL: 'http://localhost:10529',
   DB_NAME: 'chirpy',
   DB_ROOT_USER: 'root',
   DB_ROOT_PASS: 'orangorocks',

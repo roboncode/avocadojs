@@ -1,6 +1,6 @@
 ## Example
 
-The following example showcases a workflow Orango can provide in a Twitter knockoff called "Chirpy". It is composed of a client built with [Vue.js](https://vuejs.org/) and a server built on [Express](https://expressjs.com/).
+The following example showcases the workflow Orango can provide to an application. I have create a simplified version of Twitter called "Chirpy". It is composed of a client built with [Vue.js](https://vuejs.org/) and a server built on [Express](https://expressjs.com/).
 
 ### Pre-requisites
 
@@ -14,36 +14,29 @@ The following example showcases a workflow Orango can provide in a Twitter knock
 
 The following command are located in `package.json`. If the commands do not work, look at the `scripts` section and you can run them manually.
 
-#### Run an instance of ArangoDB in Docker
-
-```
-yarn examples:arango
-```
-#### Setup client & server
-
-```
-yarn examples:setup
-```
-
-
 #### Run setup
 
-Open a new terminal in the project directory.
+* Installs the dependencies needed by the client and the server
+* Creates a Docker instance of ArangoDB called "chirpy" (running on http://localhost:10529)
+* Creates a database called "chirpy" 
+* Creates a user called "admin" with administrator rights to the "chirpy" database. 
+* Populates the database with some sample data.
 
 ```
-yarn examples:setup
+$ yarn examples:setup
 ```
 
-#### Run an instance of the client
+#### Run server
 
-Open a new terminal in the project directory.
+```
+yarn examples:server
+```
+
+#### Run web client
 
 ```
 yarn examples:client
 ```
-The `client` runs on [http://localhost:8080](http://localhost:8080)
-
-The `server` runs on [http://localhost:3000](http://localhost:3000) 
 
 ### Screenshots
 

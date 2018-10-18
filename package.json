@@ -10,7 +10,6 @@
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "examples:setup": "cd examples && ./setup.sh",
-    "examples:populate": "cd examples/server && yarn populate",
     "examples:server": "cd examples/server && yarn serve",
     "examples:client": "cd examples/client && yarn serve"
   },
