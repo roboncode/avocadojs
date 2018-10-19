@@ -307,19 +307,18 @@ module.exports = orango.model('User', schema)
 # Roadmap
 
 ### Features
-* Support database users
+* <del>Support database users</del>
 * autoIndex in schema - will create indexes as properties become part of query
 * Getter / Setters in schema
-* Pre / Post Interceptors
+* <del>Pre / Post Interceptors</del>
 * Support upsert option
 * Integrate [Arango Chair](https://www.arangodb.com/2017/03/arangochair-tool-listening-changes-arangodb/)
 * web browser compatible
 * Better error handler / dispatching
-*
+
 ### Fixes
 * Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
 * Fix up for loops to be async
-* criteriaBuilder array support (maybe)
 * Break out all errors into constants
 
 ### Other
