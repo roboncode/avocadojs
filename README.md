@@ -241,14 +241,6 @@ const m = new MyModel()
 m.save()
 ```
 
-#### Tang Data Modeler
-
-The data modeler allows you to register models.
-
-Tang is a data modeler. It allows you to build schemas and models in a simplified JSON structure and apply those schemas against your data. It is I/O agnostic. It is a high-scaled version of the Joi API.
-
-Tang also has a builder which can call built-in and custom functions to manipulate data in an asynchronous and optimized manner.
-
 **Example of defining a model**
 
 ```js
