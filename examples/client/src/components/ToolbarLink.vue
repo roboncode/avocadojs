@@ -1,27 +1,39 @@
 <template>
   <v-layout style="max-width:300px">
-    <router-link to="roboncode">
-      <v-layout class="toolbar-link active" align-center>
+    <router-link :to="{name: 'home'}">
+      <v-layout class="toolbar-link" align-center>
         <v-icon class="icon">home</v-icon>
         <div class="subheading hidden-sm-and-down">Home</div>
       </v-layout>
     </router-link>
 
-    <router-link to="roboncode">
+    <span @click="notImplemented">
       <v-layout class="toolbar-link" align-center>
         <v-icon class="icon">search</v-icon>
         <div class="subheading hidden-sm-and-down">Search</div>
       </v-layout>
-    </router-link>
+    </span>
 
-    <router-link to="roboncode">
+    <span @click="notImplemented">
       <v-layout class="toolbar-link" align-center>
         <v-icon class="icon">explore</v-icon>
         <div class="subheading hidden-sm-and-down">Discover</div>
       </v-layout>
-    </router-link>
+    </span>
   </v-layout>
 </template>
+
+<script>
+import bus from '@/helpers/bus'
+export default {
+  methods: {
+    notImplemented() {
+      bus.$emit('notImplemented')
+    }
+  }
+}
+</script>
+
 
 <style lang="stylus" scoped>
 .toolbar-link
@@ -30,15 +42,16 @@
   border-bottom 3px solid transparent
   cursor pointer
 
-  &.active
-    cursor pointer
-    border-bottom 3px solid #1da1f2
-
   .subheading
     font-weight bold
 
   .icon
     margin-right 5px
     color #1da1f2 !important
+
+.router-link-exact-active
+  .toolbar-link
+    cursor pointer
+    border-bottom 3px solid #1da1f2
 </style>
 

@@ -1,28 +1,31 @@
 <template>
   <v-app>
     <!-- Toolbar -->
-    <v-toolbar app flat dense clipped-left color="toolbar" class="elevation-1">
-      <logo class="hidden-sm-and-down"></logo>
-      <v-spacer class="hidden-sm-and-down"></v-spacer>
-      <toolbar-link></toolbar-link>
-      <v-spacer></v-spacer>
-      <Avatar :user="authUser"></Avatar>
-      <v-btn round depressed color="primary" class="tweet-btn hidden-sm-and-down" @click="tweet()">
-        Tweet
-      </v-btn>
-    </v-toolbar>
+    <toolbar v-if="!$route.meta.hideToolbar"></toolbar>
 
     <!-- Views -->
     <v-content>
-      <transition name="slide">
-        <router-view />
+      <router-view v-if="$route.meta.hideToolbar" :key="$route.fullPath"></router-view>
+      <transition v-else name="slide">
+        <!-- "key" forces refresh when accessing same component -->
+        <router-view></router-view>
       </transition>
     </v-content>
 
-    <!-- Dialogs -->
-    <TweetDialog ref="tweetDialog"></TweetDialog>
-    <CommentDialog ref="commentDialog"></CommentDialog>
+    <div>
+      <!-- Dialogs -->
+      <tweet-dialog ref="tweetDialog"></tweet-dialog>
+      <comment-dialog ref="commentDialog"></comment-dialog>
+      <signup-dialog ref="signupDialog"></signup-dialog>
 
+      <!-- Snackbar -->
+      <v-snackbar v-model="snackbar" bottom right>
+        {{ snackbarText }}
+        <v-btn color="primary" flat @click="snackbar = false">
+          Close
+        </v-btn>
+      </v-snackbar>
+    </div>
   </v-app>
 </template>
 
@@ -31,9 +34,10 @@ import { mapActions, mapState } from 'vuex'
 import bus from '@/helpers/bus'
 import Avatar from '@/components/Avatar'
 import Logo from '@/components/Logo'
-import ToolbarLink from '@/components/ToolbarLink'
+import Toolbar from '@/components/Toolbar'
 import TweetDialog from '@/components/TweetDialog'
 import CommentDialog from '@/components/CommentDialog'
+import SignupDialog from '@/components/SignupDialog'
 
 export default {
   name: 'App',
@@ -41,21 +45,21 @@ export default {
     Avatar,
     CommentDialog,
     Logo,
-    ToolbarLink,
+    SignupDialog,
+    Toolbar,
     TweetDialog
   },
-  computed: {
-    ...mapState('auth', ['accessToken', 'authUser']),
-    showMenu() {
-      return !!this.authUser
-    },
-    userInitial() {
-      return this.authUser.firstName.substr(0, 1)
+  props: ['noToolbar'],
+  data() {
+    return {
+      snackbar: false,
+      snackbarText: ''
     }
   },
-  watch: {
-    authUser() {
-      this.drawer = true
+  computed: {
+    ...mapState('auth', ['accessToken']),
+    transition() {
+      return ''
     }
   },
   methods: {
@@ -65,6 +69,9 @@ export default {
     },
     comment(tweet) {
       this.$refs.commentDialog.open(tweet)
+    },
+    signup() {
+      this.$refs.signupDialog.open()
     }
   },
   created() {
@@ -74,6 +81,15 @@ export default {
 
     bus.$on('comment', tweet => {
       this.comment(tweet)
+    })
+
+    bus.$on('signup', () => {
+      this.signup()
+    })
+
+    bus.$on('notImplemented', () => {
+      this.snackbarText = 'Not implemented.'
+      this.snackbar = true
     })
 
     if (this.accessToken) {
@@ -103,6 +119,7 @@ a
 .tweet-btn
   font-weight 800 !important
 
+
 .slide-enter-active, .slide-leave-active
   transition-property opacity, transform
   transition-duration 0.25s
@@ -114,4 +131,7 @@ a
 .slide-enter, .slide-leave-active
   opacity 0
   transform translate(0, -1em)
+
+.clickable
+  cursor pointer
 </style>

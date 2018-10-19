@@ -24,3 +24,7 @@ yarn run test
 ```
 yarn run lint
 ```
+
+### Credits
+
+https://www.iconfu.com/collections/omni/sets/8-omni_icons/454-bird_icon

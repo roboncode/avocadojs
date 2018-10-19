@@ -3,7 +3,7 @@
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-toolbar color="white" flat dense>
-          <v-toolbar-title>Compose new tweet</v-toolbar-title>
+          <v-toolbar-title>Compose new chirp</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="dialog = false">
             <v-icon>close</v-icon>
@@ -14,7 +14,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark depressed round @click="send">Tweet</v-btn>
+          <v-btn color="primary" dark depressed round @click="send">Chirp</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

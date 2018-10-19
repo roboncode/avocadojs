@@ -12,5 +12,7 @@ export default (to, from, next) => {
     }
   }
 
-  next({ name: 'login' })
+  next({
+    name: 'login'
+  })
 }

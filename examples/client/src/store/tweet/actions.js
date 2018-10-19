@@ -1,14 +1,13 @@
 import axios from '@/helpers/axios'
 
 export default {
-  async getTweets({ commit }, offset) {
-    let { data } = await axios.get('/tweets', {
-      params: {
-        offset
-      }
-    })
+  async getTweets({ commit }, params) {
+    // try {
+    let { data } = await axios.get('/tweets', { params })
     commit('setTweets', data)
     return data
+    // } catch (e) {
+    // }
   },
 
   async postTweet({ commit, rootState }, text) {
@@ -19,7 +18,7 @@ export default {
     commit('addNewTweet', data)
   },
 
-  async postComment({commit}, {tweet, text}) {
+  async postComment({ commit }, { tweet, text }) {
     await axios.post('/comments', {
       tweet: tweet.id,
       text

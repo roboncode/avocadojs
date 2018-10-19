@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
+    "setup": "node setup.js",
     "serve": "nodemon app.js",
     "populate": "node tools/sampleData/index.js"
   },
@@ -16,6 +17,7 @@
     "express": "^4.16.3",
     "express-jwt": "^5.3.1",
     "express-jwt-permissions": "^1.2.1",
+    "humanparser": "^1.9.0",
     "jsonwebtoken": "^8.3.0",
     "nodemon": "^1.18.4",
     "random-datetime": "^1.0.1",

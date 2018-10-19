@@ -2,12 +2,14 @@
   <v-card tile flat v-if="tweet" class="tweet-card">
     <v-card-title>
       <v-layout>
-        <avatar size="48" class="avatar" :user="tweet.user"></avatar>
+        <router-link :to="{name: 'tweets', params: {handle: tweet.user.screenName}}">
+          <avatar size="48" class="avatar" :user="tweet.user"></avatar>
+        </router-link>
         <div class="details">
-          <router-link :to="tweet.user.screenName" class="details">
+          <router-link :to="{name: 'tweets', params: {handle: tweet.user.screenName}}" class="details">
             <span class="name">{{tweet.user.firstName}} {{tweet.user.lastName}}</span>
             <span class="screenname">{{tweet.user.screenName}}</span>
-            <router-link :to="link" class="time">{{tweet.created | moment("YYYY MMM YYYY")}}</router-link>
+            <router-link :to="link" class="time">{{tweet.created | moment("DD MMM YYYY")}}</router-link>
           </router-link>
           <div>{{tweet.text}}</div>
         </div>
@@ -24,7 +26,12 @@
         {{tweet.stats.likes}}
       </v-btn>
 
-      <v-btn flat color="grey" @click="comment">
+      <v-btn v-if="tweet.comments" flat color="primary" @click="comment">
+        <v-icon class="material-icons-outlined">comment</v-icon>
+        {{tweet.stats.comments}}
+      </v-btn>
+
+      <v-btn v-else flat color="grey" @click="comment">
         <v-icon class="material-icons-outlined">comment</v-icon>
         {{tweet.stats.comments}}
       </v-btn>
@@ -52,7 +59,7 @@ export default {
   methods: {
     ...mapActions('tweet', ['postComment', 'likeTweet', 'unlikeTweet']),
     toggleLike() {
-      if(this.tweet.likes) {
+      if (this.tweet.likes) {
         this.unlikeTweet(this.tweet)
       } else {
         this.likeTweet(this.tweet)

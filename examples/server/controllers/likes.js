@@ -3,13 +3,17 @@
  * The Like model is in "strict" mode and will filter out all undeclared.
  */
 const orango = require('orango')
+const checkJWT = require('express-jwt')
+const config = require('../config')
 const app = require('../app')
 const Tweet = orango.model('Tweet')
 
 /**
  * Like tweet
  */
-app.post('/likes', async (req, res) => {
+app.post('/likes', checkJWT({
+  secret: config.JWT_SECRET
+}), async (req, res) => {
   try {
     if (req.body.like) {
       Tweet.like(req.user.id, req.body.tweet)

@@ -37,14 +37,16 @@ Official documentation can be found at **[orango.js.org](https://orango.js.org)*
 ### Project Status
 **I started Orango at the beginning of August 2018**. This project is in `pre-release` and the API is subject to change as functionality and workflow is being developed. Once the dust settles, I will move it into an `alpha`.
 
-**[08 Oct 2018]** 0.9.3 released. Added authentication to connecting to database. Ability to create new databases with authenticated user. I worked on Edge collections and models and now provide a more streamlined approach with link() and unlink(). Many updates to the examples/server. Working on creating a mock twitter application. Other bug fixes.
+**[19 Oct 2018]** 0.9.4 released. Bug fixes. Updates to examples (still in progress). To get the example up and running, refer to the examples `README.md`. The server's controllers and models directories and `app.js` are where Orango is defined and used.
+
+**[08 Oct 2018]** 0.9.3 released. Added authentication for connecting to database. Ability to create new databases with authenticated user. I worked on Edge collections and models and now provide a more streamlined approach with link() and unlink(). Many updates to the examples/server. Working on creating a mock twitter application. Other bug fixes.
 
 *Screenshot of example application (in progress)*
 
 <img src="https://duaw26jehqd4r.cloudfront.net/items/2y2D202N1n3J3Z1M170s/Image%202018-10-10%20at%209.13.28%20AM.png" width="150">
 
 
-**[03 Oct 2018]** 0.9.0 released. A second iteration of `populate()` is available. Look at the [post example](https://github.com/roboncode/orango/blob/master/examples/express/controllers/posts.js) for an example. In addition, `var()`, `append()` and `merge()` were added. The documentation and examples are really lacking at this point. I am still working on examples and then documentation will follow after the API feels a little less ephemeral. I would not recommend using Orango yet for any real development until I have completed the examples to test the workflow. I am still finding some parts that are missing / or needing refactoring as I am trying to use it.
+**[03 Oct 2018]** 0.9.0 released. A second iteration of `populate()` is available. In addition, `var()`, `append()` and `merge()` were added. The documentation and examples are really lacking at this point. I am still working on examples and then documentation will follow after the API feels a little less ephemeral. I would not recommend using Orango yet for any real development until I have completed the examples to test the workflow. I am still finding some parts that are missing / or needing refactoring as I am trying to use it.
 
 **[26 Sep 2018]** I am working on fixing the current issues and and continuing on example project. There is quite a bit of refactoring in the latest commits and API changes as the workflow is being evaluated.
 
@@ -55,7 +57,8 @@ Official documentation can be found at **[orango.js.org](https://orango.js.org)*
 **[04 Sept 2018]**  I have tests in place currently at [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  . I am testing out the API workflow on a test project and then I will working on the documentation. In the meantime, if you are eager to start using Orango, I would recommend looking at the test cases for examples. There are other items on the Roadmap but I am working on a stable 1.0 release
 
 ### Installation
-First be sure you have ArangoDB and Node.js installed. You can easly install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a `docker-compose.yml` file that is in the `tools` directory if you want to copy it to your project, then all you have to do is run the code below to start an instance of ArangoDB.
+
+First be sure you have ArangoDB and Node.js installed. You can easily install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a `docker-compose.yml` file that is in the `tools` directory if you want to copy it to your project, then all you have to do is run the code below to start an instance of ArangoDB.
 
 ```cmd
 $ docker-compose up -d
@@ -81,9 +84,9 @@ import orango from 'orango'
 
 ### Connecting to ArangoDB
 
-First, we need to define a connection. If your app uses only one database, you should use `orango.connect()`. If you need to create additional connections, use `orango.getInstance( instanceName:String ).connect()`.
+First, we need to define a connection. If your app uses only one database, you should use `orango.connect()`. If you need to create additional connections, use `orango.get( instanceName:String ).connect()`.
 
-The method `connect(url:String="http://localhost:8529", db:String="_system")` takes the url string and database name to establish a connection. Otherwise, it will use the default values.
+The method `connect(db:String="_system", [{url:String="http://localhost:8529", username:String, password:String}])` takes database name with options to establish a connection. Otherwise, it will use the default values.
 
 ```js
 const orango = require('orango')
@@ -116,16 +119,17 @@ orango.model('blog', BlogPost)
 Aside from defining the structure of your documents and data types, a Schema handles the definition of:
 
 * Validators
-* Defaults
-* Getters
-* Setters
+* Default values
 * Indexes
 * Middleware
 * Methods definitions
 * Statics definitions
 * Computed properties
-* Plugins
+* Pre and post events
 * Real-joins (thanks ArangoDB!)
+* Custom queries
+* Filtering unknown properties
+* Support for Joi syntax
 
 The following example shows some of these features:
 
@@ -158,12 +162,24 @@ const User = orango.Schema({
     ]
 })
 
+User.statics.findByEmail = async function(email) {
+	return this.findOne({ email })
+}
+
 // computed property
 User.computed.name = function() {
 	return this.firstName + ' ' + this.lastName
 }
 
 orango.model('user', User)
+
+// ... in code somewhere else ... //
+
+let user = async User
+	.findByEmail('roboncode+orango@gmail.com')
+	.computed(true)
+	
+console.log('Hello,', user.name)
 ```
 
 ### Accessing a Model
@@ -200,12 +216,12 @@ Or we can find documents from the same collection
 ```js
 let docs = await MyModel.find()
 ```
-You can also `findOne`, `findById`, `findByQuery`, `update`, etc. For more details check out [the docs](#).
+You can also `findOne`, `findById`, `findByQuery`, `updateOne`, etc. For more details check out [the docs](#).
 
-**Important!** If you opened a separate connection using `orango.getInstance('anotherNameBesidesDefault')` but attempt to access the model through `orango.model('ModelName')` it will not work as expected since it is not hooked up to the active db connection. In this case access your model through the connection you created:
+**Important!** If you opened a separate connection using `orango.get('anotherNameBesidesDefault')` but attempt to access the model through `orango.model('ModelName')` it will not work as expected since it is not hooked up to the active db connection. In this case access your model through the connection you created:
 
 ```js
-const example = orango.getInstance('example')
+const example = orango.get('example')
 example.connect()
 const MyModel = example.model('ModelName', schema)
 const m = new MyModel()
@@ -215,7 +231,7 @@ m.save() // works
 --vs--
 
 ```js
-const example = orango.getInstance('example')
+const example = orango.get('example')
 example.connect()
 example.model('ModelName', schema)
 
@@ -270,7 +286,7 @@ module.exports = orango.model('User', schema)
 * Simple incrementation of values using "++/--" or "$inc"
 * Simple sorting using using strings
 * Simple return value filtering
-* Ability to print AQL during execution (with support to prettify and colorize)
+* Print as AQL
 * Performance measurements on data conversion
 * and more...
 
@@ -294,17 +310,14 @@ module.exports = orango.model('User', schema)
 * schemaOptions
 * select
 * sort
+ 
 
-### Schema using Tang - Build schema with JSON structure and/or Joi
-  
-
-## Roadmap
+# Roadmap
 
 ### Features
 * Support database users
 * autoIndex in schema - will create indexes as properties become part of query
 * Getter / Setters in schema
-* Events
 * Pre / Post Interceptors
 * Support upsert option
 * Integrate [Arango Chair](https://www.arangodb.com/2017/03/arangochair-tool-listening-changes-arangodb/)

@@ -1,7 +1,6 @@
 require('app-module-path').addPath(__dirname)
 const express = require('express')
 const bodyParser = require('body-parser')
-const jwt = require('express-jwt')
 const orango = require('orango')
 const cors = require('cors')
 const app = express()
@@ -22,24 +21,27 @@ async function main() {
   readFiles('models')
 
   // connect to ArangoDB
-  await orango.connect('sample')
-
-  app.use(
-    jwt({ secret: config.JWT_SECRET }).unless({ path: ['/login', '/id_token'] })
+  await orango.connect(
+    config.DB_NAME,
+    {
+      url: config.DB_URL,
+      username: config.DB_ADMIN_USER,
+      password: config.DB_ADMIN_PASS
+    }
   )
 
   app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
-      res.status(401).send('Invalid token2')
+      res.status(401).send('Invalid token')
     }
   })
 
   app.use(cors())
 
-  // // parse application/x-www-form-urlencoded
+  // parse application/x-www-form-urlencoded
   app.use(bodyParser.urlencoded({ extended: false }))
 
-  // // parse application/json
+  // parse application/json
   app.use(bodyParser.json())
 
   readFiles('controllers')
