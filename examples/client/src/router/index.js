@@ -56,7 +56,8 @@ const router = new Router({
       children: [{
           path: '',
           name: 'tweets',
-          component: Tweets
+          component: Tweets,
+          beforeEnter: authGuard
         },
         {
           path: 'following',

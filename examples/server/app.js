@@ -6,6 +6,7 @@ const cors = require('cors')
 const app = express()
 const readFiles = require('./helpers/readFiles')
 const config = require('./config')
+const expressJWT = require('express-jwt')
 require('colors')
 
 // listen for connection to ArangoDB
@@ -22,29 +23,42 @@ async function main() {
 
   // connect to ArangoDB
   await orango.connect(
-    config.DB_NAME,
-    {
+    config.DB_NAME, {
       url: config.DB_URL,
       username: config.DB_ADMIN_USER,
       password: config.DB_ADMIN_PASS
     }
   )
 
-  app.use((err, req, res, next) => {
-    if (err.name === 'UnauthorizedError') {
-      res.status(401).send('Invalid token')
-    }
-  })
+  app.use(expressJWT({
+    issuer: config.JWT_ISSUER,
+    secret: config.JWT_SECRET
+  }).unless({
+    path: [
+      '/signup',
+      '/login',
+      '/tweets',
+      /users\/\w+/
+    ]
+  }))
 
   app.use(cors())
 
   // parse application/x-www-form-urlencoded
-  app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(bodyParser.urlencoded({
+    extended: false
+  }))
 
   // parse application/json
   app.use(bodyParser.json())
 
   readFiles('controllers')
+
+  app.use((err, req, res, next) => {
+    if (err.name === 'UnauthorizedError') {
+      res.status(401).send('Invalid token')
+    }
+  })
 
   app.listen(3000, () => console.log('Example app listening on port 3000!'))
 }

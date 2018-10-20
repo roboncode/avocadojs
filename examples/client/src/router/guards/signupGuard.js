@@ -1,5 +1,6 @@
 import store from '@/store'
 import bus from '@/helpers/bus'
+import authGuard  from './authGuard'
 
 export default (to, from, next) => {
   if (from.name) {
@@ -10,11 +11,6 @@ export default (to, from, next) => {
       bus.$emit('signup')
     }
   } else {
-    next({
-      name: 'login',
-      params: {
-        redirect_after_login: to.path
-      }
-    })
+    authGuard(to, from, next)
   }
 }

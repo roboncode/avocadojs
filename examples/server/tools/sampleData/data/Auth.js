@@ -5,16 +5,22 @@ const myPlaintextPassword = 'password'
 
 let data = {
   john: {
-    username: 'john',
-    created: 1539048018793
+    provider: 'email',
+    identifier: 'john@chirpy.com',
+    created: 1539048018793,
+    signedIn: 1539048018793,
   },
   rob: {
-    username: 'rob',
-    created: 1539048069260
+    provider: 'email',
+    identifier: 'rob@chirpy.com',
+    created: 1539048069260,
+    signedIn: 1539048069260,
   },
   jane: {
-    username: 'jane',
-    created: 1539048089960
+    provider: 'email',
+    identifier: 'jane@chirpy.com',
+    created: 1539048089960,
+    signedIn: 1539048089960,
   }
 }
 
