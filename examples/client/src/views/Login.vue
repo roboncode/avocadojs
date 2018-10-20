@@ -10,14 +10,14 @@
           <v-layout row wrap>
             <div class="declare">See what’s happening in the world right now</div>
             <v-flex xs12>
-              <v-text-field label="Username" outline hide-details v-model="username"></v-text-field>
+              <v-text-field label="email" outline hide-details v-model="email"></v-text-field>
             </v-flex>
             <v-flex xs12>
               <!-- <v-text-field type="password" label="Password" outline hide-details v-model="password"></v-text-field> -->
               <v-text-field outline hide-details :append-icon="showPassword ? 'visibility_off' : 'visibility'" :rules="[rules.required, rules.min]" :type="showPassword ? 'text' : 'password'" label="Password" hint="At least 8 characters" v-model="password" @click:append="showPassword = !showPassword"></v-text-field>
             </v-flex>
             <v-flex xs12>
-              <v-btn block depressed large round color="success" @click="_login({username, password})">Log in</v-btn>
+              <v-btn block depressed large round color="success" @click="_login({email, password})">Log in</v-btn>
             </v-flex>
             <v-flex xs12>
               <v-btn width="200" round outline large dark block color="primary" :to="{name: 'signup'}">Sign Up</v-btn>
@@ -40,7 +40,7 @@ import bus from '@/helpers/bus'
 export default {
   data() {
     return {
-      username: 'rob',
+      email: 'flashext@gmail.com',
       password: 'password',
       showError: false,
       showPassword: false,

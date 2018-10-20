@@ -3,30 +3,41 @@ const jwt = require('jsonwebtoken')
 const app = require('../app')
 const config = require('../config')
 const Auth = orango.model('Auth')
+const User = orango.model('User')
 
 app.post('/signup', async (req, res) => {
   try {
-    const authUser = await Auth.signup(
-      req.body.username,
-      req.body.password,
-      req.body.name
-    )
+    const name = req.body.name
+    const email = req.body.email
+    const password = req.body.password
+    let authUser
+
+    try {
+      authUser = await Auth.signupByEmail(email, password)
+    } catch (e) {
+      return res.sendStatus(409)
+    }
+
     if (authUser) {
-      const token = jwt.sign({
-        id: authUser._key,
-        email: authUser.email,
-        firstName: authUser.firstName,
-        lastName: authUser.lastName,
-        role: authUser.role
+      let user = await User.newUser(authUser.id, name, email)
+
+      // console.log('#after', user)
+      const accessToken = jwt.sign({
+        id: authUser.id,
+        role: user.role,
+        permissions: user.permissions
       }, config.JWT_SECRET, {
         issuer: config.JWT_ISSUER,
         expiresIn: config.JWT_EXPIRES
       })
+
+      const decodedJWT = jwt.decode(accessToken)
+
       return res.send({
-        token
+        accessToken,
+        expiresIn: decodedJWT.exp
       })
     }
-    return res.status(401).send('Unauthorized')
   } catch (e) {
     res.status(500).send(e.message)
   }
@@ -34,25 +45,45 @@ app.post('/signup', async (req, res) => {
 
 app.post('/login', async (req, res) => {
   try {
-    const authUser = await Auth.login(
-      req.body.username,
-      req.body.password
-    )
+    const email = req.body.email
+    const password = req.body.password
+    const authUser = await Auth.login(email, password)
+
     if (authUser) {
-      const token = jwt.sign({
+      let user = await User.findByAuthId(authUser.id)
+
+      const accessToken = jwt.sign({
         id: authUser.id,
-        email: authUser.email,
-        firstName: authUser.firstName,
-        lastName: authUser.lastName,
-        role: authUser.role
+        role: user.role,
+        permissions: user.permissions
       }, config.JWT_SECRET, {
         issuer: config.JWT_ISSUER,
         expiresIn: config.JWT_EXPIRES
       })
+
+      const decodedJWT = jwt.decode(accessToken)
+
       return res.send({
-        token
+        accessToken,
+        expiresIn: decodedJWT.exp
       })
     }
+
+    // if (authUser) {
+    //   const token = jwt.sign({
+    //     id: authUser.id,
+    //     email: authUser.email,
+    //     firstName: authUser.firstName,
+    //     lastName: authUser.lastName,
+    //     role: authUser.role
+    //   }, config.JWT_SECRET, {
+    //     issuer: config.JWT_ISSUER,
+    //     expiresIn: config.JWT_EXPIRES
+    //   })
+    //   return res.send({
+    //     token
+    //   })
+    // }
     return res.status(401).send('Unauthorized')
   } catch (e) {
     res.status(500).send(e.message)
@@ -61,7 +92,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/me', async (req, res) => {
   try {
-    const userProfile = await Auth.getUser(req.user.id, {
+    const userProfile = await User.findByAuthId(req.user.id, {
       defaults: true
     })
     if (userProfile) {

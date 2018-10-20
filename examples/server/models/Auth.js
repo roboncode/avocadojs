@@ -2,11 +2,21 @@ const orango = require('orango')
 const bcrypt = require('bcrypt')
 const human = require('humanparser')
 const config = require('../config')
+const CONSTS = require('../consts')
 
 let schema = orango.Schema({
-  username: String,
+  provider: {
+    type: String,
+    required: true,
+    allow: [CONSTS.AUTH_PROVIDERS.EMAIL, CONSTS.AUTH_PROVIDERS.PHONE]
+  },
+  identifier: {
+    type: String,
+    required: true
+  },
   passwordHash: String,
-  created: Date
+  created: Date,
+  signedIn: Date
 }, {
   strict: true,
   indexes: [{
@@ -15,67 +25,50 @@ let schema = orango.Schema({
   }]
 })
 
-schema.statics.signup = async function (username, password, name) {
+schema.statics.signupByEmail = async function (email, password) {
+
   let authUser = await this.findOne({
-    username
+    provider: 'email',
+    identifier: email
   }).id()
 
   if (authUser) {
     throw new Error('User exists')
   }
 
+  const signedIn = Date.now()
   const created = Date.now()
+
   // create authUser
-  authUser = new this()
-  authUser.username = username
-  authUser.created = created
+  authUser = new this({
+    provider: 'email',
+    identifier: email,
+    created,
+    signedIn
+  })
 
   // TODO: LOOK INTO WHETHER I SHOULD BE USING HASHSYNC
   authUser.passwordHash = bcrypt.hashSync(
     password + created,
     config.SALT_ROUNDS
   )
-  console.log('signup', password, created)
-  await authUser.save()
 
-  // create User
-  const attrs = human.parseName(name)
-  const User = orango.model('User')
-  let user = new User({
-    firstName: attrs.firstName,
-    lastName: attrs.lastName,
-    email: username,
-    screenName: username.replace(/(@\w+\.\w+)/gi, "").replace(/[._+]/gi, ""),
-    created: Date.now()
-  })
-  await user.save()
-  return user
+  return await authUser.save().id()
 }
 
-schema.statics.login = async function (username, password) {
+schema.statics.login = async function (identifier, password) {
   let authUser = await this.findOne({
-    username
+    identifier
   }).id()
+
   if (authUser) {
     const timestamp = new Date(authUser.created).getTime()
-    const isMatch = await bcrypt.compare(password + timestamp, authUser.passwordHash)
+    const isMatch = bcrypt.compareSync(password + timestamp, authUser.passwordHash)
+
     if (isMatch) {
-      return await this.getUser(authUser.id, {
-        select: '_key email firstName lastName role'
-      })
+      return authUser
     }
   }
-}
-
-schema.statics.getUser = async function (id, options = {}) {
-  const User = orango.model('User')
-  const UserRole = orango.model('UserRole')
-  return await User.findById(id)
-    .id()
-    .defaults(options.defaults)
-    .populate('permissions', UserRole.findById('@@parent.role || "user"').select('permissions'), {
-      merge: true
-    })
 }
 
 module.exports = orango.model('Auth', schema)

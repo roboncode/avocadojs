@@ -15,7 +15,7 @@
                 <v-text-field label="Name" outline :rules="[rules.required]" v-model="name"></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Email" outline :rules="[rules.required, rules.email]" v-model="username"></v-text-field>
+                <v-text-field label="Email" outline :rules="[rules.required, rules.email]" v-model="email"></v-text-field>
               </v-flex>
               <v-flex x12>
                 <v-text-field outline :append-icon="showPassword1 ? 'visibility_off' : 'visibility'" :rules="[rules.required, rules.min]" :type="showPassword1 ? 'text' : 'password'" label="Password" hint="At least 8 characters" v-model="password" @click:append="showPassword1 = !showPassword1"></v-text-field>
@@ -46,9 +46,9 @@ import { mapActions, mapState } from 'vuex'
 export default {
   data() {
     return {
-      name: '',
-      username: '',
-      password: '',
+      name: 'Test User',
+      email: 'user_' + Date.now() + '@gmail.com',
+      password: 'password',
       password2: '',
       showError: false,
       showPassword1: false,
@@ -76,9 +76,9 @@ export default {
     async _signup() {
       try {
         await this.signup({
-          username: this.username,
-          password: this.password,
-          name: this.name
+          name: this.name,
+          email: this.email,
+          password: this.password
         })
         this.$router.push({ name: 'home' })
       } catch (e) {
