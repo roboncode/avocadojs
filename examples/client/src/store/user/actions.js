@@ -23,7 +23,7 @@ export default {
     let {
       data
     } = await axios.get('users/' + params.user + '/followers')
-    commit('setFollwers', data)
+    commit('setFollowers', data)
   },
 
   async clearFollowing({
@@ -38,6 +38,9 @@ export default {
     let {
       data
     } = await axios.get('users/' + params.user + '/following')
+    for(let item of data) {
+      item.following = true
+    }
     commit('setFollowing', data)
   },
 }

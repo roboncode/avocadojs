@@ -9,9 +9,12 @@
         <avatar size="70" class="avatar" :user="user"></avatar>
       </router-link>
       <v-spacer></v-spacer>
-      <v-btn class="following" round depressed small color="primary">
+      <v-btn v-if="user.following" class="following" round depressed small dark color="green">
         <span class="up">Following</span>
         <span class="over">Unfollow</span>
+      </v-btn>
+      <v-btn v-else class="primary" round depressed small color="primary">
+        <span>Follow</span>
       </v-btn>
       <v-btn icon>
         <v-icon class="more">more_vert</v-icon>
@@ -82,7 +85,6 @@ export default {
     .stats-title
       color #1DA1F2
 
-
   .over
     display none
 
@@ -91,12 +93,12 @@ export default {
 
     .up
       display none
+
     .over
-      display: inline-block
+      display inline-block
 
   .more
     color rgba(0, 0, 0, 0.3) !important
-    
 </style>
 
 

@@ -4,7 +4,7 @@
     <v-spacer class="hidden-sm-and-down"></v-spacer>
     <toolbar-link></toolbar-link>
     <v-spacer></v-spacer>
-    <v-menu v-if="authUser" offset-y right :close-on-content-click="false">
+    <v-menu v-if="authUser" offset-y right>
       <avatar :user="authUser" slot="activator"></avatar>
       <v-card>
         <v-list>
@@ -16,6 +16,16 @@
             <v-list-tile-content>
               <v-list-tile-title>{{authUser.firstName}} {{authUser.lastName}}</v-list-tile-title>
               <v-list-tile-sub-title>Joined {{authUser.created | moment("MMMM YYYY")}}</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list dense>
+          <v-list-tile v-for="item in items" :key="item.title" :to="{ name: 'tweets', params: { handle: authUser.screenName }}">
+            <v-list-tile-content>
+              <v-list-tile-title v-text="item.title"></v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
@@ -34,6 +44,12 @@
   </v-toolbar>
 </template>
 
+<style lang="stylus" scoped>
+.v-list__tile__title
+  color #666
+</style>
+
+
 <script>
 import { mapState, mapActions } from 'vuex'
 import bus from '@/helpers/bus'
@@ -46,6 +62,11 @@ export default {
     Avatar,
     ToolbarLink,
     Logo
+  },
+  data() {
+    return {
+      items: [{ title: 'My Profile' }]
+    }
   },
   computed: {
     ...mapState('auth', ['accessToken', 'authUser']),
