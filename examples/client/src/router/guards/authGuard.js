@@ -13,6 +13,9 @@ export default (to, from, next) => {
   }
 
   next({
-    name: 'login'
+    name: 'login',
+    query: {
+      redirect_after_login: to.path
+    }
   })
 }

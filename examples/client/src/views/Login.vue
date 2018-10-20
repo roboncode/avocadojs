@@ -59,7 +59,11 @@ export default {
     async _login(credentials) {
       try {
         await this.login(credentials)
-        this.$router.push({ name: 'home' })
+        if (this.$route.query.redirect_after_login) {
+          this.$router.push(this.$route.query.redirect_after_login)
+        } else {
+          this.$router.push({ name: 'home' })
+        }
       } catch (e) {
         this.showError = true
       }
@@ -75,11 +79,11 @@ export default {
 .login
   background white !important
   // background linear-gradient(
-  //   to right,
-  //   #1da1f2 0%,
-  //   #1da1f2 50%,
-  //   #ffffff 50%,
-  //   #ffffff 100%
+  // to right,
+  // #1da1f2 0%,
+  // #1da1f2 50%,
+  // #ffffff 50%,
+  // #ffffff 100%
   // )
 
 .declare

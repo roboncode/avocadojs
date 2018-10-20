@@ -38,6 +38,7 @@ async function main() {
       '/signup',
       '/login',
       '/tweets',
+      /users\/\w+/
     ]
   }))
 
