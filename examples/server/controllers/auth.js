@@ -1,6 +1,5 @@
 const orango = require('orango')
 const jwt = require('jsonwebtoken')
-const checkJWT = require('express-jwt')
 const app = require('../app')
 const config = require('../config')
 const Auth = orango.model('Auth')
@@ -60,9 +59,7 @@ app.post('/login', async (req, res) => {
   }
 })
 
-app.get('/me', checkJWT({
-  secret: config.JWT_SECRET
-}), async (req, res) => {
+app.get('/me', async (req, res) => {
   try {
     const userProfile = await Auth.getUser(req.user.id, {
       defaults: true
