@@ -40,7 +40,7 @@ import bus from '@/helpers/bus'
 export default {
   data() {
     return {
-      email: 'flashext@gmail.com',
+      email: 'rob@chirpy.com',
       password: 'password',
       showError: false,
       showPassword: false,

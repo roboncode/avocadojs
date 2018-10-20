@@ -46,9 +46,9 @@ import { mapActions, mapState } from 'vuex'
 export default {
   data() {
     return {
-      name: 'Test User',
-      email: 'user_' + Date.now() + '@gmail.com',
-      password: 'password',
+      name: '',
+      email: '',
+      password: '',
       password2: '',
       showError: false,
       showPassword1: false,
