@@ -1,15 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/views/Home.vue'
-import Login from '@/views/Login.vue'
-import Signup from '@/views/Signup.vue'
-import Profile from '@/views/Profile.vue'
-import Followers from '@/views/Followers.vue'
-import Following from '@/views/Following.vue'
-import Tweets from '@/views/Tweets.vue'
-import Likes from '@/views/Likes.vue'
-import NotFound from '@/views/NotFound.vue'
-
 import authGuard from './guards/authGuard'
 import signupGuard from './guards/signupGuard'
 import store from '@/store'
@@ -22,13 +12,13 @@ const router = new Router({
   routes: [{
       path: '/',
       name: 'home',
-      component: Home,
+      component: () => import( /* webpackChunkName: "home" */ '@/views/Home.vue'),
       beforeEnter: authGuard
     },
     {
       path: '/login',
       name: 'login',
-      component: Login,
+      component: () => import( /* webpackChunkName: "login" */ '@/views/Login.vue'),
       meta: {
         hideToolbar: true
       }
@@ -36,45 +26,36 @@ const router = new Router({
     {
       path: '/signup',
       name: 'signup',
-      component: Signup,
+      component: () => import( /* webpackChunkName: "signup" */ '@/views/Signup.vue'),
       meta: {
         hideToolbar: true
       }
     },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (about.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () =>
-    //     import( /* webpackChunkName: "about" */ '@/views/About.vue')
-    // },
     {
       path: '/:handle',
-      component: Profile,
+      component: () => import( /* webpackChunkName: "profile" */ '@/views/Profile.vue'),
       children: [{
           path: '',
           name: 'tweets',
-          component: Tweets,
+          component: () => import( /* webpackChunkName: "tweets" */ '@/views/Tweets.vue'),
           beforeEnter: authGuard
         },
         {
           path: 'following',
           name: 'following',
-          component: Following,
+          component: () => import( /* webpackChunkName: "following" */ '@/views/Following.vue'),
           beforeEnter: signupGuard
         },
         {
           path: 'followers',
           name: 'followers',
-          component: Followers,
+          component: () => import( /* webpackChunkName: "followers" */ '@/views/Followers.vue'),
           beforeEnter: signupGuard
         },
         {
           path: 'likes',
           name: 'likes',
-          component: Likes,
+          component: () => import( /* webpackChunkName: "likes" */ '@/views/Likes.vue'),
           beforeEnter: signupGuard
         }
       ]
@@ -90,7 +71,7 @@ const router = new Router({
     {
       name: 'notFound',
       path: '/404',
-      component: NotFound,
+      component: () => import( /* webpackChunkName: "notfound" */ '@/views/NotFound.vue'),
       meta: {
         hideToolbar: true
       }

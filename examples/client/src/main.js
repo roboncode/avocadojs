@@ -5,15 +5,16 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './registerServiceWorker'
-import './stylus/main.styl'
-import moment from 'vue-moment'
+import i18n from './i18n'
+import date from '@/filters/date'
 
-Vue.use(moment)
+Vue.use(date)
 
 Vue.config.productionTip = false
 
 new Vue({
   router,
   store,
+  i18n,
   render: h => h(App)
 }).$mount('#app')

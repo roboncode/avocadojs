@@ -1,6 +1,6 @@
 {
-  "name": "client",
-  "short_name": "client",
+  "name": "chirpy",
+  "short_name": "chirpy",
   "icons": [
     {
       "src": "/img/icons/android-chrome-192x192.png",
