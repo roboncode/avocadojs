@@ -103,6 +103,9 @@ export default {
 a
   text-decoration none
 
+.v-content
+  background #E6ECF0
+
 .v-dialog
   margin 0 !important
   // margin-top 5px !important
@@ -118,7 +121,6 @@ a
 
 .tweet-btn
   font-weight 800 !important
-
 
 .slide-enter-active, .slide-leave-active
   transition-property opacity, transform
