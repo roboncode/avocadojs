@@ -15,7 +15,7 @@
 
             <v-list-tile-content>
               <v-list-tile-title>{{authUser.firstName}} {{authUser.lastName}}</v-list-tile-title>
-              <v-list-tile-sub-title>Joined {{authUser.created | moment("MMMM YYYY")}}</v-list-tile-sub-title>
+              <v-list-tile-sub-title>Joined {{authUser.created | date("M Y")}}</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>

@@ -1,4 +1,4 @@
-# client
+# Chirpy
 
 ## Project setup
 ```

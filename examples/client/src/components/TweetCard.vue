@@ -9,7 +9,7 @@
           <router-link :to="{name: 'tweets', params: {handle: tweet.user.screenName}}" class="details">
             <span class="name">{{tweet.user.firstName}} {{tweet.user.lastName}}</span>
             <span class="screenname">{{tweet.user.screenName}}</span>
-            <router-link :to="link" class="time">{{tweet.created | moment("DD MMM YYYY")}}</router-link>
+            <router-link :to="link" class="time">{{tweet.created | date("d M Y")}}</router-link>
           </router-link>
           <div>{{tweet.text}}</div>
         </div>
