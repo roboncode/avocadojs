@@ -106,6 +106,9 @@ a
 .v-content
   background #E6ECF0
 
+.v-btn
+  text-transform none
+
 .v-dialog
   margin 0 !important
   // margin-top 5px !important
