@@ -302,7 +302,10 @@ module.exports = orango.model('User', schema)
 * schemaOptions
 * select
 * sort
- 
+
+# Known Issues / Limitations
+
+* `required: true` in the schema forces key/values to be present in updates
 
 # Roadmap
 
