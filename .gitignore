@@ -38,6 +38,7 @@ jspm_packages/
 docker/
 dist/
 tmp/
+web-services/
 
 # TypeScript v1 declaration files
 typings/
