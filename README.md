@@ -37,6 +37,8 @@ Official documentation can be found at **[orango.js.org](https://orango.js.org)*
 ### Project Status
 **I started Orango at the beginning of August 2018**. This project is in `pre-release` and the API is subject to change as functionality and workflow is being developed. Once the dust settles, I will move it into an `alpha`.
 
+**[15 Nov 2018]** 0.10.0 release. Scoped required properties added.
+
 **[14 Nov 2018]** Status update. I am currently working on a few feature items I found were needed when testing in real-world scenarios.
 
 * Support for `scoped required properties`. This will allow you to create schemas that required different properties depending on whether you are creating or updating values. This is probably how it will look once completed...
