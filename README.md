@@ -37,7 +37,7 @@ Official documentation can be found at **[orango.js.org](https://orango.js.org)*
 ### Project Status
 **I started Orango at the beginning of August 2018**. This project is in `pre-release` and the API is subject to change as functionality and workflow is being developed. Once the dust settles, I will move it into an `alpha`.
 
-**[15 Nov 2018]** 0.10.0 release. Scoped required properties added.
+**[15 Nov 2018]** 0.10.0 release. Scoped required properties added. Regarding `scoped default properties`, see response here https://github.com/roboncode/orango/issues/39
 
 **[14 Nov 2018]** Status update. I am currently working on a few feature items I found were needed when testing in real-world scenarios.
 
@@ -52,14 +52,6 @@ new Schema({
 })
 ```
 
-* Support for `scoped default properties`. This one is a bit trickier but researching it out. If I can get it working it will look like this...
-
-```js
-new Schema({
-	created: { type: Date, default: { create: Date.now } }, // only on create
-	updated: { type: Date, default: { update: Date.now } }, // only on update
-})
-```
 **[19 Oct 2018]** 0.9.4 released. Bug fixes. Updates to examples (still in progress). To get the example up and running, refer to the examples `README.md`. The server's controllers and models directories and `app.js` are where Orango is defined and used.
 
 **[08 Oct 2018]** 0.9.3 released. Added authentication for connecting to database. Ability to create new databases with authenticated user. I worked on Edge collections and models and now provide a more streamlined approach with link() and unlink(). Many updates to the examples/server. Working on creating a mock twitter application. Other bug fixes.
