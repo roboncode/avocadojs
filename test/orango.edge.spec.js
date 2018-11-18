@@ -58,10 +58,9 @@ describe('edge connections', function() {
     it('should use an edge collection to perform joins', async function() {
       await createDocs()
 
-      let likedUsers = await User.findByEdge(Like, post._key)
-        .limit(1)
+      let result = await User.findByEdge(Like, post._key).limit(1)
 
-      expect(likedUsers).to.deep.equal({
+      expect(result).to.deep.equal({
         _key: jane._key,
         _id: jane._id,
         _rev: jane._rev,
@@ -83,9 +82,7 @@ describe('edge connections', function() {
         aql = e.message
       }
 
-      expect(aql).to.match(
-        /FOR \$user IN INBOUND "posts\/\w+" likes RETURN DISTINCT \$user/
-      )
+      expect(aql).to.match(/FOR \$user IN INBOUND "posts\/\w+" likes RETURN DISTINCT \$user/)
     })
   })
 

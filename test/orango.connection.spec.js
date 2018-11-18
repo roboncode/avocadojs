@@ -3,13 +3,10 @@ let orango = require('../lib')
 require('colors')
 
 describe('orango connection', function() {
-
   describe('with no options', function() {
     it('connect to default "test" db', async function() {
       let conn = orango.get('system').connection
-      expect(conn.url + '/' + conn.name).to.equal(
-        'http://localhost:8529/_system'
-      )
+      expect(conn.url + '/' + conn.name).to.equal('http://localhost:8529/_system')
     })
   })
 
@@ -42,6 +39,19 @@ describe('orango connection', function() {
         console.log('ERROR'.bgRed, e.message)
       }
       expect(orango.get('disconnect').connection.connected).equal(false)
+    })
+  })
+
+  describe('with invalid credientials', function() {
+    it('should fail', async function() {
+      try {
+        await orango.connect('auth', {
+          username: 'bogus',
+          password: 'bogus'
+        })
+      } catch (e) {
+        expect(e.message).to.exist
+      }
     })
   })
 })

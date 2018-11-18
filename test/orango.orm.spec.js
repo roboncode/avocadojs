@@ -1,16 +1,16 @@
 const expect = require('chai').expect
 const ORM = require('../lib/ORM')
 const orango = require('../lib')
+const { RETURN } = orango.CONSTS
 
 describe('orango.orm', function() {
-
   describe('for in', function() {
     const orm = new ORM()
     orm.action('find')
     orm.collection({ name: 'users' })
 
-    it('should do something', async function() {
-      let aql = await orm.toAQL()
+    it('should do something #1', async function() {
+      let aql = await orm.return(RETURN.ONE).toAQL()
       expect(aql).to.equal('FOR $user IN users RETURN $user')
     })
   })
@@ -23,11 +23,9 @@ describe('orango.orm', function() {
       name: 'rob'
     })
 
-    it('should do something', async function() {
-      let aql = await orm.toAQL()
-      expect(aql).to.equal(
-        'FOR $user IN users FILTER ($user.`name` == "rob") RETURN $user'
-      )
+    it('should do something #2', async function() {
+      let aql = await orm.return(RETURN.ONE).toAQL()
+      expect(aql).to.equal('FOR $user IN users FILTER ($user.`name` == "rob") RETURN $user')
     })
   })
 
@@ -36,11 +34,11 @@ describe('orango.orm', function() {
     orm.action('find')
     orm.collection({ name: 'users' })
     orm.criteria({
-      $or: [{ name: 'rob' }, { name: 'john' }]
+      $or: [ { name: 'rob' }, { name: 'john' } ]
     })
 
     it('should do something', async function() {
-      let aql = await orm.toAQL()
+      let aql = await orm.return(RETURN.ONE).toAQL()
       expect(aql).to.equal(
         'FOR $user IN users FILTER (($user.`name` == "rob") OR ($user.`name` == "john")) RETURN $user'
       )
@@ -109,11 +107,9 @@ describe('orango.orm', function() {
       orm.collection({ name: 'users' })
       orm.options({ printAQL: 'color' })
       orm.query(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)
-      
-      let aql = await orm.toAQL(true)
-      expect(aql).to.equal(
-        'FOR $user IN users FILTER device.user == $user._key RETURN $user'
-      )
+
+      let aql = await orm.return(RETURN.ONE).toAQL(true)
+      expect(aql).to.equal('FOR $user IN users FILTER device.user == $user._key RETURN $user')
     })
   })
 })

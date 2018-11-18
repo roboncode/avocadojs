@@ -13,6 +13,7 @@ async function connectToDefaultDb() {
   await orango.createDatabase('disconnect')
   await orango.createDatabase('custom')
   await orango.createDatabase('edge')
+  await orango.createDatabase('auth')
   // disconnect from default database
   await orango.disconnect()
   // connect to test db
@@ -72,6 +73,10 @@ after(async function() {
 
   if (dbs.indexOf('edge') !== -1) {
     await orango.get('system').dropDatabase('edge')
+  }
+
+  if (dbs.indexOf('auth') !== -1) {
+    await orango.get('system').dropDatabase('auth')
   }
 })
 

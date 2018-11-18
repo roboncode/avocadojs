@@ -318,26 +318,25 @@ module.exports = orango.model('User', schema)
 * select
 * sort
 
-# Known Issues / Limitations
-
-* `required: true` in the schema forces key/values to be present in updates
-
 # Roadmap
 
-### Features
+### MVP
 * <del>Support database users</del>
 * autoIndex in schema - will create indexes as properties become part of query
-* Getter / Setters in schema
 * <del>Pre / Post Interceptors</del>
 * Support upsert option
+
+### Future
+* Getter / Setters in schema
 * Integrate [Arango Chair](https://www.arangodb.com/2017/03/arangochair-tool-listening-changes-arangodb/)
 * web browser compatible
 * Better error handler / dispatching
+* Upgrade to TypeScript
 
 ### Fixes
-* Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
+* <del>Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc</del>
 * Fix up for loops to be async
-* Break out all errors into constants
+* <del>Break out all errors into constants</del>
 
 ### Other
 * Cleanup

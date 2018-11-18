@@ -2,7 +2,7 @@ let expect = require('chai').expect
 let orango = require('../lib')
 let Model = require('../lib/Model')
 let ORM = require('../lib/ORM')
-let CONSTS = require('../lib/consts')
+let { ERRORS, RETURN } = require('../lib/consts')
 
 describe('orango model', function() {
   before(async function() {
@@ -102,11 +102,11 @@ describe('orango model', function() {
           indexes: [
             {
               type: 'hash',
-              fields: ['name']
+              fields: [ 'name' ]
             },
             {
               type: 'skipList',
-              fields: ['name']
+              fields: [ 'name' ]
             }
           ]
         }
@@ -117,9 +117,9 @@ describe('orango model', function() {
 
       expect(indexes.length).to.equal(3)
       expect(indexes[1].type).to.equal('hash')
-      expect(indexes[1].fields).to.deep.equal(['name'])
+      expect(indexes[1].fields).to.deep.equal([ 'name' ])
       expect(indexes[2].type).to.equal('skiplist')
-      expect(indexes[2].fields).to.deep.equal(['name'])
+      expect(indexes[2].fields).to.deep.equal([ 'name' ])
     })
   })
 
@@ -168,13 +168,13 @@ describe('orango model', function() {
       const ModelTest = orango.model('ModelTest')
       const Test = orango.model('Test')
       let result = await ModelTest.findById('rob')
-      .set('myObj', {abc: 123}, true)
-      .set('myStr', "Hello, world!")
-      .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
-      // .set('test2', Test.find({role: 'admin'}).select('permissions').id().computed(true))
-      .set('test2', Test.find().select('permissions').id().computed(true))
-      .select('firstName lastName')
-      .toAQL()
+        .set('myObj', { abc: 123 }, true)
+        .set('myStr', 'Hello, world!')
+        .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
+        // .set('test2', Test.find({role: 'admin'}).select('permissions').id().computed(true))
+        .set('test2', Test.find().select('permissions').id().computed(true))
+        .select('firstName lastName')
+        .toAQL()
       console.log('#RESULT', result)
       expect(result.split('LET').length - 1).to.be.equal(7)
     })
@@ -185,13 +185,13 @@ describe('orango model', function() {
       ORM.counter = 1
       const ModelTest = orango.model('ModelTest')
       const Test = orango.model('Test')
-      let result = await ModelTest.find({admin: true})
-      .set('myObj', {abc: 123}, true)
-      .set('myStr', "Hello, world!")
-      .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
-      .set('test2', Test.findById('@@parent.role').select('junk').id().computed(true))
-      .select('firstName lastName')
-      .toAQL()
+      let result = await ModelTest.find({ admin: true })
+        .set('myObj', { abc: 123 }, true)
+        .set('myStr', 'Hello, world!')
+        .set('test', Test.findById('@@parent.role').select('permissions').id().computed(true), true)
+        .set('test2', Test.findById('@@parent.role').select('junk').id().computed(true))
+        .select('firstName lastName')
+        .toAQL()
       expect(result.split('LET').length - 1).to.be.equal(6)
     })
   })
@@ -227,7 +227,7 @@ describe('orango model', function() {
       expect(aql).to.equal(
         'LET modified = COUNT( FOR $model_test IN model_tests FILTER ($model_test.`_key` == "' +
           test._key +
-          '") UPDATE $model_test WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
+          '") LIMIT 1 UPDATE $model_test WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
       )
     })
   })
@@ -318,6 +318,7 @@ describe('orango model', function() {
         .computed(true)
         .select('_key firstName')
         .id()
+      // .toAQL()
 
       expect(results[0].greeting).to.deep.equal('I am Geddy')
       expect(results[0].id).to.exist
@@ -327,7 +328,7 @@ describe('orango model', function() {
   })
 
   describe('update', function() {
-    it('SHOULD UPDATE`', async function() {
+    it('SHOULD UPDATE #1', async function() {
       const ModelTest = orango.model('ModelTest')
 
       await ModelTest.deleteMany()
@@ -358,7 +359,7 @@ describe('orango model', function() {
   })
 
   describe('update', function() {
-    it('SHOULD UPDATE`', async function() {
+    it('SHOULD UPDATE #2', async function() {
       const ModelTest = orango.model('ModelTest')
 
       await ModelTest.deleteMany()
@@ -383,14 +384,12 @@ describe('orango model', function() {
         {
           name: 'update'
         }
-      ).options({
-        returnNew: true
-      })
-      expect(result.length).to.be.equal(3)
+      )
+      expect(result.modified).to.be.equal(3)
     })
   })
 
-  describe('findByIdAndUpdate with bogus id', function() {
+  describe('findByIdAndUpdate with bogus id #1???', function() {
     it('should have a name `Test`', async function() {
       const ModelTest = orango.model('ModelTest')
       let result
@@ -405,13 +404,13 @@ describe('orango model', function() {
     })
   })
 
-  describe('findByIdAndUpdate with bogus id', function() {
+  describe('findByIdAndUpdate with bogus id #2', function() {
     it('should have a name `Test`', async function() {
       const ModelTest = orango.model('ModelTest')
       let result = await ModelTest.findByIdAndUpdate('bogus', {
         name: 'update'
       })
-      expect(result.modified).to.equal(0)
+      expect(result).to.be.undefined
     })
   })
 
@@ -423,22 +422,18 @@ describe('orango model', function() {
       let result = await ModelTest.findByIdAndUpdate(test._key, {
         name: 'update'
       })
-      expect(result.modified).to.equal(1)
+      expect(result._key).to.equal(test._key)
     })
   })
 
-  describe('findByIdAndUpdate return new ### 1', function() {
+  describe('findByIdAndUpdate return new', function() {
     it('should have a name `Test`', async function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
       await test.save()
-      let result = await ModelTest.findByIdAndUpdate(
-        test._key,
-        {
-          name: 'update'
-        },
-        { returnNew: true }
-      )
+      let result = await ModelTest.findByIdAndUpdate(test._key, {
+        name: 'update'
+      })
       expect(result.name).to.equal('update')
     })
   })
@@ -449,13 +444,9 @@ describe('orango model', function() {
       let test = new ModelTest()
       test.name = 'new'
       await test.save()
-      let result = await ModelTest.findByIdAndUpdate(
-        test._key,
-        {
-          name: 'changed'
-        },
-        { returnOld: true }
-      )
+      let result = await ModelTest.findByIdAndUpdate(test._key, {
+        name: 'changed'
+      }).return(RETURN.OLD)
       expect(result.name).to.equal('new')
     })
   })
@@ -465,13 +456,9 @@ describe('orango model', function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
       await test.save()
-      let result = await ModelTest.findByIdAndUpdate(
-        test._key,
-        {
-          name: 'changed'
-        },
-        { returnNew: true, returnOld: true }
-      )
+      let result = await ModelTest.findByIdAndUpdate(test._key, {
+        name: 'changed'
+      }).return(RETURN.NEW_OLD)
       expect(result.old).to.be.exist
       expect(result.new).to.be.exist
     })
@@ -484,13 +471,13 @@ describe('orango model', function() {
       await modelTest.save()
       let result
       try {
-        result = await ModelTest.findByQuery(
-          `FOR @@doc IN @@collection FILTER @@doc._key == '${modelTest._key}'`
-        ).id()
+        result = await ModelTest.findByQuery(`FOR @@doc IN @@collection FILTER @@doc._key == '${modelTest._key}'`)
+          .id()
+          .return(RETURN.ONE)
       } catch (e) {
         result = e
       }
-      expect(result[0].id).to.deep.equal(modelTest._key)
+      expect(result.id).to.deep.equal(modelTest._key)
     })
   })
 
@@ -505,7 +492,7 @@ describe('orango model', function() {
         result = e
       }
       expect(result).to.be.an('error')
-      expect(result.message).to.equal(CONSTS.ERRORS.MODEL_NOT_FOUND + 'Test')
+      expect(result.message).to.equal(ERRORS.MODEL_NOT_FOUND.split('{name}').join('Test'))
     })
   })
 
@@ -527,9 +514,7 @@ describe('orango model', function() {
       const ModelTest = orango.model('ModelTest')
       let test = new ModelTest()
       await test.save()
-      let result = await ModelTest.findById(test._key)
-        .id()
-        .select('_key')
+      let result = await ModelTest.findById(test._key).id().select('_key')
       expect(result.id).to.equal(test._key)
     })
   })
