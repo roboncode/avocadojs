@@ -10,7 +10,7 @@ describe('orango.orm', function() {
     orm.collection({ name: 'users' })
 
     it('should do something #1', async function() {
-      let aql = await orm.return(RETURN.ONE).toAQL()
+      let aql = await orm.return(RETURN.DOC).toAQL()
       expect(aql).to.equal('FOR $user IN users RETURN $user')
     })
   })
@@ -24,7 +24,7 @@ describe('orango.orm', function() {
     })
 
     it('should do something #2', async function() {
-      let aql = await orm.return(RETURN.ONE).toAQL()
+      let aql = await orm.return(RETURN.DOC).toAQL()
       expect(aql).to.equal('FOR $user IN users FILTER ($user.`name` == "rob") RETURN $user')
     })
   })
@@ -38,7 +38,7 @@ describe('orango.orm', function() {
     })
 
     it('should do something', async function() {
-      let aql = await orm.return(RETURN.ONE).toAQL()
+      let aql = await orm.return(RETURN.DOC).toAQL()
       expect(aql).to.equal(
         'FOR $user IN users FILTER (($user.`name` == "rob") OR ($user.`name` == "john")) RETURN $user'
       )
@@ -108,7 +108,7 @@ describe('orango.orm', function() {
       orm.options({ printAQL: 'color' })
       orm.query(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)
 
-      let aql = await orm.return(RETURN.ONE).toAQL(true)
+      let aql = await orm.return(RETURN.DOC).toAQL(true)
       expect(aql).to.equal('FOR $user IN users FILTER device.user == $user._key RETURN $user')
     })
   })

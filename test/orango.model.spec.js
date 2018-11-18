@@ -473,7 +473,7 @@ describe('orango model', function() {
       try {
         result = await ModelTest.findByQuery(`FOR @@doc IN @@collection FILTER @@doc._key == '${modelTest._key}'`)
           .id()
-          .return(RETURN.ONE)
+          .return(RETURN.DOC)
       } catch (e) {
         result = e
       }
