@@ -52,27 +52,27 @@ function checkConnection() {
 }
 
 after(async function() {
-  let dbs = await orango.connection.db.listDatabases()
+  // let dbs = await orango.connection.db.listDatabases()
 
-  if (dbs.indexOf('test') !== -1) {
-    await orango.get('system').dropDatabase('test')
-  }
+  // if (dbs.indexOf('test') !== -1) {
+  //   await orango.get('system').dropDatabase('test')
+  // }
 
-  if (dbs.indexOf('model_tests') !== -1) {
-    await orango.get('system').dropDatabase('model_tests')
-  }
+  // if (dbs.indexOf('model_tests') !== -1) {
+  //   await orango.get('system').dropDatabase('model_tests')
+  // }
 
-  if (dbs.indexOf('disconnect') !== -1) {
-    await orango.get('system').dropDatabase('disconnect')
-  }
+  // if (dbs.indexOf('disconnect') !== -1) {
+  //   await orango.get('system').dropDatabase('disconnect')
+  // }
 
-  if (dbs.indexOf('custom') !== -1) {
-    await orango.get('system').dropDatabase('custom')
-  }
+  // if (dbs.indexOf('custom') !== -1) {
+  //   await orango.get('system').dropDatabase('custom')
+  // }
 
-  if (dbs.indexOf('edge') !== -1) {
-    await orango.get('system').dropDatabase('edge')
-  }
+  // if (dbs.indexOf('edge') !== -1) {
+  //   await orango.get('system').dropDatabase('edge')
+  // }
 })
 
 checkConnection()

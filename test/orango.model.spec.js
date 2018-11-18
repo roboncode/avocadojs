@@ -4,7 +4,7 @@ let Model = require('../lib/Model')
 let ORM = require('../lib/ORM')
 let CONSTS = require('../lib/consts')
 
-describe('orango model', function() {
+describe.only('orango model', function() {
   before(async function() {
     let schema = orango.Schema(
       {
@@ -227,7 +227,7 @@ describe('orango model', function() {
       expect(aql).to.equal(
         'LET modified = COUNT( FOR $model_test IN model_tests FILTER ($model_test.`_key` == "' +
           test._key +
-          '") UPDATE $model_test WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
+          '") LIMIT 1 UPDATE $model_test WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
       )
     })
   })
@@ -289,26 +289,26 @@ describe('orango model', function() {
     })
   })
 
-  describe('find with options ', function() {
+  describe.only('find with options ', function() {
     it('print AQL query', async function() {
       const ModelTest = orango.model('ModelTest')
 
-      await ModelTest.deleteMany()
+      // await ModelTest.deleteMany()
 
-      await new ModelTest({
-        firstName: 'Geddy',
-        lastName: 'Lee'
-      }).save()
+      // await new ModelTest({
+      //   firstName: 'Geddy',
+      //   lastName: 'Lee'
+      // }).save()
 
-      await new ModelTest({
-        firstName: 'Alex',
-        lastName: 'Lifeson'
-      }).save()
+      // await new ModelTest({
+      //   firstName: 'Alex',
+      //   lastName: 'Lifeson'
+      // }).save()
 
-      await new ModelTest({
-        firstName: 'Neal',
-        lastName: 'Peart'
-      }).save()
+      // await new ModelTest({
+      //   firstName: 'Neal',
+      //   lastName: 'Peart'
+      // }).save()
 
       let results = await ModelTest.find()
         .defaults(true)
@@ -318,6 +318,8 @@ describe('orango model', function() {
         .computed(true)
         .select('_key firstName')
         .id()
+        // .toAQL()
+        console.log('RESULTS', results)
 
       expect(results[0].greeting).to.deep.equal('I am Geddy')
       expect(results[0].id).to.exist
