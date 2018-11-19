@@ -1,4 +1,4 @@
-const orango = require('../../lib')
+const orango = require('../../../lib')
 const { RETURN } = orango.CONSTS
 require('../models/User')
 
