@@ -1,0 +1,95 @@
+---
+pageClass: api
+---
+
+# Constants
+
+A list of constants used in Orango.
+
+## Usage
+
+```js
+const orango = require('orango')
+const { DEFAULTS, EVENTS } orango.CONSTS
+
+...
+
+orango.on(EVENTS.CONNECTED, () => {
+  console.log('Connected to database!')
+})
+
+await orango.connect(DEFAULTS.DATABASE)
+```
+
+## ACTIONS
+
+* INSERT
+* DOCUMENT
+* FIND
+* FIND_EDGE
+* UPDATE
+* DELETE
+* COUNT
+
+## AQL
+
+* DIVIDER
+* MODIFIED
+
+## DEFAULTS
+
+* DATABASE = "_system"
+* URL = "http://localhost:8529"
+* USERNAME = "root"
+* PASSWORD = ""
+
+## ERRORS
+
+* ALREADY_CONNECTED
+* COLLECTION_NOT_FOUND
+* EDGE_MODEL_REQUIRED
+* ID_REQUIRED
+* INVALID_COLLECTION
+* INVALID_RETURN
+* MODEL_EXISTS
+* MODEL_NOT_FOUND
+* NOT_CONNECTED
+* USER_EXISTS
+
+## EVENTS
+
+* DATABASE_CREATED
+* DATABASE_DROPPED
+* CONNECTED
+* DISCONNECTED
+* READY
+* IMPORT
+* IMPORTED
+* CREATE
+* CREATED
+* UPDATE
+* UPDATED
+* DELETE
+* DELETED
+* LINK
+* LINKED
+* UNLINK
+* UNLINKED
+
+## RETURN
+
+* DOC
+* DOCS
+* MODEL
+* MODELS
+* NEW_DOC
+* OLD_DOC
+* NEW_OLD_DOCS
+* NEW_MODEL
+* OLD_MODEL
+* NEW_OLD_MODELS
+
+## TANG
+
+* STRIP
+* ALLOW

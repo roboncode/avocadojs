@@ -77,7 +77,10 @@ module.exports = {
         children: [
           '/api/orango',
           '/api/connection',
+          '/api/consts',
           '/api/schema',
+          '/api/model',
+          '/api/orm',
         ]
       },
       '/roadmap'
