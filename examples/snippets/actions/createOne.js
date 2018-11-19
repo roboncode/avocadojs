@@ -9,7 +9,7 @@ async function main() {
   let user = new User({
     email: 'user@sample.com'
   })
-  await user.save().withDefaults()
+  await user.save()//.withDefaults()
   console.log('Successfully added:\n', user)
 }
 

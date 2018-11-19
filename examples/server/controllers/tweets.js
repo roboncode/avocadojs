@@ -119,7 +119,7 @@ app.delete('/tweets/:id', async (req, res) => {
   }
 })
 
-Like.on(CONSTS.EVENTS.LINKED, ({ data }) => {
+Like.on(CONSTS.HOOKS.LINKED, ({ data }) => {
   Tweet.findByIdAndUpdate(data.to, {
     stats: {
       likes: '++1'
@@ -127,7 +127,7 @@ Like.on(CONSTS.EVENTS.LINKED, ({ data }) => {
   }).exec()
 })
 
-Like.on(CONSTS.EVENTS.UNLINKED, ({ data }) => {
+Like.on(CONSTS.HOOKS.UNLINKED, ({ data }) => {
   Tweet.findByIdAndUpdate(data.to, {
     stats: {
       likes: '--1'
@@ -135,7 +135,7 @@ Like.on(CONSTS.EVENTS.UNLINKED, ({ data }) => {
   }).exec()
 })
 
-Comment.on(CONSTS.EVENTS.CREATED, ({ data }) => {
+Comment.on(CONSTS.HOOKS.CREATED, ({ data }) => {
   Tweet.findByIdAndUpdate(data.tweet, {
     stats: {
       comments: '++1'
@@ -143,7 +143,7 @@ Comment.on(CONSTS.EVENTS.CREATED, ({ data }) => {
   }).exec()
 })
 
-Comment.on(CONSTS.EVENTS.DELETED, ({ data }) => {
+Comment.on(CONSTS.HOOKS.DELETED, ({ data }) => {
   Tweet.findByIdAndUpdate(data.tweet, {
     stats: {
       comments: '--1'

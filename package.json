@@ -19,7 +19,7 @@
     "arangojs": "6.9.0",
     "colors": "1.3.2",
     "dotenv": "6.1.0",
-    "lodash": "4.17.11",
+    "lodash": "^4.17.11",
     "pluralize": "^7.0.0",
     "tangjs": "^0.2.1",
     "uniqid": "^5.0.3"

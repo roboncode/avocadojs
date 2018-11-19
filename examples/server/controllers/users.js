@@ -130,7 +130,7 @@ app.get('/users/:handle/followers', async (req, res) => {
 //   })
 // })
 
-Tweet.on(CONSTS.EVENTS.CREATED, result => {
+Tweet.on(CONSTS.HOOKS.CREATED, result => {
   User.findByIdAndUpdate(result.data.user, {
     stats: {
       tweets: '++1'
@@ -138,7 +138,7 @@ Tweet.on(CONSTS.EVENTS.CREATED, result => {
   }).exec()
 })
 
-Tweet.on(CONSTS.EVENTS.DELETED, async friend => {
+Tweet.on(CONSTS.HOOKS.DELETED, async friend => {
   User.findByIdAndUpdate(result.data.user, {
     stats: {
       tweets: '--1'
