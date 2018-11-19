@@ -1,5 +1,6 @@
-const orango = require('../../lib')
+const orango = require('../../../lib')
 require('../models/User')
+const { RETURN } = orango.CONSTS
 
 const User = orango.model('User')
 
@@ -14,7 +15,10 @@ async function main() {
         friends: '++1'
       }
     }
-  ).toAQL()
+  )
+    .computed()
+    .return(RETURN.NEW_OLD_MODEL)
+    // .toAQL()
 
   console.log('Successfully updated:\n', user)
 }

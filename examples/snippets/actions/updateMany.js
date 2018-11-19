@@ -1,4 +1,4 @@
-const orango = require('../../lib')
+const orango = require('../../../lib')
 require('../models/User')
 
 const User = orango.model('User')
@@ -15,6 +15,7 @@ async function main() {
       }
     }
   )
+  .computed()
 
   console.log('Successfully updated:\n', user)
 }
