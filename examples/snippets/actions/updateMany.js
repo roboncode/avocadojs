@@ -21,8 +21,8 @@ async function main() {
     }
   )
   .computed()
-  .return(RETURN.NEW_OLD_MODELS)
-  // .return(RETURN.NEW_OLD_DOC)
+  // .return(RETURN.NEW_OLD)
+  // .toModel()
   // .toAQL()
 
   console.log('Successfully updated:\n', user)
