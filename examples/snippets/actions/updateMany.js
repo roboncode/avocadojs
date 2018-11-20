@@ -22,6 +22,7 @@ async function main() {
   )
   .computed()
   // .return(RETURN.NEW_OLD)
+  .return(RETURN.DOC)
   // .toModel()
   // .toAQL()
 

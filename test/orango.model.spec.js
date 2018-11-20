@@ -434,6 +434,9 @@ describe('orango model', function() {
       let result = await ModelTest.findByIdAndUpdate(test._key, {
         name: 'update'
       })
+      .return(RETURN.DOC)
+      // .toAQL()
+
       expect(result.name).to.equal('update')
     })
   })
@@ -446,7 +449,7 @@ describe('orango model', function() {
       await test.save()
       let result = await ModelTest.findByIdAndUpdate(test._key, {
         name: 'changed'
-      }).return(RETURN.OLD_DOC)
+      }).return(RETURN.OLD)
       expect(result.name).to.equal('new')
     })
   })
@@ -458,7 +461,7 @@ describe('orango model', function() {
       await test.save()
       let result = await ModelTest.findByIdAndUpdate(test._key, {
         name: 'changed'
-      }).return(RETURN.NEW_OLD_DOC)
+      }).return(RETURN.NEW_OLD)
       expect(result.old).to.be.exist
       expect(result.new).to.be.exist
     })
@@ -473,7 +476,7 @@ describe('orango model', function() {
       try {
         result = await ModelTest.findByQuery(`FOR @@doc IN @@collection FILTER @@doc._key == '${modelTest._key}'`)
           .id()
-          .return(RETURN.DOC)
+          .one()
       } catch (e) {
         result = e
       }
