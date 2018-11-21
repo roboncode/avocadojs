@@ -1,7 +1,7 @@
 let expect = require('chai').expect
 let orango = require('../lib')
 
-describe('edge connections', function() {
+describe.only('edge connections', function() {
   let john
   let jane
   let post
@@ -116,6 +116,8 @@ describe('edge connections', function() {
     it('should remove a single item', async function() {
       await createDocs()
       let result = await Like.unlink(jane._key)
+      // .return('doc')
+      // .toAQL()
       expect(result.deleted).to.equal(1)
     })
   })
