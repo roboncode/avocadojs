@@ -1,7 +1,7 @@
 let expect = require('chai').expect
 let orango = require('../lib')
 
-describe.only('edge connections', function() {
+describe('edge connections', function() {
   let john
   let jane
   let post

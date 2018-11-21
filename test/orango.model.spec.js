@@ -541,7 +541,7 @@ describe('orango model', function() {
       let test = new ModelTest()
       await test.save()
       let result = await ModelTest.findByIdAndDelete(test._key)
-      expect(result.deleted).to.equal(1)
+      expect(result._key).to.equal(test._key)
     })
   })
 
