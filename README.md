@@ -40,7 +40,7 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 
 ### Project Status
 
-Orango is in `alpha`. Focus is now on bug fixes, cleanup and documentation .
+Orango is in `alpha`. Working on bug fixes, cleanup, documentation and examples.
 
 ### Installation
 
