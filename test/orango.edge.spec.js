@@ -5,7 +5,6 @@ describe('edge connections', function() {
   let john
   let jane
   let post
-  let like
   let Like
   let User
   let Post
@@ -108,6 +107,7 @@ describe('edge connections', function() {
     it('should remove a single item', async function() {
       await createDocs()
       let result = await Like.unlink(null, post._key)
+      // .toAQL()
       expect(result.deleted).to.equal(1)
     })
   })
