@@ -28,8 +28,12 @@ const UserSchema = orango.Schema(
   }
 )
 
-UserSchema.computed.username = function(payload) {
-  return this.email.replace(/(\w+)@(\w+).*/g, '$1_$2')
+// UserSchema.computed.username = function(payload) {
+//   return this.email.replace(/(\w+)@(\w+).*/g, '$1_$2')
+// }
+
+UserSchema.computed.message = function() {
+  return 'Hello, world!'
 }
 
 const User = orango.model('User', UserSchema, 'users')
