@@ -106,7 +106,7 @@ describe('orango.orm', function() {
       orm.method('find')
       orm.collection({ name: 'users' })
       orm.options({ printAQL: 'color' })
-      orm.query(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)
+      orm.customQuery(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)
 
       let aql = await orm.return(RETURN.DOC).toAQL(true)
       expect(aql).to.equal('FOR $user IN users FILTER device.user == $user._key RETURN $user')
