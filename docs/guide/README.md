@@ -16,7 +16,7 @@ I just started developing Orango at the start of August 2018 and have been worki
 * Check / Change name that references setDefaultsToNull, API change needed - withDefaults option, etc
 * Fix up for loops to be async
 * Break out Tang into separate repo
-* criteriaBuilder array support
+* filterToAQL array support
 
 ### Other
 * unit tests (in progress) - 100+ and counting

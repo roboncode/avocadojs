@@ -19,7 +19,7 @@ describe('orango.orm', function() {
     const orm = new ORM()
     orm.method('find')
     orm.collection({ name: 'users' })
-    orm.criteria({
+    orm.filter({
       name: 'rob'
     })
 
@@ -33,7 +33,7 @@ describe('orango.orm', function() {
     const orm = new ORM()
     orm.method('find')
     orm.collection({ name: 'users' })
-    orm.criteria({
+    orm.filter({
       $or: [ { name: 'rob' }, { name: 'john' } ]
     })
 

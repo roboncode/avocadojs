@@ -153,7 +153,7 @@ let user = await User.findOne({ active: true, email: 'john.smith@gmail.com' })
 
 ### Finding with condition statements
 
-By default adding multiple properties to the query criteria are treated as `AND` statements. Orango also support other conditional statements. Conditions can be grouped within each other.
+By default adding multiple properties to the query filter are treated as `AND` statements. Orango also support other conditional statements. Conditions can be grouped within each other.
 
 **AND statements**
 
@@ -217,7 +217,7 @@ let user = await User.findById('12345')
 
 ### Finding documents using a custom query
 
-You can create custom queries still using all the features of Orango.  The criteria does not include the return statements. That is broken into a separate function. Let's look at a few examples...
+You can create custom queries still using all the features of Orango.  The filter does not include the return statements. That is broken into a separate function. Let's look at a few examples...
 
 **Example #1 - Using special variables**
 

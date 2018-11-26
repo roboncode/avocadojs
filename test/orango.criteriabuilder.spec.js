@@ -1,12 +1,12 @@
 let expect = require('chai').expect
-let criteriaBuilder = require('../lib/helpers/criteriaBuilder')
+let filterToAQL = require('../lib/helpers/filterToAQL')
 let jstr = require('tangjs/lib/helpers/jsonStringify')
 
-describe('orango criteria builder', function() {
+describe('orango filter builder', function() {
   describe(`{ foo: 'bar' }`, function() {
     let data = { foo: 'bar' }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo == "bar")')
     })
   })
@@ -14,7 +14,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: 'bar', baz: 'qux' }`, function() {
     let data = { foo: 'bar', baz: 'qux' }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo == "bar" AND baz == "qux")')
     })
   })
@@ -22,7 +22,7 @@ describe('orango criteria builder', function() {
   describe(`{ $or: [{ foo: 'bar' }, { baz: 'qux' }] }`, function() {
     let data = { $or: [{ foo: 'bar' }, { baz: 'qux' }] }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('((foo == "bar") OR (baz == "qux"))')
     })
   })
@@ -30,7 +30,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: { $ne: 'bar' } }`, function() {
     let data = { foo: { $ne: 'bar' } }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo != "bar")')
     })
   })
@@ -38,7 +38,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: { $eq: 'bar' } }`, function() {
     let data = { foo: { $eq: 'bar' } }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo == "bar")')
     })
   })
@@ -46,7 +46,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: { $gt: 'bar' } }`, function() {
     let data = { foo: { $gt: 'bar' } }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo > "bar")')
     })
   })
@@ -54,7 +54,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: { $lt: 'bar' } }`, function() {
     let data = { foo: { $lt: 'bar' } }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo < "bar")')
     })
   })
@@ -62,7 +62,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: { $gte: 'bar' } }`, function() {
     let data = { foo: { $gte: 'bar' } }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo >= "bar")')
     })
   })
@@ -70,7 +70,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: { $lte: 'bar' } }`, function() {
     let data = { foo: { $lte: 'bar' } }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo <= "bar")')
     })
   })
@@ -78,7 +78,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: 1 }`, function() {
     let data = { foo: 1 }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo == 1)')
     })
   })
@@ -86,7 +86,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: true }`, function() {
     let data = { foo: true }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data)
+      let c = filterToAQL(data)
       expect(c).to.equal('(foo == true)')
     })
   })
@@ -94,7 +94,7 @@ describe('orango criteria builder', function() {
   describe(`{ foo: 'bar' }`, function() {
     let data = { foo: 'bar' }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data, 'test')
+      let c = filterToAQL(data, 'test')
       expect(c).to.equal('(test.`foo` == "bar")')
     })
   })
@@ -102,12 +102,12 @@ describe('orango criteria builder', function() {
   describe('{ foo: {bar: null}}', function() {
     let data = { foo: {bar: null}}
     it(jstr(data), function() {
-      let c = criteriaBuilder(data, 'test')
+      let c = filterToAQL(data, 'test')
       expect(c).to.equal('(test.foo.`bar` == null)')
     })
   })
 
-  describe(`complex criteria`, function() {
+  describe(`complex filter`, function() {
     let data = {
       _key: '12345',
       role: 'admin',
@@ -160,7 +160,7 @@ describe('orango criteria builder', function() {
       ]
     }
     it(jstr(data), function() {
-      let c = criteriaBuilder(data, 'test')
+      let c = filterToAQL(data, 'test')
       expect(c).to.equal(
         '(test.`_key` == "12345" AND test.`role` == "admin" AND test.`a` != 1 AND test.`b` == true AND test.`c` > "3" AND test.`d` < "four" AND test.`e` >= 5 AND test.`f` <= 6) AND ((test.`x1` == 1 AND test.`x2` == 2) OR (test.`y` > 3) OR ((test.`z` < "four") OR (test.`z` == 10)))'
       )

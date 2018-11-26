@@ -108,7 +108,7 @@ module.exports = orango.model('User', schema)
 * collection
 * computed
 * connection
-* criteria
+* filter
 * data
 * exec
 * limit

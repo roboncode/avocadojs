@@ -2,7 +2,7 @@ require('app-module-path').addPath(__dirname)
 const orango = require('orango')
 const readFiles = require('./helpers/readFiles')
 const pluralize = require('pluralize')
-const { sortToAQL, criteriaBuilder, setDefaultsToNull, arrayOverride, createUniqueId } = orango.helpers
+const { sortToAQL, filterToAQL, setDefaultsToNull, arrayOverride, createUniqueId } = orango.helpers
 require('colors')
 
 const AQB = orango.AQB
@@ -12,8 +12,8 @@ function parseQuery(data) {
   let col = ModelCls.collectionName
   let doc = pluralize.singular(col)
   let aql = AQB.for(doc).in(col)
-  let criteria = criteriaBuilder(data.criteria, doc)
-  aql = aql.filter(AQB.expr(criteria))
+  let filter = filterToAQL(data.filter, doc)
+  aql = aql.filter(AQB.expr(filter))
   if (data.offset && data.limit) {
     aql = aql.limit(data.offset, data.limit)
   } else if (data.offset) {
@@ -34,7 +34,7 @@ async function main() {
   let result = parseQuery({
     model: 'Tweet',
     method: 'find',
-    criteria: { $or: [ { active: true }, { test: 1 } ] },
+    filter: { $or: [ { active: true }, { test: 1 } ] },
     limit: 10,
     // offset: 1,
     select: 'firstName lastName',

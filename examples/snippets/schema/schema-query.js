@@ -10,7 +10,7 @@ async function main() {
     let result = await orango.execQuery({
       model: 'Tweet',
       method: 'findOne',
-      // criteria: { $or: [{_key: 'rob' }, {_key: 'john'}]},
+      // filter: { $or: [{_key: 'rob' }, {_key: 'john'}]},
       computed: true,
       populate2: [
         { model: 'User' }

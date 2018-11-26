@@ -47,7 +47,7 @@ let posts = await Post.
 ```js
 let query = {
   model: 'Post',
-  criteria: {},
+  filter: {},
   limit: 10,
   populate: [
     { model: 'User', computed: true, select: 'firstName lastName' },
