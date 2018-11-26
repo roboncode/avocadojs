@@ -38,6 +38,8 @@ UserSchema.computed.message = function() {
 
 const User = orango.model('User', UserSchema, 'users')
 
+User.hasMany('Tweet')
+
 User.on('create', (payload) => {
   payload.data.created = Date.now()
 })

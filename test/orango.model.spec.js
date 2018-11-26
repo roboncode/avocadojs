@@ -225,9 +225,9 @@ describe('orango model', function() {
 
       let aql = await test.save().toAQL()
       expect(aql).to.equal(
-        'LET modified = COUNT( FOR $model_test IN model_tests FILTER ($model_test.`_key` == "' +
+        'FOR $model_test IN model_tests FILTER ($model_test.`_key` == "' +
           test._key +
-          '") LIMIT 1 UPDATE $model_test WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} RETURN 1) RETURN { modified }'
+          '") LIMIT 1 UPDATE $model_test WITH {"name":"Test"} IN model_tests OPTIONS {"keepNull":false} COLLECT WITH COUNT INTO modified RETURN { modified }'
       )
     })
   })

@@ -12,13 +12,13 @@ async function main() {
       method: 'findOne',
       // criteria: { $or: [{_key: 'rob' }, {_key: 'john'}]},
       computed: true,
-      // populate2: [
-      //   { model: 'User' }
-      // ],
+      populate2: [
+        { model: 'User' }
+      ],
       // select: 'firstName lastName',
       // toModel: true,
     })
-    .toAQL()
+    // .toAQL()
     console.log('result'.bgGreen, result)
   } catch (e) {
     console.log('error'.bgRed, e.message)

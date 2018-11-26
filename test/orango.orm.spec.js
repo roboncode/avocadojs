@@ -61,7 +61,7 @@ describe('orango.orm', function() {
 
       let aql = await orm.toAQL()
       expect(aql).to.equal(
-        'LET modified = COUNT( FOR $user IN users UPDATE $user WITH {"stats":{"friends":$user.stats.friends+1}} IN users RETURN 1) RETURN { modified }'
+        'FOR $user IN users UPDATE $user WITH {"stats":{"friends":$user.stats.friends+1}} IN users COLLECT WITH COUNT INTO modified RETURN { modified }'
       )
     })
   })
@@ -78,7 +78,7 @@ describe('orango.orm', function() {
 
       let aql = await orm.toAQL()
       expect(aql).to.equal(
-        'LET modified = COUNT( FOR $user IN users UPDATE $user WITH {"friends":$user.friends+1} IN users RETURN 1) RETURN { modified }'
+        'FOR $user IN users UPDATE $user WITH {"friends":$user.friends+1} IN users COLLECT WITH COUNT INTO modified RETURN { modified }'
       )
     })
   })
@@ -95,7 +95,7 @@ describe('orango.orm', function() {
 
       let aql = await orm.toAQL()
       expect(aql).to.equal(
-        'LET modified = COUNT( FOR $user IN users UPDATE $user WITH {"friends":$user.friends+1} IN users RETURN 1) RETURN { modified }'
+        'FOR $user IN users UPDATE $user WITH {"friends":$user.friends+1} IN users COLLECT WITH COUNT INTO modified RETURN { modified }'
       )
     })
   })
