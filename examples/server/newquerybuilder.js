@@ -3,11 +3,7 @@ const orango = require('orango')
 const readFiles = require('./helpers/readFiles')
 const pluralize = require('pluralize')
 const {
-  sortToAQL,
   filterToAQL,
-  setDefaultsToNull,
-  arrayOverride,
-  createUniqueId
 } = orango.helpers
 require('colors')
 
@@ -18,7 +14,7 @@ function parseQuery(data) {
   let col = ModelCls.collectionName
   let doc = pluralize.singular(col)
   let aql = AQB.for(doc).in(col)
-  let filterAQL = filterToAQL(data.filter, doc)
+
   let result = doc
   if (data.select) {
     let select = data.select.split(' ')
@@ -28,32 +24,44 @@ function parseQuery(data) {
     result = AQB.KEEP(doc, select)
   }
 
-  aql = aql.filter(AQB.expr(filterAQL))
-  if (data.offset && data.limit) {
-    aql = aql.limit(data.offset, data.limit)
-  } else if (data.offset) {
-    aql = aql.limit(data.offset, 10)
-  } else if (data.limit) {
-    aql = aql.limit(data.limit)
+  if (data.filter) {
+    let filterAQL = filterToAQL(data.filter, doc)
+    aql = aql.filter(AQB.expr(filterAQL))
+    if (data.offset && data.limit) {
+      aql = aql.limit(data.offset, data.limit)
+    } else if (data.offset) {
+      aql = aql.limit(data.offset, 10)
+    } else if (data.limit) {
+      aql = aql.limit(data.limit)
+    }
   }
 
   // dummy
   // these are just properties???
-  let merges = ['junk', 'test']
+  // let merges = ['junk', 'test']
+  let merges = []
   // these are populates
-  let appends = ['user']
+  let appends = []
+
+  if (data.populate) {
+    for (let pop of data.populate) {
+      let PopModelCls = orango.model(pop.model)
+      aql = aql.let(PopModelCls.collectionName, parseQuery(pop))
+      appends.push(PopModelCls.collectionName)
+    }
+  }
 
   let appendData = {}
-  for(let name of appends) {
+  for (let name of appends) {
     appendData[name] = name
   }
 
-  result = AQB.MERGE(result, AQB.expr(merges.join(', ')), appendData)
+  result = AQB.MERGE(result, /*AQB.expr(merges.join(', ')),*/ appendData)
 
   // AQB.KEEP(aqb.DOCUMENT(aqb.CONCAT(aqb.str('users/'), 'tweet.user')), AQB.str('firstName'), AQB.str('lastName'))
 
   aql = aql.return(result)
-  return aql.toAQL()
+  return aql
 }
 
 async function main() {
@@ -91,7 +99,7 @@ async function main() {
     computed: true
   })
 
-  console.log(result.green)
+  console.log(result.toAQL().green)
 }
 
 main()
