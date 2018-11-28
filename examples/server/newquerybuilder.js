@@ -2,6 +2,7 @@ require('app-module-path').addPath(__dirname)
 const orango = require('orango')
 const readFiles = require('./helpers/readFiles')
 const pluralize = require('pluralize')
+const { RELATION } = orango.CONSTS
 const {
   filterToAQL,
 } = orango.helpers
@@ -61,14 +62,14 @@ function parseQuery(data) {
   if (data.populate) {
     for (let pop of data.populate) {
       let PopModelCls = orango.model(pop.model)
-      // console.log(data.model, 'has', ModelCls.getRelation(pop.model), pop.model)
+      console.log(data.model.blue, 'has', ModelCls.getRelation(pop.model).has.magenta, pop.model.green)
       // console.log(pop.model, 'hasMany'.magenta, data.model, '=', PopModelCls._hasMany)
-      switch (ModelCls.getRelation(pop.model)) {
-        case 'many':
+      switch (ModelCls.getRelation(pop.model).has) {
+        case RELATION.MANY:
           aql = aql.let(PopModelCls.collectionName, parseQuery(pop))
           appends.push(PopModelCls.collectionName)
           break
-        case 'one':
+        case RELATION.ONE:
           aql = aql.let(pluralize.singular(PopModelCls.collectionName), AQB.FIRST(parseQuery(pop)))
           appends.push(pluralize.singular(PopModelCls.collectionName))
           break
