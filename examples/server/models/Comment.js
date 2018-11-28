@@ -19,4 +19,8 @@ let schema = orango.Schema({
   ]
 })
 
-module.exports = orango.model('Comment', schema)
+const Comment = orango.model('Comment', schema)
+
+Comment.belongsTo('User') // many
+
+module.exports = Comment

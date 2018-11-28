@@ -77,4 +77,10 @@ schema.statics.unlike = async function(userId, tweetId) {
   return await Like.unlink(userId, tweetId)
 }
 
-module.exports = orango.model('Tweet', schema)
+const Tweet = orango.model('Tweet', schema)
+
+Tweet.belongsTo('User') // one -> inserted as 'user'
+Tweet.hasMany('Comment') // many -> inserted as 'comments'
+// Tweet.hasMany('Comment', { as: 'my_comments' }) // many -> inserted as 'my_comments'
+
+module.exports = Tweet

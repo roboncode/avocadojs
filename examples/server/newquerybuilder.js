@@ -7,6 +7,21 @@ const {
 } = orango.helpers
 require('colors')
 
+/*
+Tweet hasOne
+User
+
+Comment hasOne
+User
+
+User hasMany
+Tweet
+Comment
+
+User hasOne
+User_Role
+*/
+
 const AQB = orango.AQB
 
 function parseQuery(data) {
@@ -46,8 +61,18 @@ function parseQuery(data) {
   if (data.populate) {
     for (let pop of data.populate) {
       let PopModelCls = orango.model(pop.model)
-      aql = aql.let(PopModelCls.collectionName, parseQuery(pop))
-      appends.push(PopModelCls.collectionName)
+      // console.log(data.model, 'has', ModelCls.getRelation(pop.model), pop.model)
+      // console.log(pop.model, 'hasMany'.magenta, data.model, '=', PopModelCls._hasMany)
+      switch (ModelCls.getRelation(pop.model)) {
+        case 'many':
+          aql = aql.let(PopModelCls.collectionName, parseQuery(pop))
+          appends.push(PopModelCls.collectionName)
+          break
+        case 'one':
+          aql = aql.let(pluralize.singular(PopModelCls.collectionName), AQB.FIRST(parseQuery(pop)))
+          appends.push(pluralize.singular(PopModelCls.collectionName))
+          break
+      }
     }
   }
 
@@ -81,6 +106,7 @@ async function main() {
     offset: 1,
     select: 'firstName lastName',
     populate: [{
+        // name: 'user',
         model: 'User',
         computed: true,
         select: 'firstName lastName'
@@ -90,6 +116,7 @@ async function main() {
         limit: 10,
         computed: true,
         populate: [{
+          // name: 'user',
           model: 'User',
           computed: true,
           select: 'firstName lastName'
