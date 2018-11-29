@@ -2,10 +2,13 @@ require('app-module-path').addPath(__dirname)
 const orango = require('orango')
 const readFiles = require('./helpers/readFiles')
 const pluralize = require('pluralize')
-const { RELATION } = orango.CONSTS
+const {
+  RELATION
+} = orango.CONSTS
 const {
   filterToAQL,
 } = orango.helpers
+const merge = require('lodash/merge')
 require('colors')
 
 /*
@@ -62,16 +65,36 @@ function parseQuery(data) {
   if (data.populate) {
     for (let pop of data.populate) {
       let PopModelCls = orango.model(pop.model)
-      console.log(data.model.blue, 'has', ModelCls.getRelation(pop.model).has.magenta, pop.model.green)
+      const relation = ModelCls.getRelation(pop.model)
+      console.log(data.model.blue, 'has', relation.has.magenta, pop.model.green)
       // console.log(pop.model, 'hasMany'.magenta, data.model, '=', PopModelCls._hasMany)
-      switch (ModelCls.getRelation(pop.model).has) {
+      switch (relation.has) {
         case RELATION.MANY:
           aql = aql.let(PopModelCls.collectionName, parseQuery(pop))
           appends.push(PopModelCls.collectionName)
           break
         case RELATION.ONE:
-          aql = aql.let(pluralize.singular(PopModelCls.collectionName), AQB.FIRST(parseQuery(pop)))
-          appends.push(pluralize.singular(PopModelCls.collectionName))
+          // console.log(AQB.DOCUMENT(AQB.CONCAT(AQB.str(`${col}/`), `${doc}.${relation.ref}`)).toAQL())
+          // console.log('whois', pop.filter)
+          if (pop.filter) {
+            pop.filter = merge({
+              _key: `@{${doc}.${relation.ref}}`
+            }, pop.filter)
+          } else {
+            pop.filter = {
+              _key: `@{${doc}.${relation.ref}}`
+            }
+          }
+
+          pop.limit = 1
+
+          aql = aql.let(relation.as, AQB.FIRST(parseQuery(pop)))
+
+          if (pop.merge) {
+            merges.push(relation.as)
+          } else {
+            appends.push(relation.as)
+          }
           break
       }
     }
@@ -82,9 +105,13 @@ function parseQuery(data) {
     appendData[name] = name
   }
 
-  result = AQB.MERGE(result, /*AQB.expr(merges.join(', ')),*/ appendData)
-
-  // AQB.KEEP(aqb.DOCUMENT(aqb.CONCAT(aqb.str('users/'), 'tweet.user')), AQB.str('firstName'), AQB.str('lastName'))
+  if (appends.length && merges.length) {
+    result = AQB.MERGE(result, AQB.expr(merges.join(', ')), appendData)
+  } else if (merges.length) {
+    result = AQB.MERGE(result, AQB.expr(merges.join(', ')))
+  } else if (appends.length) {
+    result = AQB.MERGE(result, appendData)
+  }
 
   aql = aql.return(result)
   return aql
@@ -100,17 +127,23 @@ async function main() {
       $or: [{
         active: true
       }, {
-        test: 1
+        created: {
+          $lte: Date.now()
+        }
       }]
     },
     limit: 10,
     offset: 1,
-    select: 'firstName lastName',
+    select: 'text',
     populate: [{
         // name: 'user',
         model: 'User',
         computed: true,
-        select: 'firstName lastName'
+        filter: {
+          active: true
+        },
+        select: 'firstName lastName',
+        // merge: true
       },
       {
         model: 'Comment',

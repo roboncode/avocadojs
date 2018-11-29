@@ -79,7 +79,7 @@ schema.statics.unlike = async function(userId, tweetId) {
 
 const Tweet = orango.model('Tweet', schema)
 
-Tweet.belongsTo('User') // one -> inserted as 'user'
+Tweet.belongsTo('User', { ref: 'user', as: 'userA' }) // one -> inserted as 'userA'
 Tweet.hasMany('Comment') // many -> inserted as 'comments'
 // Tweet.hasMany('Comment', { as: 'my_comments' }) // many -> inserted as 'my_comments'
 

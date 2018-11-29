@@ -21,6 +21,7 @@ let schema = orango.Schema({
 
 const Comment = orango.model('Comment', schema)
 
-Comment.belongsTo('User') // many
+Comment.belongsTo('User', { ref: 'user' }) // one
+Comment.belongsTo('Tweet', { ref: 'tweet' }) // one
 
 module.exports = Comment
