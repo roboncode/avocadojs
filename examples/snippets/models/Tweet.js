@@ -29,8 +29,5 @@ let schema = orango.Schema(
   }
 )
 
-const Tweet = orango.model('Tweet', schema)
+module.exports = orango.model('Tweet', schema)
 
-Tweet.belongsTo('User')
-
-module.exports = Tweet
