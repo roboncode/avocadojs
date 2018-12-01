@@ -3,38 +3,37 @@ const orango = require('orango')
 const readFiles = require('./helpers/readFiles')
 const pluralize = require('pluralize')
 const {
-  RELATION
-} = orango.CONSTS
+  Builder
+} = require('tangjs/lib')
 const {
   filterToAQL,
 } = orango.helpers
-const merge = require('lodash/merge')
 require('colors')
 
-/*
-Tweet hasOne
-User
-
-Comment hasOne
-User
-
-User hasMany
-Tweet
-Comment
-
-User hasOne
-User_Role
-*/
-
-let counter = 1
 const AQB = orango.AQB
 
 function isOne(method) {
   switch (method) {
     case 'findOne':
+    case 'updateOne':
+    case 'deleteOne':
       return true
   }
   return false
+}
+
+async function execQuery(data) {
+  let q = await Builder.getInstance()
+    .data(data)
+    .convertTo(orango.Query)
+    .toObject({
+      computed: true,
+      scope: true // invokes required
+    })
+    .build()
+
+  let result = parseQuery(q)
+  console.log(result.toAQL().green)
 }
 
 function parseQuery(data) {
@@ -44,11 +43,11 @@ function parseQuery(data) {
   let ModelCls = orango.model(data.model)
   let col = ModelCls.collectionName
 
-  if (data.name === col) {
-    throw new Error('Name cannot be the same name as collection: ' + col)
+  if (data.alias === col) {
+    throw new Error('The property "alias" cannot be the same name as collection: ' + col)
   }
 
-  let name = data.name || pluralize.singular(col)
+  let name = data.alias || pluralize.singular(col)
   let aql = AQB.for(name).in(col)
 
   let result = name
@@ -82,46 +81,7 @@ function parseQuery(data) {
   if (data.populate) {
     for (let pop of data.populate) {
       let PopModelCls = orango.model(pop.model)
-      const relation = ModelCls.getRelation(pop.model)
-      console.log(data.model.blue, 'has', relation.has.magenta, pop.model.green)
-      // console.log(pop.model, 'hasMany'.magenta, data.model, '=', PopModelCls._hasMany)
-      // switch (relation.has) {
-      //   case RELATION.MANY:
-      //     aql = aql.let(PopModelCls.collectionName, parseQuery(pop))
-      //     appends.push(PopModelCls.collectionName)
-      //     break
-      //   case RELATION.ONE:
-      //     // console.log(AQB.nameUMENT(AQB.CONCAT(AQB.str(`${col}/`), `${name}.${relation.ref}`)).toAQL())
-      //     // console.log('whois', pop.filter)
-      //     if (pop.filter) {
-      //       pop.filter = merge({
-      //         _key: `@{${name}.${relation.ref}}`
-      //       }, pop.filter)
-      //     } else {
-      //       pop.filter = {
-      //         _key: `@{${name}.${relation.ref}}`
-      //       }
-      //     }
-
-      //     pop.limit = 1
-
-      //     aql = aql.let(relation.as, AQB.FIRST(parseQuery(pop)))
-
-      //     if (pop.merge) {
-      //       merges.push(relation.as)
-      //     } else {
-      //       appends.push(relation.as)
-      //     }
-      //     break
-      // }
-
-      // let name = pop.name || pluralize.singular(data.model.charAt(0).toLowerCase() + data.model.slice(1))
-      // let name = isOne(pop.method) ? pluralize.singular(pop.model.charAt(0).toLowerCase() + pop.model.slice(1)) : PopModelCls.collectionName
-      // let name = pop.name
-      // if(!name) {
-      //   name = isOne(pop.method) ? pluralize.singular(pop.model.charAt(0).toLowerCase() + pop.model.slice(1)) : PopModelCls.collectionName
-      // }
-      let popName = pop.name || PopModelCls.collectionName
+      let popName = pop.alias || PopModelCls.collectionName
       if (isOne(pop.method)) {
         aql = aql.let(popName, AQB.FIRST(parseQuery(pop)))
       } else {
@@ -132,7 +92,7 @@ function parseQuery(data) {
         merges.push(popName)
       } else {
         appends.push({
-          key: pop.append || popName,
+          key: pop.appendAs || popName,
           value: popName
         })
       }
@@ -159,9 +119,9 @@ function parseQuery(data) {
 async function main() {
   readFiles('models')
 
-  let result = parseQuery({
-    name: 'tweeter',
+  execQuery({
     model: 'Tweet',
+    alias: 'tweeter',
     method: 'find',
     filter: {
       $or: [{
@@ -176,9 +136,9 @@ async function main() {
     offset: 1,
     select: 'text',
     populate: [{
-        name: 'fred',
-        // merge: true,
         model: 'User',
+        alias: 'fred',
+        merge: true,
         method: 'findOne',
         filter: {
           _key: '@{tweeter.user}',
@@ -188,17 +148,17 @@ async function main() {
         select: 'firstName lastName',
       },
       {
-        name: 'comment',
-        append: 'comments',
         model: 'Comment',
+        alias: 'comment',
+        appendAs: 'comments',
         filter: {
           _key: '@{tweeter.user}'
         },
         limit: 10,
         computed: true,
         populate: [{
-          name: 'user',
           model: 'User',
+          alias: 'user',
           method: 'findOne',
           filter: {
             _key: '@{comment.user}'
@@ -210,8 +170,6 @@ async function main() {
     ],
     computed: true
   })
-
-  console.log(result.toAQL().green)
 }
 
 main()

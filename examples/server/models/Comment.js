@@ -19,9 +19,4 @@ let schema = orango.Schema({
   ]
 })
 
-const Comment = orango.model('Comment', schema)
-
-Comment.belongsTo('User', { ref: 'user' }) // one
-Comment.belongsTo('Tweet', { ref: 'tweet' }) // one
-
-module.exports = Comment
+module.exports = orango.model('Comment', schema)

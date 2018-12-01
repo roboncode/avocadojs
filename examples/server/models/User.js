@@ -119,10 +119,4 @@ schema.computed.fullName = function () {
   return this.firstName + ' ' + this.lastName
 }
 
-const User = orango.model('User', schema)
-
-User.hasMany('Tweet') // many
-User.hasMany('Comment') // many
-
-
-module.exports = User
+module.exports = orango.model('User', schema)
