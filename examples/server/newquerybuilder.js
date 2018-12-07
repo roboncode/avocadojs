@@ -2,15 +2,81 @@ require('app-module-path').addPath(__dirname)
 const orango = require('orango')
 const readFiles = require('./helpers/readFiles')
 const pluralize = require('pluralize')
-const {
-  Builder
-} = require('tangjs/lib')
-const {
-  filterToAQL,
-} = orango.helpers
+const { Builder } = require('tangjs/lib')
+const { filterToAQL } = orango.helpers
 require('colors')
 
 const AQB = orango.AQB
+
+let query = {
+  model: 'Tweet',
+  alias: 'tweeter',
+  method: 'find',
+  filter: {
+    $or: [
+      {
+        active: true
+      },
+      {
+        created: {
+          $lte: Date.now()
+        }
+      }
+    ]
+  },
+  limit: 10,
+  offset: 1,
+  select: 'text',
+  populate: [
+    {
+      model: 'User',
+      alias: 'fred',
+      merge: true,
+      method: 'findOne',
+      filter: {
+        _key: '@{tweeter.user}',
+        active: true
+      },
+      select: 'firstName lastName'
+      // return: { // cannot use return with merge
+      //   computed: true,
+      // }
+    },
+    {
+      model: 'Comment',
+      alias: 'comment',
+      appendAs: 'comments',
+      filter: {
+        _key: '@{tweeter.user}'
+      },
+      limit: 10,
+      populate: [
+        {
+          model: 'User',
+          alias: 'user',
+          method: 'findOne',
+          filter: {
+            _key: '@{comment.user}'
+          },
+          select: 'firstName lastName',
+          return: {
+            id: true,
+            computed: true
+          }
+        }
+      ],
+      return: {
+        id: true,
+        computed: true
+      }
+    }
+  ],
+  return: {
+    id: true,
+    computed: true,
+    // toModel: true
+  }
+}
 
 function isOne(method) {
   switch (method) {
@@ -119,57 +185,52 @@ function parseQuery(data) {
 async function main() {
   readFiles('models')
 
-  execQuery({
-    model: 'Tweet',
-    alias: 'tweeter',
-    method: 'find',
+  query = {
+    model: 'Identity',
+    alias: 'id',
+    method: 'findOne',
     filter: {
-      $or: [{
-        active: true
-      }, {
-        created: {
-          $lte: Date.now()
-        }
-      }]
+      identifier: 'roboncode@gmail.com'
     },
-    limit: 10,
-    offset: 1,
-    select: 'text',
-    populate: [{
-        model: 'User',
-        alias: 'fred',
-        merge: true,
-        method: 'findOne',
-        filter: {
-          _key: '@{tweeter.user}',
-          active: true
-        },
-        computed: true,
-        select: 'firstName lastName',
-      },
+    populate: [
       {
-        model: 'Comment',
-        alias: 'comment',
-        appendAs: 'comments',
+        model: 'User',
+        method: 'findOne',
+        appendAs: 'user',
         filter: {
-          _key: '@{tweeter.user}'
-        },
-        limit: 10,
-        computed: true,
-        populate: [{
-          model: 'User',
-          alias: 'user',
-          method: 'findOne',
-          filter: {
-            _key: '@{comment.user}'
-          },
-          computed: true,
-          select: 'firstName lastName'
-        }]
+          _key: '@{id.user}'
+        }
       }
     ],
+    return: {
+      id: true,
+      computed: true,
+      // toModel: true
+    }
+  }
+  
+  await execQuery(query)
+}
+
+// TODO: This will be used to modify results
+let modifier = {
+  single: true,
+  model: 'Identity',
+  return: {
+    id: true,
     computed: true
-  })
+  },
+  children: [
+    {
+      prop: 'user',
+      single: true,
+      model: 'User',
+      return: {
+        id: true,
+        computed: true
+      }
+    }
+  ]
 }
 
 main()
