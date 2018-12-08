@@ -1,48 +1,20 @@
 {
-    "method": "findOne",
+    "method": "find",
     "model": "Identity",
     "filter": {
-        "_key": "12345"
+        "active": true
     },
     "methods": [
         {
-            "method": "find",
+            "method": "updateOne",
             "model": "User",
             "filter": {
                 "_key": "@{id.user}"
             },
-            "methods": [],
-            "return": {
-                "id": true,
-                "computed": true
-            },
-            "alias": "george",
-            "appendAs": "user"
-        },
-        {
-            "method": "findOne",
-            "model": "User",
-            "filter": {
-                "_key": "@{id.user}"
-            },
-            "methods": [],
-            "return": {},
-            "alias": "fred",
-            "merge": true
-        },
-        {
-            "method": "deleteOne",
-            "model": "User",
-            "filter": {
-                "_key": "@{id.user}"
-            },
-            "methods": [],
-            "return": {}
+            "data": {}
         }
     ],
-    "return": {},
-    "alias": "id",
-    "limit": 10,
-    "offset": 1,
-    "select": "text"
+    "return": {
+        "value": "NEW"
+    }
 }

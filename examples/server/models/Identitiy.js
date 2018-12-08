@@ -16,8 +16,8 @@ const IdentitySchema = orango.Schema(
     identifier: String, // email, phone#
     passwordHash: String,
     connection: String, // Username-Password-Authentication, google-oauth2, etc
-    isSocial: { type: Boolean, default: false },
-    verified: { type: Boolean, default: false }
+    isSocial: { type: Boolean },
+    verified: { type: Boolean }
   },
   {
     strict: true,

@@ -1,4 +1,4 @@
-const keywords = 'FOR FILTER LET LIMIT REMOVE RETURN'.split(' ')
+const keywords = 'FOR FILTER LET LIMIT REMOVE UPDATE RETURN'.split(' ')
 const regexPhrase = new RegExp('\\b(' + keywords.join('|') + ')\\b', 'g')
 const SPACES = '   '
 const NEWLINE = '\n'

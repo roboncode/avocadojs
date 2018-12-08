@@ -1,9 +1,7 @@
 const fs = require('fs')
 require('colors')
-let query = {}
 
 class Model {
-
   constructor(name) {
     this.name = name
   }
@@ -26,6 +24,16 @@ class Model {
     return qb
   }
 
+  updateOne(filter = {}, data = {}) {
+    let qb = new QueryBuilder({
+      method: 'updateOne',
+      model: this.name,
+      filter,
+      data
+    })
+    return qb
+  }
+
   find(filter = {}) {
     let qb = new QueryBuilder({
       method: 'find',
@@ -39,8 +47,18 @@ class Model {
 class QueryBuilder {
   constructor(query = {}) {
     this.query = query
-    this.query.methods = []
-    this.query.return = {}
+  }
+
+  _ensureMethods() {
+    if (!this.query.methods) {
+      this.query.methods = []
+    }
+  }
+
+  _ensureReturn() {
+    if (!this.query.return) {
+      this.query.return = {}
+    }
   }
 
   alias(val) {
@@ -64,7 +82,7 @@ class QueryBuilder {
   }
 
   select(val = '') {
-    if(val) {
+    if (val) {
       this.query.select = val
     } else {
       delete this.query.select
@@ -74,28 +92,39 @@ class QueryBuilder {
 
   append(prop, qb) {
     qb.query.appendAs = prop
+    this._ensureMethods()
     this.query.methods.push(qb.query)
     return this
   }
 
   merge(qb) {
     qb.query.merge = true
+    this._ensureMethods()
     this.query.methods.push(qb.query)
     return this
   }
 
   call(qb) {
+    this._ensureMethods()
     this.query.methods.push(qb.query)
     return this
   }
 
   id(val = true) {
+    this._ensureReturn()
     this.query.return.id = val
     return this
   }
 
   computed(val = true) {
+    this._ensureReturn()
     this.query.return.computed = val
+    return this
+  }
+
+  return(val) {
+    this._ensureReturn()
+    this.query.return.value = val
     return this
   }
 
@@ -108,17 +137,18 @@ class QueryBuilder {
 let Identity = new Model('Identity')
 let User = new Model('User')
 
-let result = Identity
-  .findOne({_key: '12345'})
-  .alias('id')
-  .limit(10)
-  .offset(1)
-  .select('text')
-  .append('user', User.find({ _key: '@{id.user}'}).id().computed().alias('george'))
-  .merge(User.findOne({ _key: '@{id.user}'}).alias('fred'))
-  .call(User.deleteOne({ _key: '@{id.user}'}))
+let result = Identity.find({ active: true }, { verified: true, bogus: true})
+  // .alias('id')
+  // .limit(10)
+  // .offset(1)
+  // .select('text')
+  // .append('user', User.find({ _key: '@{id.user}'}).id().computed().alias('george'))
+  // .merge(User.findOne({ _key: '@{id.user}'}).alias('fred'))
+  // .call(User.deleteOne({ _key: '@{id.user}'}))
+  // .call(User.updateOne({ _key: '@{id.user}' }))
+  .call(User.updateOne({ _key: '@{id.user}' }))
+  .return('NEW')
 
 console.log(result.toString().green)
 
-fs.writeFileSync('query.json', result.toString(4), 'utf-8')  
-
+fs.writeFileSync('query.json', result.toString(4), 'utf-8')

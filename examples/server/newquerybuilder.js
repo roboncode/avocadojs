@@ -9,89 +9,93 @@ const formatAQL = require('./prettyaql')
 require('colors')
 
 const AQB = orango.AQB
+const METHODS = {
+  FIND_ONE: 'findOne',
+  UPDATE_ONE: 'updateOne',
+  DELETE_ONE: 'deleteOne'
+}
 
-let query = JSON.parse(fs.readFileSync('query.json', { encoding: 'utf-8' }))
+let query = JSON.parse(fs.readFileSync(__dirname + '/query.json', { encoding: 'utf-8' }))
 
 function isOne(method) {
   switch (method) {
-    case 'findOne':
-    case 'updateOne':
-    case 'deleteOne':
+    case METHODS.FIND_ONE:
+    case METHODS.UPDATE_ONE:
+    case METHODS.DELETE_ONE:
       return true
   }
   return false
 }
 
-async function execQuery(data) {
-  let q = await Builder.getInstance()
+async function execQuery(query) {
+  let q = await validate(orango.Query, query)
+  let result = await parseQuery(q)
+  console.log(formatAQL(result.aql.toAQL()).green)
+}
+
+async function validate(Model, data) {
+  let result = await Builder.getInstance()
     .data(data)
-    .convertTo(orango.Query)
+    .convertTo(Model)
     .toObject({
-      computed: true,
       scope: true // invokes required
     })
     .build()
-
-  let result = parseQuery(q)
-  console.log(formatAQL(result.toAQL()).green)
+  return result
 }
 
-function parseQuery(data) {
-  let ModelCls = orango.model(data.model)
-  let col = ModelCls.collectionName
+async function parseQuery(query) {
+  const ModelCls = orango.model(query.model)
+  const col = ModelCls.collectionName
+  const name = query.id || pluralize.singular(col) // the prop name
+  const merges = []
+  const appends = []
 
-  if (data.id === col) {
+  let result = name // this is the defatul result; ex. RETURN user
+  let aql = AQB.for(name).in(col) // create FOR..IN
+
+  if (query.id === col) {
     throw new Error('The property "id" cannot be the same name as collection: ' + col)
   }
 
-  let name = data.id || pluralize.singular(col)
-  let aql = AQB.for(name).in(col)
-  let result = name
-
-  if (isOne(data.method)) {
-    data.limit = 1
+  if (isOne(query.method)) {
+    query.limit = 1
   }
 
-  if (data.select) {
-    let select = data.select.split(' ')
+  if (query.select) {
+    let select = query.select.split(' ')
     for (let i = 0; i < select.length; i++) {
       select[i] = AQB.str(select[i])
     }
     result = AQB.KEEP(name, select)
   }
 
-  if (data.filter) {
-    let filterAQL = filterToAQL(data.filter, name)
+  if (query.filter) {
+    let filterAQL = filterToAQL(query.filter, name)
     aql = aql.filter(AQB.expr(filterAQL))
-    if (data.offset && data.limit) {
-      aql = aql.limit(data.offset, data.limit)
-    } else if (data.offset) {
-      aql = aql.limit(data.offset, 10)
-    } else if (data.limit) {
-      aql = aql.limit(data.limit)
+    if (query.offset && query.limit) {
+      aql = aql.limit(query.offset, query.limit)
+    } else if (query.offset) {
+      aql = aql.limit(query.offset, 10)
+    } else if (query.limit) {
+      aql = aql.limit(query.limit)
     }
   }
 
-  // dummy
-  // these are just properties???
-  // let merges = ['junk', 'test']
-  let merges = []
-  // these are populates
-  let appends = []
-
-  if (data.methods) {
-    for (let item of data.methods) {
+  if (query.methods) {
+    for (let item of query.methods) {
       let ItemModelCls = orango.model(item.model)
       let id = item.id || ItemModelCls.collectionName
+      let result = await parseQuery(item)
       if (isOne(item.method)) {
-        aql = aql.let(id, AQB.FIRST(parseQuery(item)))
+        aql = aql.let(id, AQB.FIRST(result.aql))
       } else {
-        aql = aql.let(id, parseQuery(item))
+        aql = aql.let(id, result.aql)
       }
 
       if (item.merge) {
         merges.push(id)
-      } else {
+      } else if (item.appendAs) {
         appends.push({
           key: item.appendAs || id,
           value: id
@@ -100,8 +104,11 @@ function parseQuery(data) {
     }
   }
 
-  if (data.method === 'deleteOne') {
+  if (query.method === METHODS.DELETE_ONE) {
     aql = aql.remove(name).in(col)
+  } else if (query.method === METHODS.UPDATE_ONE) {
+    let data = await validate(ModelCls, query.data)
+    aql = aql.update(name).with(data).in(col)
   }
 
   let appendData = {}
@@ -117,14 +124,19 @@ function parseQuery(data) {
     result = AQB.MERGE(result, appendData)
   }
 
-  try {
-    aql = aql.return(result)
-  } catch (e) {}
-  return aql
+  if (query.return) {
+    try {
+      aql = aql.return(query.return.value, name)
+    } catch(e) {
+      throw e
+    }
+  }
+
+  return { aql }
 }
 
 async function main() {
-  readFiles('models')
+  readFiles(__dirname + '/models')
   await execQuery(query)
 }
 
