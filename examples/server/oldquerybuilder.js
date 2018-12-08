@@ -2,12 +2,8 @@ require('app-module-path').addPath(__dirname)
 const orango = require('orango')
 const readFiles = require('./helpers/readFiles')
 const pluralize = require('pluralize')
-const {
-  Builder
-} = require('tangjs/lib')
-const {
-  filterToAQL
-} = orango.helpers
+const { Builder } = require('tangjs/lib')
+const { filterToAQL } = orango.helpers
 require('colors')
 
 const AQB = orango.AQB
@@ -17,7 +13,8 @@ let query = {
   model: 'Tweet',
   alias: 'tweeter',
   filter: {
-    $or: [{
+    $or: [
+      {
         active: true
       },
       {
@@ -30,7 +27,8 @@ let query = {
   limit: 10,
   offset: 1,
   select: 'text',
-  methods: [{
+  methods: [
+    {
       method: 'findOne',
       model: 'User',
       alias: 'fred',
@@ -52,19 +50,21 @@ let query = {
         _key: '@{tweeter.user}'
       },
       limit: 10,
-      methods: [{
-        method: 'findOne',
-        model: 'User',
-        alias: 'user',
-        filter: {
-          _key: '@{comment.user}'
-        },
-        select: 'firstName lastName',
-        return: {
-          id: true,
-          computed: true
+      methods: [
+        {
+          method: 'findOne',
+          model: 'User',
+          alias: 'user',
+          filter: {
+            _key: '@{comment.user}'
+          },
+          select: 'firstName lastName',
+          return: {
+            id: true,
+            computed: true
+          }
         }
-      }],
+      ],
       return: {
         id: true,
         computed: true
@@ -145,31 +145,24 @@ function parseQuery(data) {
   let appends = []
 
   if (data.methods) {
-    for (let item of data.methods) {
-      let PopModelCls = orango.model(item.model)
-      let popName = item.alias || PopModelCls.collectionName
-      if (isOne(item.method)) {
-        aql = aql.let(popName, AQB.FIRST(parseQuery(item)))
+    for (let pop of data.methods) {
+      let PopModelCls = orango.model(pop.model)
+      let popName = pop.alias || PopModelCls.collectionName
+      if (isOne(pop.method)) {
+        aql = aql.let(popName, AQB.FIRST(parseQuery(pop)))
       } else {
-        aql = aql.let(popName, parseQuery(item))
+        aql = aql.let(popName, parseQuery(pop))
       }
 
-      console.log(item)
-      if (item.merge) {
-        console.log('merge', item.name)
+      if (pop.merge) {
         merges.push(popName)
       } else {
         appends.push({
-          key: item.appendAs || popName,
+          key: pop.appendAs || popName,
           value: popName
         })
       }
     }
-  }
-
-  if(data.method === 'deleteOne') {
-    // console.log('YOU GOT MAIL!!!!'.bgRed)
-    aql = aql.remove('abc', 'def')
   }
 
   let appendData = {}
@@ -185,9 +178,7 @@ function parseQuery(data) {
     result = AQB.MERGE(result, appendData)
   }
 
-  try {
-    aql = aql.return(result)
-  } catch(e) {}
+  aql = aql.return(result)
   return aql
 }
 
@@ -201,113 +192,45 @@ async function main() {
     filter: {
       identifier: 'roboncode@gmail.com'
     },
-    methods: [{
-      method: 'findOne',
-      model: 'User',
-      appendAs: 'user',
-      filter: {
-        _key: '@{id.user}'
+    methods: [
+      {
+        method: 'findOne',
+        model: 'User',
+        appendAs: 'user',
+        filter: {
+          _key: '@{id.user}'
+        }
       }
-    }],
+    ],
     return: {
       id: true,
       computed: true,
       // toModel: true
     }
   }
-
-  query = {
-    "method": "findOne",
-    "model": "Identity",
-    "filter": {
-      "_key": "12345"
-    },
-    "methods": [{
-      "method": "findOne",
-      "model": "User",
-      "filter": {
-        "_key": "@{id.user}"
-      },
-      "methods": [],
-      "return": {
-        "id": true,
-        "computed": true
-      },
-      "appendAs": "user"
-    }],
-    "return": {},
-    "alias": "tweeter",
-    "limit": 10,
-    "offset": 1,
-    "select": "text"
-  }
-
-  query = {
-    "method": "findOne",
-    "model": "Identity",
-    "filter": {
-      "_key": "12345"
-    },
-    "methods": [{
-      "method": "find",
-      "model": "User",
-      "filter": {
-        "_key": "@{id.user}"
-      },
-      "methods": [],
-      "return": {
-        "id": true,
-        "computed": true
-      },
-      "alias": "george",
-      "appendAs": "user"
-    }, {
-      "method": "findOne",
-      "model": "User",
-      "filter": {
-        "_key": "@{id.user}"
-      },
-      "methods": [],
-      "return": {},
-      "alias": "fred",
-      "merge": true
-    }, {
-      "method": "deleteOne",
-      "model": "User",
-      "filter": {
-        "_key": "@{id.XXXXX}"
-      },
-      "methods": [],
-      "return": {}
-    }],
-    "return": {},
-    "alias": "id",
-    "limit": 10,
-    "offset": 1,
-    "select": "text"
-  }
+  
   await execQuery(query)
 }
 
 // TODO: This will be used to modify results
-// let modifier = {
-//   single: true,
-//   model: 'Identity',
-//   return: {
-//     id: true,
-//     computed: true
-//   },
-//   children: [
-//     {
-//       prop: 'user',
-//       single: true,
-//       model: 'User',
-//       return: {
-//         id: true,
-//         computed: true
-//       }
-//     }
-//   ]
-// }
+let modifier = {
+  single: true,
+  model: 'Identity',
+  return: {
+    id: true,
+    computed: true
+  },
+  children: [
+    {
+      prop: 'user',
+      single: true,
+      model: 'User',
+      return: {
+        id: true,
+        computed: true
+      }
+    }
+  ]
+}
 
 main()
