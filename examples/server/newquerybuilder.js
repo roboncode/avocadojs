@@ -1,82 +1,16 @@
 require('app-module-path').addPath(__dirname)
+const fs = require('fs')
 const orango = require('orango')
 const readFiles = require('./helpers/readFiles')
 const pluralize = require('pluralize')
-const {
-  Builder
-} = require('tangjs/lib')
-const {
-  filterToAQL
-} = orango.helpers
+const { Builder } = require('tangjs/lib')
+const { filterToAQL } = orango.helpers
+const formatAQL = require('./prettyaql')
 require('colors')
 
 const AQB = orango.AQB
 
-let query = {
-  method: 'find',
-  model: 'Tweet',
-  alias: 'tweeter',
-  filter: {
-    $or: [{
-        active: true
-      },
-      {
-        created: {
-          $lte: Date.now()
-        }
-      }
-    ]
-  },
-  limit: 10,
-  offset: 1,
-  select: 'text',
-  methods: [{
-      method: 'findOne',
-      model: 'User',
-      alias: 'fred',
-      merge: true,
-      filter: {
-        _key: '@{tweeter.user}',
-        active: true
-      },
-      select: 'firstName lastName'
-      // return: { // cannot use return with merge
-      //   computed: true,
-      // }
-    },
-    {
-      model: 'Comment',
-      alias: 'comment',
-      appendAs: 'comments',
-      filter: {
-        _key: '@{tweeter.user}'
-      },
-      limit: 10,
-      methods: [{
-        method: 'findOne',
-        model: 'User',
-        alias: 'user',
-        filter: {
-          _key: '@{comment.user}'
-        },
-        select: 'firstName lastName',
-        return: {
-          id: true,
-          computed: true
-        }
-      }],
-      return: {
-        id: true,
-        computed: true
-      }
-    }
-  ],
-  return: {
-    id: true,
-    computed: true,
-    // toModel: true
-  }
-}
+let query = JSON.parse(fs.readFileSync('query.json', { encoding: 'utf-8' }))
 
 function isOne(method) {
   switch (method) {
@@ -99,24 +33,25 @@ async function execQuery(data) {
     .build()
 
   let result = parseQuery(q)
-  console.log(result.toAQL().green)
+  console.log(formatAQL(result.toAQL()).green)
 }
 
 function parseQuery(data) {
-  if (data.method === 'findOne') {
-    data.limit = 1
-  }
   let ModelCls = orango.model(data.model)
   let col = ModelCls.collectionName
 
-  if (data.alias === col) {
-    throw new Error('The property "alias" cannot be the same name as collection: ' + col)
+  if (data.id === col) {
+    throw new Error('The property "id" cannot be the same name as collection: ' + col)
   }
 
-  let name = data.alias || pluralize.singular(col)
+  let name = data.id || pluralize.singular(col)
   let aql = AQB.for(name).in(col)
-
   let result = name
+
+  if (isOne(data.method)) {
+    data.limit = 1
+  }
+
   if (data.select) {
     let select = data.select.split(' ')
     for (let i = 0; i < select.length; i++) {
@@ -146,30 +81,27 @@ function parseQuery(data) {
 
   if (data.methods) {
     for (let item of data.methods) {
-      let PopModelCls = orango.model(item.model)
-      let popName = item.alias || PopModelCls.collectionName
+      let ItemModelCls = orango.model(item.model)
+      let id = item.id || ItemModelCls.collectionName
       if (isOne(item.method)) {
-        aql = aql.let(popName, AQB.FIRST(parseQuery(item)))
+        aql = aql.let(id, AQB.FIRST(parseQuery(item)))
       } else {
-        aql = aql.let(popName, parseQuery(item))
+        aql = aql.let(id, parseQuery(item))
       }
 
-      console.log(item)
       if (item.merge) {
-        console.log('merge', item.name)
-        merges.push(popName)
+        merges.push(id)
       } else {
         appends.push({
-          key: item.appendAs || popName,
-          value: popName
+          key: item.appendAs || id,
+          value: id
         })
       }
     }
   }
 
-  if(data.method === 'deleteOne') {
-    // console.log('YOU GOT MAIL!!!!'.bgRed)
-    aql = aql.remove('abc', 'def')
+  if (data.method === 'deleteOne') {
+    aql = aql.remove(name).in(col)
   }
 
   let appendData = {}
@@ -187,105 +119,12 @@ function parseQuery(data) {
 
   try {
     aql = aql.return(result)
-  } catch(e) {}
+  } catch (e) {}
   return aql
 }
 
 async function main() {
   readFiles('models')
-
-  query = {
-    method: 'findOne',
-    model: 'Identity',
-    alias: 'id',
-    filter: {
-      identifier: 'roboncode@gmail.com'
-    },
-    methods: [{
-      method: 'findOne',
-      model: 'User',
-      appendAs: 'user',
-      filter: {
-        _key: '@{id.user}'
-      }
-    }],
-    return: {
-      id: true,
-      computed: true,
-      // toModel: true
-    }
-  }
-
-  query = {
-    "method": "findOne",
-    "model": "Identity",
-    "filter": {
-      "_key": "12345"
-    },
-    "methods": [{
-      "method": "findOne",
-      "model": "User",
-      "filter": {
-        "_key": "@{id.user}"
-      },
-      "methods": [],
-      "return": {
-        "id": true,
-        "computed": true
-      },
-      "appendAs": "user"
-    }],
-    "return": {},
-    "alias": "tweeter",
-    "limit": 10,
-    "offset": 1,
-    "select": "text"
-  }
-
-  query = {
-    "method": "findOne",
-    "model": "Identity",
-    "filter": {
-      "_key": "12345"
-    },
-    "methods": [{
-      "method": "find",
-      "model": "User",
-      "filter": {
-        "_key": "@{id.user}"
-      },
-      "methods": [],
-      "return": {
-        "id": true,
-        "computed": true
-      },
-      "alias": "george",
-      "appendAs": "user"
-    }, {
-      "method": "findOne",
-      "model": "User",
-      "filter": {
-        "_key": "@{id.user}"
-      },
-      "methods": [],
-      "return": {},
-      "alias": "fred",
-      "merge": true
-    }, {
-      "method": "deleteOne",
-      "model": "User",
-      "filter": {
-        "_key": "@{id.XXXXX}"
-      },
-      "methods": [],
-      "return": {}
-    }],
-    "return": {},
-    "alias": "id",
-    "limit": 10,
-    "offset": 1,
-    "select": "text"
-  }
   await execQuery(query)
 }
 

@@ -1,3 +1,4 @@
+const fs = require('fs')
 require('colors')
 let query = {}
 
@@ -98,8 +99,8 @@ class QueryBuilder {
     return this
   }
 
-  toString() {
-    return JSON.stringify(this.query)
+  toString(indent = 0) {
+    return JSON.stringify(this.query, null, indent)
   }
 }
 
@@ -115,7 +116,9 @@ let result = Identity
   .select('text')
   .append('user', User.find({ _key: '@{id.user}'}).id().computed().alias('george'))
   .merge(User.findOne({ _key: '@{id.user}'}).alias('fred'))
-  .call(User.deleteOne({ _key: '@{id.XXXXX}'}))
+  .call(User.deleteOne({ _key: '@{id.user}'}))
 
 console.log(result.toString().green)
+
+fs.writeFileSync('query.json', result.toString(4), 'utf-8')  
 
