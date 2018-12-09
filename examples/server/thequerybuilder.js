@@ -34,6 +34,16 @@ class Model {
     return qb
   }
 
+  update(filter, data = {}) {
+    let qb = new QueryBuilder({
+      method: 'update',
+      model: this.name,
+      filter,
+      data
+    })
+    return qb
+  }
+
   find(filter = {}) {
     let qb = new QueryBuilder({
       method: 'find',
@@ -41,6 +51,10 @@ class Model {
       filter
     })
     return qb
+  }
+
+  return() {
+    return new Return()
   }
 }
 
@@ -81,6 +95,11 @@ class QueryBuilder {
     return this
   }
 
+  one() {
+    this.query.one = true
+    return this
+  }
+
   select(val = '') {
     if (val) {
       this.query.select = val
@@ -94,13 +113,20 @@ class QueryBuilder {
     qb.query.appendAs = prop
     this._ensureMethods()
     this.query.methods.push(qb.query)
+    qb.return()
     return this
   }
 
-  merge(qb) {
+  merge(prop, qb) {
+    qb.query.appendAs = prop
     qb.query.merge = true
     this._ensureMethods()
     this.query.methods.push(qb.query)
+    return this
+  }
+
+  return(options = {}) {
+    this.query.return = options
     return this
   }
 
@@ -110,26 +136,42 @@ class QueryBuilder {
     return this
   }
 
+  rawQuery() {
+    let returnOptions = this.query.return
+    if (returnOptions && returnOptions.options) {
+      returnOptions = returnOptions.options
+    }
+    return Object.assign({}, this.query, { return: returnOptions })
+  }
+
+  toString(indent = false) {
+    return JSON.stringify(this.rawQuery(), null, indent ? 2 : 0)
+  }
+}
+
+class Return {
+  constructor(options = {}) {
+    this.options = options
+  }
+
+  as(val) {
+    this.options.as = val
+    return this
+  }
+
   id(val = true) {
-    this._ensureReturn()
-    this.query.return.id = val
+    this.options.id = val
     return this
   }
 
   computed(val = true) {
-    this._ensureReturn()
-    this.query.return.computed = val
+    this.options.computed = val
     return this
   }
 
-  return(val) {
-    this._ensureReturn()
-    this.query.return.value = val
+  model(val = true) {
+    this.options.model = val
     return this
-  }
-
-  toString(indent = 0) {
-    return JSON.stringify(this.query, null, indent)
   }
 }
 
@@ -137,18 +179,32 @@ class QueryBuilder {
 let Identity = new Model('Identity')
 let User = new Model('User')
 
-let result = Identity.find({ active: true }, { verified: true, bogus: true})
-  // .alias('id')
-  // .limit(10)
-  // .offset(1)
-  // .select('text')
-  // .append('user', User.find({ _key: '@{id.user}'}).id().computed().alias('george'))
-  // .merge(User.findOne({ _key: '@{id.user}'}).alias('fred'))
-  // .call(User.deleteOne({ _key: '@{id.user}'}))
-  // .call(User.updateOne({ _key: '@{id.user}' }))
-  .call(User.updateOne({ _key: '@{id.user}' }))
-  .return('NEW')
+// let result1 = Identity.find({ active: true }, { verified: true, bogus: true})
+// .alias('id')
+// .limit(10)
+// .offset(1)
+// .select('text')
+// .append('user', User.find({ _key: '@{id.user}'}).id().computed().alias('george'))
+// .merge(User.findOne({ _key: '@{id.user}'}).alias('fred'))
+// .call(User.deleteOne({ _key: '@{id.user}'}))
+// .call(User.updateOne({ _key: '@{id.user}' }))
+// .call(User.updateOne({ _key: '@{id.user}' }))
+// .return('NEW')
+
+let UserQuery = User.update({ _key: '@{^.user}' }).one().alias('u').return()
+
+let result = Identity.update({ _key: '217388' }, { verified: true, bogus: true })
+  .alias('ident')
+  .one()
+  .append('user', UserQuery)
+  .select('name')
+  .return(Identity.return().as('NEW').id().computed())
+  // .return({
+  //   // as: 'NEW',
+  //   id: true,
+  //   computed: true
+  // })
 
 console.log(result.toString().green)
 
-fs.writeFileSync('query.json', result.toString(4), 'utf-8')
+fs.writeFileSync('query.json', result.toString(true), 'utf-8')

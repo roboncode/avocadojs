@@ -1,20 +1,33 @@
 {
-    "method": "find",
-    "model": "Identity",
-    "filter": {
-        "active": true
-    },
-    "methods": [
-        {
-            "method": "updateOne",
-            "model": "User",
-            "filter": {
-                "_key": "@{id.user}"
-            },
-            "data": {}
-        }
-    ],
-    "return": {
-        "value": "NEW"
+  "method": "update",
+  "model": "Identity",
+  "filter": {
+    "_key": "217388"
+  },
+  "data": {
+    "verified": true,
+    "bogus": true
+  },
+  "alias": "ident",
+  "one": true,
+  "methods": [
+    {
+      "method": "update",
+      "model": "User",
+      "filter": {
+        "_key": "@{^.user}"
+      },
+      "data": {},
+      "one": true,
+      "alias": "u",
+      "return": {},
+      "appendAs": "user"
     }
+  ],
+  "select": "name",
+  "return": {
+    "as": "NEW",
+    "id": true,
+    "computed": true
+  }
 }

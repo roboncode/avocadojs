@@ -10,22 +10,16 @@ require('colors')
 
 const AQB = orango.AQB
 const METHODS = {
+  FIND: 'find',
   FIND_ONE: 'findOne',
+  UPDATE: 'update',
   UPDATE_ONE: 'updateOne',
+  DELETE: 'delete',
   DELETE_ONE: 'deleteOne'
 }
 
+let count = 1
 let query = JSON.parse(fs.readFileSync(__dirname + '/query.json', { encoding: 'utf-8' }))
-
-function isOne(method) {
-  switch (method) {
-    case METHODS.FIND_ONE:
-    case METHODS.UPDATE_ONE:
-    case METHODS.DELETE_ONE:
-      return true
-  }
-  return false
-}
 
 async function execQuery(query) {
   let q = await validate(orango.Query, query)
@@ -47,18 +41,32 @@ async function validate(Model, data) {
 async function parseQuery(query) {
   const ModelCls = orango.model(query.model)
   const col = ModelCls.collectionName
-  const name = query.id || pluralize.singular(col) // the prop name
+  const doc = query.alias || pluralize.singular(col) // the doc id
   const merges = []
   const appends = []
 
-  let result = name // this is the defatul result; ex. RETURN user
-  let aql = AQB.for(name).in(col) // create FOR..IN
+  let result // this is the defatul result; ex. RETURN user
+  let aql = AQB.for(doc).in(col) // create FOR..IN
 
-  if (query.id === col) {
+  if (query.return) {
+    if (query.return.as) {
+      result = query.return.as
+      if (typeof result === 'object') {
+        let strResult = JSON.stringify(result).replace(/:"(new|old)"/gi, ':`$1`')
+        result = AQB.expr(strResult)
+      }
+    } else if (query.method === METHODS.UPDATE) {
+      result = 'NEW'
+    } else {
+      result = doc
+    }
+  }
+
+  if (query.alias === col) {
     throw new Error('The property "id" cannot be the same name as collection: ' + col)
   }
 
-  if (isOne(query.method)) {
+  if (query.one) {
     query.limit = 1
   }
 
@@ -67,11 +75,14 @@ async function parseQuery(query) {
     for (let i = 0; i < select.length; i++) {
       select[i] = AQB.str(select[i])
     }
-    result = AQB.KEEP(name, select)
+    result = AQB.KEEP(result, select)
   }
 
   if (query.filter) {
-    let filterAQL = filterToAQL(query.filter, name)
+    let filterAQL = filterToAQL(query.filter, {
+      doc,
+      parentDoc: query.$doc
+    })
     aql = aql.filter(AQB.expr(filterAQL))
     if (query.offset && query.limit) {
       aql = aql.limit(query.offset, query.limit)
@@ -84,10 +95,11 @@ async function parseQuery(query) {
 
   if (query.methods) {
     for (let item of query.methods) {
-      let ItemModelCls = orango.model(item.model)
-      let id = item.id || ItemModelCls.collectionName
+      // let ItemModelCls = orango.model(item.model)
+      let id = item.appendAs || '_' + count++
+      item.$doc = doc
       let result = await parseQuery(item)
-      if (isOne(item.method)) {
+      if (item.one) {
         aql = aql.let(id, AQB.FIRST(result.aql))
       } else {
         aql = aql.let(id, result.aql)
@@ -105,10 +117,13 @@ async function parseQuery(query) {
   }
 
   if (query.method === METHODS.DELETE_ONE) {
-    aql = aql.remove(name).in(col)
+    aql = aql.remove(doc).in(col)
   } else if (query.method === METHODS.UPDATE_ONE) {
     let data = await validate(ModelCls, query.data)
-    aql = aql.update(name).with(data).in(col)
+    aql = aql.update(doc).with(data).in(col)
+  } else if (query.method === METHODS.UPDATE) {
+    let data = await validate(ModelCls, query.data)
+    aql = aql.update(doc).with(data).in(col)
   }
 
   let appendData = {}
@@ -126,8 +141,15 @@ async function parseQuery(query) {
 
   if (query.return) {
     try {
-      aql = aql.return(query.return.value, name)
-    } catch(e) {
+      // let returnVal = query.return.as
+      // if(!returnVal && query.method === METHODS.UPDATE) {
+      //   returnVal = 'NEW'
+      // } else {
+      //   returnVal = doc
+      // }
+      // aql = aql.return(returnVal)
+      aql = aql.return(result)
+    } catch (e) {
       throw e
     }
   }

@@ -1,40 +1,49 @@
 const keywords = 'FOR FILTER LET LIMIT REMOVE UPDATE RETURN'.split(' ')
 const regexPhrase = new RegExp('\\b(' + keywords.join('|') + ')\\b', 'g')
-const SPACES = '   '
+const TAB = '   '
 const NEWLINE = '\n'
 
+let pad = ''
+
+function clear() {
+  pad = ''
+}
+
+function indent() {
+  pad += TAB
+}
+
+function outdent() {
+  pad = pad.substr(TAB.length * 2)
+}
+
 function formatAQL(aql) {
-  let indent = ''
   let prettyAQL = ''
-  let lastPhraseType = ''
   let phrases = aql.replace(regexPhrase, '\n$1').substr(1).split('\n')
 
   for (let i = 0; i < phrases.length; i++) {
-    let phrase = phrases[i]
+    let phrase = phrases[i].trim()
     if (phrase.match(/\bFOR\b/g)) {
-      indent += SPACES
-      prettyAQL += phrases[i] + NEWLINE + indent
-      lastPhraseType = 'FOR'
-    } else if (phrase.match(/\bFILTER\b/g)) {
-      prettyAQL += phrases[i] + NEWLINE + indent
-      lastPhraseType = 'FILTER'
-    } else if (phrase.match(/\LET\b/g)) {
-      prettyAQL += NEWLINE + indent + phrases[i]
-      indent += SPACES
-      prettyAQL += NEWLINE + indent
-      lastPhraseType = 'LET'
-    } else if (phrase.match(/\RETURN\b/g)) {
-      if (lastPhraseType === 'RETURN') {
-        prettyAQL += NEWLINE + indent
-      }
-      indent = indent.substr(SPACES.length * 2)
-      prettyAQL += phrases[i] + NEWLINE + indent
-      lastPhraseType = 'RETURN'
+      prettyAQL += NEWLINE + pad + phrase
+      indent()
+    } else if (phrase.match(/\bLET\b/g)) {
+      prettyAQL += NEWLINE + NEWLINE + pad + phrase
+      indent()
+    } else if (phrase.match(/\bRETURN\b/g)) {
+      // outdent()
+      prettyAQL += NEWLINE + pad + phrase
+    } else if (phrase.match(/\bUPDATE|REMOVE\b/g)) {
+      prettyAQL += NEWLINE + pad + phrase
     } else {
-      prettyAQL += phrases[i] + NEWLINE + indent
-      lastPhraseType = ''
+      prettyAQL += NEWLINE + pad + phrase
+    }
+    if (prettyAQL.substr(-2) === '))') {
+      prettyAQL = prettyAQL.substr(0, prettyAQL.length-2)
+      outdent()
+      prettyAQL += NEWLINE + pad + '))' + NEWLINE
     }
   }
+  clear()
   return prettyAQL
 }
 
