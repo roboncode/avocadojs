@@ -12,29 +12,20 @@ class Model {
     })
   }
 
-  findOne(filter = {}) {
+  find(filter = {}) {
     let qb = new QueryBuilder({
-      method: 'findOne',
+      method: 'find',
       model: this.name,
       filter
     })
+    qb.return()
     return qb
   }
 
-  deleteOne(filter = {}) {
+  insert(data = {}) {
     let qb = new QueryBuilder({
-      method: 'deleteOne',
+      method: 'insert',
       model: this.name,
-      filter
-    })
-    return qb
-  }
-
-  updateOne(filter = {}, data = {}) {
-    let qb = new QueryBuilder({
-      method: 'updateOne',
-      model: this.name,
-      filter,
       data
     })
     return qb
@@ -50,12 +41,46 @@ class Model {
     return qb
   }
 
-  find(filter = {}) {
+  replace(filter, data = {}) {
     let qb = new QueryBuilder({
-      method: 'find',
+      method: 'replace',
+      model: this.name,
+      filter,
+      data
+    })
+    return qb
+  }
+
+  remove(filter = {}) {
+    let qb = new QueryBuilder({
+      method: 'remove',
       model: this.name,
       filter
     })
+    return qb
+  }
+
+  count(filter = {}) {
+    let qb = new QueryBuilder({
+      method: 'count',
+      model: this.name,
+      filter
+    })
+    qb.return()
+    return qb
+  }
+
+  upsert(filter = {}, insertData = {}, updateData = {}) {
+    let qb = new QueryBuilder({
+      method: 'upsert',
+      model: this.name,
+      filter,
+      data: {
+        insert: insertData,
+        update: updateData
+      }
+    })
+    qb.return()
     return qb
   }
 
@@ -66,66 +91,58 @@ class Model {
 
 class QueryBuilder {
   constructor(query = {}) {
-    this.query = query
-    this.query.subqueries = []
+    this._query = query
+    this._query.queries = []
   }
 
   _ensureReturn() {
-    if (!this.query.return) {
-      this.query.return = {}
+    if (!this._query.return) {
+      this._query.return = {}
     }
   }
 
-  alias(val) {
-    this.query.alias = val
+  name(val) {
+    this._query.name = val
     return this
   }
 
   filter(val) {
-    this.query.filter = val
+    this._query.filter = val
     return this
   }
 
   offset(val = 0) {
-    this.query.offset = val
+    this._query.offset = val
     return this
   }
 
   limit(val = 10) {
-    this.query.limit = val
+    this._query.limit = val
     return this
   }
 
   one() {
-    this.query.one = true
+    this._query.one = true
     return this
   }
 
   select(val = '') {
     if (val) {
-      this.query.select = val
+      this._query.select = val
     } else {
-      delete this.query.select
+      delete this._query.select
     }
     return this
   }
 
-  // query(prop, qb) {
-  //   // qb.rawQuery().appendAs = prop
-  //   this._ensureMethods()
-  //   this.query.methods.push(qb.query)
-  //   qb.return()
-  //   return this
-  // }
-
-  subquery(...opts) {
+  query(...opts) {
     if (typeof opts[0] === 'string') {
-      this.query.subqueries.push({
+      this._query.queries.push({
         id: opts[0],
         query: opts[1].rawQuery()
       })
     } else {
-      this.query.subqueries.push({
+      this._query.queries.push({
         query: opts[0].rawQuery()
       })
     }
@@ -133,16 +150,16 @@ class QueryBuilder {
   }
 
   return(value) {
-    this.query.return = value || Model.return()
+    this._query.return = value || Model.return()
     return this
   }
 
   rawQuery() {
-    let returnOptions = this.query.return
+    let returnOptions = this._query.return
     if (returnOptions && returnOptions.options) {
       returnOptions = returnOptions.options
     }
-    return Object.assign({}, this.query, { return: returnOptions })
+    return Object.assign({}, this._query, { return: returnOptions })
   }
 
   toString(indent = false) {
@@ -197,23 +214,28 @@ class Return {
 // let Tweet = new Model('Tweet')
 let Identity = new Model('Identity')
 let User = new Model('User')
-let UserQuery = User.update({ _key: '@{^.user}' }).one().alias('u').return()
+let UserQuery = User.update({ _key: '@{^.user}' }).one().name('u').return()
 
-let result = Identity.update({ _key: '217388' }, { verified: true, bogus: true })
-  .alias('ident')
-  .one()
-  .subquery('user', UserQuery)
-  .select('name')
-  .return( 
-    Model
-    .return('ident')
-    .append('user', 'myUser')
-    .append('user', 'myUser2')
-    .merge('user')
-    .id()
-    .computed()
-  )
+function test1() {
+  let result = Identity.update({ _key: '217388' }, { verified: true, bogus: true })
+    .name('ident')
+    .one()
+    .query('user', UserQuery)
+    .select('name')
+    .return(Model.return('ident').append('user', 'myUser').append('user', 'myUser2').merge('user').id().computed())
 
-console.log(result.toString().green)
+  console.log(result.toString().green)
 
-fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+  fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+}
+
+function test2() {
+  let result = User.insert({ firstName: 'John', lastName: 'Smith' })
+    .query('id1', Identity.update({ _key: '123' }, { provider: 'hello', verified: true }))
+    .return()
+  console.log(result.toString().green)
+  fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+}
+
+// test1()
+test2()

@@ -1,54 +1,28 @@
 {
-  "method": "update",
-  "model": "Identity",
-  "filter": {
-    "_key": "217388"
-  },
+  "method": "insert",
+  "model": "User",
   "data": {
-    "verified": true,
-    "bogus": true
+    "firstName": "John",
+    "lastName": "Smith"
   },
-  "subqueries": [
+  "queries": [
     {
-      "id": "user",
+      "id": "id1",
       "query": {
         "method": "update",
-        "model": "User",
+        "model": "Identity",
         "filter": {
-          "_key": "@{^.user}"
+          "_key": "123"
         },
-        "data": {},
-        "subqueries": [],
-        "one": true,
-        "alias": "u",
-        "return": {
-          "actions": []
-        }
+        "data": {
+          "provider": "hello",
+          "verified": true
+        },
+        "queries": []
       }
     }
   ],
-  "alias": "ident",
-  "one": true,
-  "select": "name",
   "return": {
-    "value": "ident",
-    "actions": [
-      {
-        "action": "append",
-        "target": "user",
-        "as": "myUser"
-      },
-      {
-        "action": "append",
-        "target": "user",
-        "as": "myUser2"
-      },
-      {
-        "action": "merge",
-        "target": "user"
-      }
-    ],
-    "id": true,
-    "computed": true
+    "actions": []
   }
 }

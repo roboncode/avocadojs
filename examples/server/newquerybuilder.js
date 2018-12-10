@@ -9,13 +9,14 @@ const formatAQL = require('./prettyaql')
 require('colors')
 
 const AQB = orango.AQB
-const METHODS = {
+const OPERATIONS = {
+  COUNT: 'count',
   FIND: 'find',
-  FIND_ONE: 'findOne',
-  UPDATE: 'update',
-  UPDATE_ONE: 'updateOne',
-  DELETE: 'delete',
-  DELETE_ONE: 'deleteOne'
+  INSERT: 'insert',
+  REMOVE: 'remove',
+  REPLACE: 'replace',
+  UPSERT: 'upsert',
+  UPDATE: 'update'
 }
 
 let count = 1
@@ -41,36 +42,42 @@ async function validate(Model, data) {
 async function parseQuery(query) {
   const ModelCls = orango.model(query.model)
   const col = ModelCls.collectionName
-  const doc = query.alias || pluralize.singular(col) // the doc id
+  const doc = query.name || pluralize.singular(col) // the doc id
 
   let result // this is the defatul result; ex. RETURN user
-  let aql = AQB.for(doc).in(col) // create FOR..IN
+  let aql
 
-  if (query.alias === col) {
-    throw new Error('The property "id" cannot be the same name as collection: ' + col)
-  }
+  if (query.method === OPERATIONS.INSERT) {
+    aql = AQB.insert(AQB(query.data)).in(col)
+  } else {
+    aql = AQB.for(doc).in(col) // create FOR..IN
 
-  if (query.one) {
-    query.limit = 1
-  }
+    if (query.name === col) {
+      throw new Error('The property "id" cannot be the same name as collection: ' + col)
+    }
 
-  if (query.filter) {
-    let filterAQL = filterToAQL(query.filter, {
-      doc,
-      parentDoc: query.$doc
-    })
-    aql = aql.filter(AQB.expr(filterAQL))
-    if (query.offset && query.limit) {
-      aql = aql.limit(query.offset, query.limit)
-    } else if (query.offset) {
-      aql = aql.limit(query.offset, 10)
-    } else if (query.limit) {
-      aql = aql.limit(query.limit)
+    if (query.one) {
+      query.limit = 1
+    }
+
+    if (query.filter) {
+      let filterAQL = filterToAQL(query.filter, {
+        doc,
+        parentDoc: query.$doc
+      })
+      aql = aql.filter(AQB.expr(filterAQL))
+      if (query.offset && query.limit) {
+        aql = aql.limit(query.offset, query.limit)
+      } else if (query.offset) {
+        aql = aql.limit(query.offset, 10)
+      } else if (query.limit) {
+        aql = aql.limit(query.limit)
+      }
     }
   }
 
-  if (query.subqueries) {
-    for (let subquery of query.subqueries) {
+  if (query.queries) {
+    for (let subquery of query.queries) {
       let id = subquery.id || '_' + count++
       let subq = subquery.query
       subq.$doc = doc
@@ -83,14 +90,17 @@ async function parseQuery(query) {
     }
   }
 
-  if (query.method === METHODS.DELETE_ONE) {
+  if (query.method === OPERATIONS.UPDATE) {
+    let data = AQB(await validate(ModelCls, query.data))
+    aql = aql.update(doc).with(data).in(col)
+  } else if (query.method === OPERATIONS.REMOVE) {
     aql = aql.remove(doc).in(col)
-  } else if (query.method === METHODS.UPDATE_ONE) {
-    let data = await validate(ModelCls, query.data)
-    aql = aql.update(doc).with(data).in(col)
-  } else if (query.method === METHODS.UPDATE) {
-    let data = await validate(ModelCls, query.data)
-    aql = aql.update(doc).with(data).in(col)
+  } else if (query.method === OPERATIONS.UPSERT) {
+    let insertData = await validate(ModelCls, query.data.insert)
+    let updateData = await validate(ModelCls, query.data.update)
+    aql = aql.upsert(doc).insert(insertData).update(updateData).in(col)
+  } else if (query.method === OPERATIONS.COUNT) {
+    aql = aql.collectWithCountInto('length')
   }
 
   if (query.return) {
@@ -100,8 +110,10 @@ async function parseQuery(query) {
         let strResult = JSON.stringify(result).replace(/:"(new|old)"/gi, ':`$1`')
         result = AQB.expr(strResult)
       }
-    } else if (query.method === METHODS.UPDATE) {
+    } else if (query.method === OPERATIONS.UPDATE || query.method === OPERATIONS.INSERT) {
       result = 'NEW'
+    } else if (query.method === OPERATIONS.REMOVE) {
+      result = 'OLD'
     } else {
       result = doc
     }
@@ -126,7 +138,7 @@ async function parseQuery(query) {
       }
     }
 
-    if(merges.length) {
+    if (merges.length) {
       let mergesStr = JSON.stringify(merges)
       mergesStr = mergesStr.replace(/\[(.*)\]/gi, '$1')
       result = AQB.MERGE(result, AQB.expr(mergesStr.replace(/['"]@{([\w|^(.|\n)]+)}['"]/gi, '$1')))
