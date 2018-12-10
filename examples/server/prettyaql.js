@@ -1,4 +1,4 @@
-const keywords = 'FOR FILTER LET LIMIT INSERT UPSERT COUNT REMOVE UPDATE RETURN'.split(' ')
+const keywords = 'FOR FILTER LET LIMIT INSERT UPSERT COLLECT REMOVE UPDATE RETURN'.split(' ')
 const regexPhrase = new RegExp('\\b(' + keywords.join('|') + ')\\b', 'g')
 const TAB = '   '
 const NEWLINE = '\n'
@@ -32,7 +32,7 @@ function formatAQL(aql) {
     } else if (phrase.match(/\bRETURN\b/g)) {
       outdent()
       prettyAQL += NEWLINE + pad + phrase
-    } else if (phrase.match(/\bINSERT|UPSERT|UPDATE|REMOVE|COUNT\b/g)) {
+    } else if (phrase.match(/\bINSERT|UPSERT|UPDATE|REMOVE|COLLECT\b/g)) {
       prettyAQL += NEWLINE + pad + phrase
       indent()
     } else {

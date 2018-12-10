@@ -48,7 +48,10 @@ async function parseQuery(query) {
   let aql
 
   if (query.method === OPERATIONS.INSERT) {
+
     aql = AQB.insert(AQB(query.data)).in(col)
+  } else if(query.method === OPERATIONS.UPSERT) {
+    aql = AQB.upsert(AQB(query.where)).insert(AQB(query.data.insert)).update(AQB(query.data.update)).in(col)
   } else {
     aql = AQB.for(doc).in(col) // create FOR..IN
 
@@ -60,8 +63,8 @@ async function parseQuery(query) {
       query.limit = 1
     }
 
-    if (query.filter) {
-      let filterAQL = filterToAQL(query.filter, {
+    if (query.where) {
+      let filterAQL = filterToAQL(query.where, {
         doc,
         parentDoc: query.$doc
       })
@@ -95,10 +98,6 @@ async function parseQuery(query) {
     aql = aql.update(doc).with(data).in(col)
   } else if (query.method === OPERATIONS.REMOVE) {
     aql = aql.remove(doc).in(col)
-  } else if (query.method === OPERATIONS.UPSERT) {
-    let insertData = await validate(ModelCls, query.data.insert)
-    let updateData = await validate(ModelCls, query.data.update)
-    aql = aql.upsert(doc).insert(insertData).update(updateData).in(col)
   } else if (query.method === OPERATIONS.COUNT) {
     aql = aql.collectWithCountInto('length')
   }
@@ -110,10 +109,12 @@ async function parseQuery(query) {
         let strResult = JSON.stringify(result).replace(/:"(new|old)"/gi, ':`$1`')
         result = AQB.expr(strResult)
       }
-    } else if (query.method === OPERATIONS.UPDATE || query.method === OPERATIONS.INSERT) {
+    } else if (query.method === OPERATIONS.UPDATE || query.method === OPERATIONS.INSERT || query.method === OPERATIONS.UPSERT) {
       result = 'NEW'
     } else if (query.method === OPERATIONS.REMOVE) {
       result = 'OLD'
+    } else if (query.method === OPERATIONS.COUNT) {
+      result = 'length'
     } else {
       result = doc
     }

@@ -1,27 +1,20 @@
 {
-  "method": "insert",
+  "method": "upsert",
   "model": "User",
   "data": {
-    "firstName": "John",
-    "lastName": "Smith"
-  },
-  "queries": [
-    {
-      "id": "id1",
-      "query": {
-        "method": "update",
-        "model": "Identity",
-        "filter": {
-          "_key": "123"
-        },
-        "data": {
-          "provider": "hello",
-          "verified": true
-        },
-        "queries": []
-      }
+    "insert": {
+      "name": "user",
+      "firstName": "John"
+    },
+    "update": {
+      "lastName": "Smith"
     }
-  ],
+  },
+  "queries": [],
+  "one": true,
+  "where": {
+    "name": "user"
+  },
   "return": {
     "actions": []
   }

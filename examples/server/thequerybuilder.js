@@ -12,11 +12,10 @@ class Model {
     })
   }
 
-  find(filter = {}) {
+  find() {
     let qb = new QueryBuilder({
       method: 'find',
-      model: this.name,
-      filter
+      model: this.name
     })
     qb.return()
     return qb
@@ -31,56 +30,50 @@ class Model {
     return qb
   }
 
-  update(filter, data = {}) {
+  update(data = {}) {
     let qb = new QueryBuilder({
       method: 'update',
       model: this.name,
-      filter,
       data
     })
     return qb
   }
 
-  replace(filter, data = {}) {
+  replace(data = {}) {
     let qb = new QueryBuilder({
       method: 'replace',
       model: this.name,
-      filter,
       data
     })
     return qb
   }
 
-  remove(filter = {}) {
+  remove() {
     let qb = new QueryBuilder({
       method: 'remove',
-      model: this.name,
-      filter
+      model: this.name
     })
     return qb
   }
 
-  count(filter = {}) {
+  count() {
     let qb = new QueryBuilder({
       method: 'count',
-      model: this.name,
-      filter
+      model: this.name
     })
     qb.return()
     return qb
   }
 
-  upsert(filter = {}, insertData = {}, updateData = {}) {
+  upsert(insertData = {}, updateData = {}) {
     let qb = new QueryBuilder({
       method: 'upsert',
       model: this.name,
-      filter,
       data: {
         insert: insertData,
         update: updateData
       }
     })
-    qb.return()
     return qb
   }
 
@@ -106,8 +99,8 @@ class QueryBuilder {
     return this
   }
 
-  filter(val) {
-    this._query.filter = val
+  where(val) {
+    this._query.where = val
     return this
   }
 
@@ -214,15 +207,26 @@ class Return {
 // let Tweet = new Model('Tweet')
 let Identity = new Model('Identity')
 let User = new Model('User')
-let UserQuery = User.update({ _key: '@{^.user}' }).one().name('u').return()
+let UserQuery = User.update({firstName: 'John'})
+  .one()
+  .where({ _key: '@{^.user}' })
+  // .name('u')
+  .return()
 
 function test1() {
-  let result = Identity.update({ _key: '217388' }, { verified: true, bogus: true })
-    .name('ident')
+  let result = Identity.update({ verified: true, bogus: true })
     .one()
+    .where({ _key: '217388' })
+    .name('ident')
     .query('user', UserQuery)
     .select('name')
-    .return(Model.return('ident').append('user', 'myUser').append('user', 'myUser2').merge('user').id().computed())
+    .return(Model
+      .return('ident')
+      .append('user', 'myUser')
+      .append('user', 'myUser2')
+      .merge('user')
+      .id()
+      .computed())
 
   console.log(result.toString().green)
 
@@ -231,11 +235,50 @@ function test1() {
 
 function test2() {
   let result = User.insert({ firstName: 'John', lastName: 'Smith' })
-    .query('id1', Identity.update({ _key: '123' }, { provider: 'hello', verified: true }))
+    .query('id1', Identity.update({ provider: 'hello', verified: true }).where({ _key: '123' }))
     .return()
   console.log(result.toString().green)
   fs.writeFileSync('query.json', result.toString(true), 'utf-8')
 }
 
+function test3() {
+  let result = User.remove()
+    .one()
+    .where({active: true})
+    .return()
+    console.log(result.toString().green)
+    fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+}
+
+function test4() {
+  let result = User.find()
+    .one()
+    .where({active: true})
+    .return()
+    console.log(result.toString().green)
+    fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+}
+
+function test5() {
+  let result = User.count()
+    .where({active: true})
+    .return()
+    console.log(result.toString().green)
+    fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+}
+
+function test6() {
+  let result = User.upsert({name: 'user', firstName: 'John'}, {lastName: 'Smith'})
+    .one()
+    .where({name: 'user'})
+    .return()
+    console.log(result.toString().green)
+    fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+}
+
 // test1()
-test2()
+// test2()
+// test3()
+// test4()
+// test5()
+test6()
