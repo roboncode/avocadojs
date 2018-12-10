@@ -6,6 +6,12 @@ class Model {
     this.name = name
   }
 
+  static return(value) {
+    return new Return({
+      value
+    })
+  }
+
   findOne(filter = {}) {
     let qb = new QueryBuilder({
       method: 'findOne',
@@ -61,12 +67,7 @@ class Model {
 class QueryBuilder {
   constructor(query = {}) {
     this.query = query
-  }
-
-  _ensureMethods() {
-    if (!this.query.methods) {
-      this.query.methods = []
-    }
+    this.query.subqueries = []
   }
 
   _ensureReturn() {
@@ -109,30 +110,30 @@ class QueryBuilder {
     return this
   }
 
-  append(prop, qb) {
-    qb.query.appendAs = prop
-    this._ensureMethods()
-    this.query.methods.push(qb.query)
-    qb.return()
+  // query(prop, qb) {
+  //   // qb.rawQuery().appendAs = prop
+  //   this._ensureMethods()
+  //   this.query.methods.push(qb.query)
+  //   qb.return()
+  //   return this
+  // }
+
+  subquery(...opts) {
+    if (typeof opts[0] === 'string') {
+      this.query.subqueries.push({
+        id: opts[0],
+        query: opts[1].rawQuery()
+      })
+    } else {
+      this.query.subqueries.push({
+        query: opts[0].rawQuery()
+      })
+    }
     return this
   }
 
-  merge(prop, qb) {
-    qb.query.appendAs = prop
-    qb.query.merge = true
-    this._ensureMethods()
-    this.query.methods.push(qb.query)
-    return this
-  }
-
-  return(options = {}) {
-    this.query.return = options
-    return this
-  }
-
-  call(qb) {
-    this._ensureMethods()
-    this.query.methods.push(qb.query)
+  return(value) {
+    this.query.return = value || Model.return()
     return this
   }
 
@@ -152,10 +153,11 @@ class QueryBuilder {
 class Return {
   constructor(options = {}) {
     this.options = options
+    this.options.actions = this.options.actions || []
   }
 
-  as(val) {
-    this.options.as = val
+  value(val) {
+    this.options.value = val
     return this
   }
 
@@ -173,37 +175,44 @@ class Return {
     this.options.model = val
     return this
   }
+
+  append(target, as) {
+    this.options.actions.push({
+      action: 'append',
+      target,
+      as
+    })
+    return this
+  }
+
+  merge(target) {
+    this.options.actions.push({
+      action: 'merge',
+      target
+    })
+    return this
+  }
 }
 
 // let Tweet = new Model('Tweet')
 let Identity = new Model('Identity')
 let User = new Model('User')
-
-// let result1 = Identity.find({ active: true }, { verified: true, bogus: true})
-// .alias('id')
-// .limit(10)
-// .offset(1)
-// .select('text')
-// .append('user', User.find({ _key: '@{id.user}'}).id().computed().alias('george'))
-// .merge(User.findOne({ _key: '@{id.user}'}).alias('fred'))
-// .call(User.deleteOne({ _key: '@{id.user}'}))
-// .call(User.updateOne({ _key: '@{id.user}' }))
-// .call(User.updateOne({ _key: '@{id.user}' }))
-// .return('NEW')
-
 let UserQuery = User.update({ _key: '@{^.user}' }).one().alias('u').return()
 
 let result = Identity.update({ _key: '217388' }, { verified: true, bogus: true })
   .alias('ident')
   .one()
-  .append('user', UserQuery)
+  .subquery('user', UserQuery)
   .select('name')
-  .return(Identity.return().as('NEW').id().computed())
-  // .return({
-  //   // as: 'NEW',
-  //   id: true,
-  //   computed: true
-  // })
+  .return( 
+    Model
+    .return('ident')
+    .append('user', 'myUser')
+    .append('user', 'myUser2')
+    .merge('user')
+    .id()
+    .computed()
+  )
 
 console.log(result.toString().green)
 

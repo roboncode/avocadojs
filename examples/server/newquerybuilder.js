@@ -42,25 +42,9 @@ async function parseQuery(query) {
   const ModelCls = orango.model(query.model)
   const col = ModelCls.collectionName
   const doc = query.alias || pluralize.singular(col) // the doc id
-  const merges = []
-  const appends = []
 
   let result // this is the defatul result; ex. RETURN user
   let aql = AQB.for(doc).in(col) // create FOR..IN
-
-  if (query.return) {
-    if (query.return.as) {
-      result = query.return.as
-      if (typeof result === 'object') {
-        let strResult = JSON.stringify(result).replace(/:"(new|old)"/gi, ':`$1`')
-        result = AQB.expr(strResult)
-      }
-    } else if (query.method === METHODS.UPDATE) {
-      result = 'NEW'
-    } else {
-      result = doc
-    }
-  }
 
   if (query.alias === col) {
     throw new Error('The property "id" cannot be the same name as collection: ' + col)
@@ -68,14 +52,6 @@ async function parseQuery(query) {
 
   if (query.one) {
     query.limit = 1
-  }
-
-  if (query.select) {
-    let select = query.select.split(' ')
-    for (let i = 0; i < select.length; i++) {
-      select[i] = AQB.str(select[i])
-    }
-    result = AQB.KEEP(result, select)
   }
 
   if (query.filter) {
@@ -93,25 +69,16 @@ async function parseQuery(query) {
     }
   }
 
-  if (query.methods) {
-    for (let item of query.methods) {
-      // let ItemModelCls = orango.model(item.model)
-      let id = item.appendAs || '_' + count++
-      item.$doc = doc
-      let result = await parseQuery(item)
-      if (item.one) {
-        aql = aql.let(id, AQB.FIRST(result.aql))
+  if (query.subqueries) {
+    for (let subquery of query.subqueries) {
+      let id = subquery.id || '_' + count++
+      let subq = subquery.query
+      subq.$doc = doc
+      let q = await parseQuery(subq)
+      if (subq.one) {
+        aql = aql.let(id, AQB.FIRST(q.aql))
       } else {
-        aql = aql.let(id, result.aql)
-      }
-
-      if (item.merge) {
-        merges.push(id)
-      } else if (item.appendAs) {
-        appends.push({
-          key: item.appendAs || id,
-          value: id
-        })
+        aql = aql.let(id, q.aql)
       }
     }
   }
@@ -126,28 +93,46 @@ async function parseQuery(query) {
     aql = aql.update(doc).with(data).in(col)
   }
 
-  let appendData = {}
-  for (let i = 0; i < appends.length; i++) {
-    appendData[appends[i].key] = appends[i].value
-  }
-
-  if (appends.length && merges.length) {
-    result = AQB.MERGE(result, AQB.expr(merges.join(', ')), appendData)
-  } else if (merges.length) {
-    result = AQB.MERGE(result, AQB.expr(merges.join(', ')))
-  } else if (appends.length) {
-    result = AQB.MERGE(result, appendData)
-  }
-
   if (query.return) {
+    if (query.return.value) {
+      result = query.return.value
+      if (typeof result === 'object') {
+        let strResult = JSON.stringify(result).replace(/:"(new|old)"/gi, ':`$1`')
+        result = AQB.expr(strResult)
+      }
+    } else if (query.method === METHODS.UPDATE) {
+      result = 'NEW'
+    } else {
+      result = doc
+    }
+
+    if (query.select) {
+      let select = query.select.split(' ')
+      for (let i = 0; i < select.length; i++) {
+        select[i] = AQB.str(select[i])
+      }
+      result = AQB.KEEP(result, select)
+    }
+
+    let actions = query.return.actions
+    let merges = []
+    for (let i = 0; i < actions.length; i++) {
+      let action = actions[i]
+      if (action.action === 'append') {
+        let data = { [action.as || action.target]: `@{${action.target}}` }
+        merges.push(data)
+      } else if (action.action === 'merge') {
+        merges.push(`@{${action.target}}`)
+      }
+    }
+
+    if(merges.length) {
+      let mergesStr = JSON.stringify(merges)
+      mergesStr = mergesStr.replace(/\[(.*)\]/gi, '$1')
+      result = AQB.MERGE(result, AQB.expr(mergesStr.replace(/['"]@{([\w|^(.|\n)]+)}['"]/gi, '$1')))
+    }
+
     try {
-      // let returnVal = query.return.as
-      // if(!returnVal && query.method === METHODS.UPDATE) {
-      //   returnVal = 'NEW'
-      // } else {
-      //   returnVal = doc
-      // }
-      // aql = aql.return(returnVal)
       aql = aql.return(result)
     } catch (e) {
       throw e

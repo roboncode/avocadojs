@@ -8,25 +8,46 @@
     "verified": true,
     "bogus": true
   },
-  "alias": "ident",
-  "one": true,
-  "methods": [
+  "subqueries": [
     {
-      "method": "update",
-      "model": "User",
-      "filter": {
-        "_key": "@{^.user}"
-      },
-      "data": {},
-      "one": true,
-      "alias": "u",
-      "return": {},
-      "appendAs": "user"
+      "id": "user",
+      "query": {
+        "method": "update",
+        "model": "User",
+        "filter": {
+          "_key": "@{^.user}"
+        },
+        "data": {},
+        "subqueries": [],
+        "one": true,
+        "alias": "u",
+        "return": {
+          "actions": []
+        }
+      }
     }
   ],
+  "alias": "ident",
+  "one": true,
   "select": "name",
   "return": {
-    "as": "NEW",
+    "value": "ident",
+    "actions": [
+      {
+        "action": "append",
+        "target": "user",
+        "as": "myUser"
+      },
+      {
+        "action": "append",
+        "target": "user",
+        "as": "myUser2"
+      },
+      {
+        "action": "merge",
+        "target": "user"
+      }
+    ],
     "id": true,
     "computed": true
   }
