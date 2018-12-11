@@ -85,6 +85,7 @@ class Model {
 class QueryBuilder {
   constructor(query = {}) {
     this._query = query
+    this._query.version = '1.0'
     this._query.queries = []
   }
 
@@ -116,6 +117,14 @@ class QueryBuilder {
 
   one() {
     this._query.one = true
+    return this
+  }
+
+  let(key, value) {
+    if (!this._query.lets) {
+      this._query.lets = {}
+    }
+    this._query.lets[key] = value
     return this
   }
 
@@ -207,11 +216,8 @@ class Return {
 // let Tweet = new Model('Tweet')
 let Identity = new Model('Identity')
 let User = new Model('User')
-let UserQuery = User.update({firstName: 'John'})
-  .one()
-  .where({ _key: '@{^.user}' })
-  // .name('u')
-  .return()
+let UserQuery = User.update({ firstName: 'John' }).one().where({ _key: '@{^.user}' })// .name('u')
+.return()
 
 function test1() {
   let result = Identity.update({ verified: true, bogus: true })
@@ -220,13 +226,7 @@ function test1() {
     .name('ident')
     .query('user', UserQuery)
     .select('name')
-    .return(Model
-      .return('ident')
-      .append('user', 'myUser')
-      .append('user', 'myUser2')
-      .merge('user')
-      .id()
-      .computed())
+    .return(Model.return('ident').append('user', 'myUser').append('user', 'myUser2').merge('user').id().computed())
 
   console.log(result.toString().green)
 
@@ -242,38 +242,43 @@ function test2() {
 }
 
 function test3() {
-  let result = User.remove()
-    .one()
-    .where({active: true})
-    .return()
-    console.log(result.toString().green)
-    fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+  let result = User.remove().one().where({ active: true }).return()
+  console.log(result.toString().green)
+  fs.writeFileSync('query.json', result.toString(true), 'utf-8')
 }
 
 function test4() {
-  let result = User.find()
-    .one()
-    .where({active: true})
-    .return()
-    console.log(result.toString().green)
-    fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+  let result = User.find().one().where({ active: true }).return()
+  console.log(result.toString().green)
+  fs.writeFileSync('query.json', result.toString(true), 'utf-8')
 }
 
 function test5() {
-  let result = User.count()
-    .where({active: true})
-    .return()
-    console.log(result.toString().green)
-    fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+  let result = User.count().where({ active: true }).return()
+  console.log(result.toString().green)
+  fs.writeFileSync('query.json', result.toString(true), 'utf-8')
 }
 
 function test6() {
-  let result = User.upsert({name: 'user', firstName: 'John'}, {lastName: 'Smith'})
+  let result = User.upsert({ name: 'user', firstName: 'John' }, { lastName: 'Smith' })
     .one()
-    .where({name: 'user'})
+    .where({ name: 'user' })
     .return()
-    console.log(result.toString().green)
-    fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+  console.log(result.toString().green)
+  fs.writeFileSync('query.json', result.toString(true), 'utf-8')
+}
+
+function test7() {
+  let result = User.find()
+  .one()
+  .let('num', 1)
+  .let('str', 'Hello')
+  .let('bool', true)
+  .let('arr', [1, "two", true])
+  .let('obj', {foo: 'bar'})
+  .return(Model.return().append('num', 'num1').append('bool').merge('arr').id().computed())
+  console.log(result.toString().green)
+  fs.writeFileSync('query.json', result.toString(true), 'utf-8')
 }
 
 // test1()
@@ -281,4 +286,5 @@ function test6() {
 // test3()
 // test4()
 // test5()
-test6()
+// test6()
+test7()

@@ -79,6 +79,12 @@ async function parseQuery(query) {
     }
   }
 
+  if(query.lets) {
+    for(let key in query.lets) {
+      aql = aql.let(key, AQB(query.lets[key]))
+    }
+  }
+
   if (query.queries) {
     for (let subquery of query.queries) {
       let id = subquery.id || '_' + count++

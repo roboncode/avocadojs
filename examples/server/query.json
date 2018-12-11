@@ -1,21 +1,39 @@
 {
-  "method": "upsert",
+  "method": "find",
   "model": "User",
-  "data": {
-    "insert": {
-      "name": "user",
-      "firstName": "John"
-    },
-    "update": {
-      "lastName": "Smith"
-    }
-  },
+  "version": "1.0",
   "queries": [],
-  "one": true,
-  "where": {
-    "name": "user"
-  },
   "return": {
-    "actions": []
+    "actions": [
+      {
+        "action": "append",
+        "target": "num",
+        "as": "num1"
+      },
+      {
+        "action": "append",
+        "target": "bool"
+      },
+      {
+        "action": "merge",
+        "target": "arr"
+      }
+    ],
+    "id": true,
+    "computed": true
+  },
+  "one": true,
+  "lets": {
+    "num": 1,
+    "str": "Hello",
+    "bool": true,
+    "arr": [
+      1,
+      "two",
+      true
+    ],
+    "obj": {
+      "foo": "bar"
+    }
   }
 }

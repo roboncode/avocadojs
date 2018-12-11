@@ -27,8 +27,14 @@ function formatAQL(aql) {
       prettyAQL += NEWLINE + pad + phrase
       indent()
     } else if (phrase.match(/\bLET\b/g)) {
-      prettyAQL += NEWLINE + NEWLINE + pad + phrase
-      indent()
+      let isMatch = phrase.match(/\($/i)
+      if(isMatch) {
+        prettyAQL += NEWLINE
+      }
+      prettyAQL += NEWLINE + pad + phrase
+      if(isMatch) {
+        indent()
+      }
     } else if (phrase.match(/\bRETURN\b/g)) {
       outdent()
       prettyAQL += NEWLINE + pad + phrase
