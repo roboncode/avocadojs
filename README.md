@@ -12,6 +12,9 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
   [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  
 
+🍊 **[Click here to checkout what is coming up in the next release!](https://github.com/roboncode/orango/wiki/Orango-NEXT)**
+
+
 **Orango** is an Object Data Modeler (ODM) that provides the following features:
 
 * Central connectivity to ArangoDB
