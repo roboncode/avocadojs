@@ -39,52 +39,44 @@ async function validate(Model, data) {
   return result
 }
 
-async function parseQuery(query) {
-  const ModelCls = orango.model(query.model)
-  const col = ModelCls.collectionName
-  const doc = query.name || pluralize.singular(col) // the doc id
+function parseForIn(aql, query, { doc, col }) {
+  aql = AQB.for(doc).in(col) // create FOR..IN
 
-  let result // this is the defatul result; ex. RETURN user
-  let aql
-
-  if (query.method === OPERATIONS.INSERT) {
-
-    aql = AQB.insert(AQB(query.data)).in(col)
-  } else if(query.method === OPERATIONS.UPSERT) {
-    aql = AQB.upsert(AQB(query.where)).insert(AQB(query.data.insert)).update(AQB(query.data.update)).in(col)
-  } else {
-    aql = AQB.for(doc).in(col) // create FOR..IN
-
-    if (query.name === col) {
-      throw new Error('The property "id" cannot be the same name as collection: ' + col)
-    }
-
-    if (query.one) {
-      query.limit = 1
-    }
-
-    if (query.where) {
-      let filterAQL = filterToAQL(query.where, {
-        doc,
-        parentDoc: query.$doc
-      })
-      aql = aql.filter(AQB.expr(filterAQL))
-      if (query.offset && query.limit) {
-        aql = aql.limit(query.offset, query.limit)
-      } else if (query.offset) {
-        aql = aql.limit(query.offset, 10)
-      } else if (query.limit) {
-        aql = aql.limit(query.limit)
-      }
-    }
+  if (query.name === col) {
+    throw new Error('The property "id" cannot be the same name as collection: ' + col)
   }
 
-  if(query.lets) {
-    for(let key in query.lets) {
+  if (query.one) {
+    query.limit = 1
+  }
+
+  if (query.where) {
+    let filterAQL = filterToAQL(query.where, {
+      doc,
+      parentDoc: query.$doc
+    })
+    aql = aql.filter(AQB.expr(filterAQL))
+    if (query.offset && query.limit) {
+      aql = aql.limit(query.offset, query.limit)
+    } else if (query.offset) {
+      aql = aql.limit(query.offset, 10)
+    } else if (query.limit) {
+      aql = aql.limit(query.limit)
+    }
+  }
+  return aql
+}
+
+function parseLets(aql, query, { doc, col }) {
+  if (query.lets) {
+    for (let key in query.lets) {
       aql = aql.let(key, AQB(query.lets[key]))
     }
   }
+  return aql
+}
 
+async function parseQueries(aql, query, { doc, col }) {
   if (query.queries) {
     for (let subquery of query.queries) {
       let id = subquery.id || '_' + count++
@@ -98,7 +90,10 @@ async function parseQuery(query) {
       }
     }
   }
+  return aql
+}
 
+async function parseOperations(aql, query, { doc, col }) {
   if (query.method === OPERATIONS.UPDATE) {
     let data = AQB(await validate(ModelCls, query.data))
     aql = aql.update(doc).with(data).in(col)
@@ -107,7 +102,11 @@ async function parseQuery(query) {
   } else if (query.method === OPERATIONS.COUNT) {
     aql = aql.collectWithCountInto('length')
   }
+  return aql
+}
 
+function parseReturn(aql, query, { doc, col }) {
+  let result // this is the defatul result; ex. RETURN user
   if (query.return) {
     if (query.return.value) {
       result = query.return.value
@@ -115,7 +114,11 @@ async function parseQuery(query) {
         let strResult = JSON.stringify(result).replace(/:"(new|old)"/gi, ':`$1`')
         result = AQB.expr(strResult)
       }
-    } else if (query.method === OPERATIONS.UPDATE || query.method === OPERATIONS.INSERT || query.method === OPERATIONS.UPSERT) {
+    } else if (
+      query.method === OPERATIONS.UPDATE ||
+      query.method === OPERATIONS.INSERT ||
+      query.method === OPERATIONS.UPSERT
+    ) {
       result = 'NEW'
     } else if (query.method === OPERATIONS.REMOVE) {
       result = 'OLD'
@@ -157,6 +160,28 @@ async function parseQuery(query) {
       throw e
     }
   }
+  return aql
+}
+
+async function parseQuery(query) {
+  const ModelCls = orango.model(query.model)
+  const col = ModelCls.collectionName
+  const doc = query.name || pluralize.singular(col) // the doc id
+
+  let aql
+
+  if (query.method === OPERATIONS.INSERT) {
+    aql = AQB.insert(AQB(query.data)).in(col)
+  } else if (query.method === OPERATIONS.UPSERT) {
+    aql = AQB.upsert(AQB(query.where)).insert(AQB(query.data.insert)).update(AQB(query.data.update)).in(col)
+  } else {
+    aql = parseForIn(aql, query, {doc, col})
+  }
+
+  aql = parseLets(aql, query, { doc, col })
+  aql = await parseQueries(aql, query, { doc, col })
+  aql = await parseOperations(aql, query, { doc, col })
+  aql = parseReturn(aql, query, { doc, col })
 
   return { aql }
 }
@@ -165,26 +190,5 @@ async function main() {
   readFiles(__dirname + '/models')
   await execQuery(query)
 }
-
-// TODO: This will be used to modify results
-// let modifier = {
-//   single: true,
-//   model: 'Identity',
-//   return: {
-//     id: true,
-//     computed: true
-//   },
-//   children: [
-//     {
-//       prop: 'user',
-//       single: true,
-//       model: 'User',
-//       return: {
-//         id: true,
-//         computed: true
-//       }
-//     }
-//   ]
-// }
 
 main()
