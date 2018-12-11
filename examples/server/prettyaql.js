@@ -19,7 +19,7 @@ function outdent() {
 
 function formatAQL(aql) {
   let prettyAQL = ''
-  let phrases = aql.replace(regexPhrase, '\n$1').substr(1).split('\n')
+  let phrases = aql.trim().replace(regexPhrase, '\n$1').split('\n')
 
   for (let i = 0; i < phrases.length; i++) {
     let phrase = phrases[i].trim()

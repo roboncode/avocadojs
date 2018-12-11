@@ -1,39 +1,11 @@
-{
-  "method": "find",
-  "model": "User",
-  "version": "1.0",
-  "queries": [],
-  "return": {
-    "actions": [
-      {
-        "action": "append",
-        "target": "num",
-        "as": "num1"
-      },
-      {
-        "action": "append",
-        "target": "bool"
+{"method":"update","model":"Identity","data":{"verified":true,"bogus":true},"version":1,"queries":[{"id":"user","query":{"method":"update","model":"User","data":{"firstName":"John"},"version":1,"queries":[],"one":true,"where":{"_key":"@{^.user}"},"return":{"actions":[]}}}],"one":true,"where":{"_key":"217388"},"name":"ident","select":"name","return":{"value":"ident","actions":[{"action":"append","target":"user","as":"myUser"},{"action":"append","target":"user","as":"myUser2"
       },
       {
         "action": "merge",
-        "target": "arr"
+        "target": "user"
       }
     ],
     "id": true,
     "computed": true
-  },
-  "one": true,
-  "lets": {
-    "num": 1,
-    "str": "Hello",
-    "bool": true,
-    "arr": [
-      1,
-      "two",
-      true
-    ],
-    "obj": {
-      "foo": "bar"
-    }
   }
 }

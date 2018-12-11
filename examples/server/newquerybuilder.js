@@ -12,7 +12,10 @@ const AQB = orango.AQB
 const OPERATIONS = {
   COUNT: 'count',
   FIND: 'find',
+  IMPORT: 'import',
   INSERT: 'insert',
+  LINK: 'link',
+  UNLINK: 'unlink',
   REMOVE: 'remove',
   REPLACE: 'replace',
   UPSERT: 'upsert',
@@ -38,6 +41,8 @@ async function validate(Model, data) {
     .build()
   return result
 }
+
+function parseImport(query) {}
 
 function parseForIn(aql, query, { doc, col }) {
   aql = AQB.for(doc).in(col) // create FOR..IN
@@ -95,6 +100,7 @@ async function parseQueries(aql, query, { doc, col }) {
 
 async function parseOperations(aql, query, { doc, col }) {
   if (query.method === OPERATIONS.UPDATE) {
+    const ModelCls = orango.model(query.model)
     let data = AQB(await validate(ModelCls, query.data))
     aql = aql.update(doc).with(data).in(col)
   } else if (query.method === OPERATIONS.REMOVE) {
@@ -163,6 +169,13 @@ function parseReturn(aql, query, { doc, col }) {
   return aql
 }
 
+function parseLink(query) {
+  query.data._from = query.data.from
+  query.data._to = query.data.to
+  delete query.data.from
+  delete query.data.to
+}
+
 async function parseQuery(query) {
   const ModelCls = orango.model(query.model)
   const col = ModelCls.collectionName
@@ -170,12 +183,20 @@ async function parseQuery(query) {
 
   let aql
 
+  if (query.method === OPERATIONS.IMPORT) {
+    parseImport(query)
+    return { aql: AQB() }
+  }
+
   if (query.method === OPERATIONS.INSERT) {
     aql = AQB.insert(AQB(query.data)).in(col)
   } else if (query.method === OPERATIONS.UPSERT) {
     aql = AQB.upsert(AQB(query.where)).insert(AQB(query.data.insert)).update(AQB(query.data.update)).in(col)
+  } else if (query.method === OPERATIONS.LINK) {
+    parseLink(query)
+    aql = AQB.insert(AQB(query.data)).in(col)
   } else {
-    aql = parseForIn(aql, query, {doc, col})
+    aql = parseForIn(aql, query, { doc, col })
   }
 
   aql = parseLets(aql, query, { doc, col })
