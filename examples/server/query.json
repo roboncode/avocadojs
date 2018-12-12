@@ -1,11 +1,10 @@
-{"method":"update","model":"Identity","data":{"verified":true,"bogus":true},"version":1,"queries":[{"id":"user","query":{"method":"update","model":"User","data":{"firstName":"John"},"version":1,"queries":[],"one":true,"where":{"_key":"@{^.user}"},"return":{"actions":[]}}}],"one":true,"where":{"_key":"217388"},"name":"ident","select":"name","return":{"value":"ident","actions":[{"action":"append","target":"user","as":"myUser"},{"action":"append","target":"user","as":"myUser2"
-      },
-      {
-        "action": "merge",
-        "target": "user"
-      }
-    ],
-    "id": true,
-    "computed": true
+{
+  "v": 1,
+  "q": {
+    "method": "unlink",
+    "model": "Like",
+    "data": {
+      "to": "identities/b"
+    }
   }
 }

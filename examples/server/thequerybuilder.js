@@ -1,9 +1,32 @@
 const fs = require('fs')
+const pluralize = require('pluralize')
 require('colors')
 
+let orango = {
+  model(name, Model) {
+    if (Model) {
+      this.models[name] = Model
+    }
+    return this.models[name]
+  },
+
+  models: {}
+}
+
 class Model {
-  static factory(name) {
-    class DocumentModel extends Model {}
+  static factory(name, schema) {
+    class DocumentModel extends Model {
+      static getSchema() {
+        return schema
+      }
+
+      static getCollection() {
+        // this.schema.getCollection()
+        return {
+          name: pluralize(name).toLowerCase()
+        }
+      }
+    }
 
     Object.defineProperty(DocumentModel, 'name', {
       value: name
@@ -20,7 +43,31 @@ class Model {
     })
   }
 
-  static return(value) {
+  static truncate() {
+    return new Promise(async (resolve) => {
+      let collection = this.getCollection()
+      let result = await collection.truncate()
+      return resolve(result)
+    })
+  }
+
+  static getSchema() {
+    throw new Error(`Abstract method "getSchema" not implemented`)
+  }
+
+  static getCollection() {
+    throw new Error(`Abstract method "getCollection" not implemented`)
+  }
+
+  static getKey(id) {
+    if (!id.match(/\//g)) {
+      return this.getCollection().name + '/' + id
+    }
+    return id
+  }
+
+  static
+  return (value) {
     return new Return({
       value
     })
@@ -58,6 +105,10 @@ class Model {
   }
 
   static link(from, to, data = {}) {
+    const schema = this.getSchema()
+    from = orango.model(schema.from).getKey(from)
+    to = orango.model(schema.to).getKey(to)
+
     return this._qb('link', {
       ...data,
       from,
@@ -66,6 +117,19 @@ class Model {
   }
 
   static unlink(from, to) {
+    const schema = this.getSchema()
+    if (from) {
+      from = orango.model(schema.from).getKey(from)
+    } else {
+      from = undefined
+    }
+
+    if (to) {
+      to = orango.model(schema.to).getKey(to)
+    } else {
+      to = undefined
+    }
+
     return this._qb('unlink', {
       from,
       to
@@ -73,7 +137,9 @@ class Model {
   }
 
   static import(items) {
-    return this._qb('import', { data: items })
+    return this._qb('import', {
+      data: items
+    })
   }
 
   toJSON() {
@@ -91,8 +157,6 @@ class Model {
 class QueryBuilder {
   constructor(query = {}) {
     this._query = query
-    this._query.version = 1
-    this._query.queries = []
   }
 
   _ensureReturn() {
@@ -103,6 +167,13 @@ class QueryBuilder {
 
   name(val) {
     this._query.name = val
+    return this
+  }
+
+  byId(id) {
+    this.where({
+      _key: id
+    })
     return this
   }
 
@@ -126,7 +197,7 @@ class QueryBuilder {
     return this
   }
 
-  let(key, value) {
+  let (key, value) {
     if (!this._query.lets) {
       this._query.lets = {}
     }
@@ -144,6 +215,9 @@ class QueryBuilder {
   }
 
   query(...opts) {
+    if (!this._query.queries) {
+      this._query.queries = []
+    }
     if (typeof opts[0] === 'string') {
       this._query.queries.push({
         id: opts[0],
@@ -157,7 +231,7 @@ class QueryBuilder {
     return this
   }
 
-  return(value) {
+  return (value) {
     this._query.return = value || Model.return()
     return this
   }
@@ -167,7 +241,14 @@ class QueryBuilder {
     if (returnOptions && returnOptions.options) {
       returnOptions = returnOptions.options
     }
-    return Object.assign({}, this._query, { return: returnOptions })
+    const q = Object.assign({}, this._query, {
+      return: returnOptions
+    })
+
+    return {
+      v: 1,
+      q
+    }
   }
 }
 
@@ -218,11 +299,23 @@ class Return {
 // let Tweet = new Model('Tweet')
 let Identity = Model.factory('Identity')
 let User = Model.factory('User')
-let Like = Model.factory('Like')
-let UserQuery = User.update({ firstName: 'John' })
+let Like = Model.factory('Like', {
+  from: 'User',
+  to: "Identity"
+})
+let UserQuery = User.update({
+    firstName: 'John'
+  })
   .one()
-  .where({ _key: '@{^.user}' }) // .name('u')
+  .where({
+    _key: '@{^.user}'
+  }) // .name('u')
   .return()
+
+// MOCK, TODO: turn real
+orango.model('Identity', Identity)
+orango.model('User', User)
+orango.model('Like', Like)
 
 // var u = new User()
 // u.firstName = 'Rob'
@@ -230,58 +323,87 @@ let UserQuery = User.update({ firstName: 'John' })
 
 // console.log(u.toJSON())
 
+function formatJSON(data, indent = false) {
+  return JSON.stringify(data, null, indent ? 2 : 0)
+}
+
 function test1() {
-  let result = Identity.update({ verified: true, bogus: true })
+  let result = Identity.update({
+      verified: true,
+      bogus: true
+    })
     .one()
-    .where({ _key: '217388' })
+    .where({
+      _key: '217388'
+    })
     .name('ident')
     .query('user', UserQuery)
     .select('name')
     .return(Model.return('ident').append('user', 'myUser').append('user', 'myUser2').merge('user').id().computed())
 
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
 function test2() {
-  let result = User.insert({ firstName: 'John', lastName: 'Smith' })
-    .query('id1', Identity.update({ provider: 'hello', verified: true }).where({ _key: '123' }))
+  let result = User.insert({
+      firstName: 'John',
+      lastName: 'Smith'
+    })
+    .query('id1', Identity.update({
+      provider: 'hello',
+      verified: true
+    }).where({
+      _key: '123'
+    }))
     .return()
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
 function test3() {
-  let result = User.remove().one().where({ active: true }).return()
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+  let result = User.remove().one().where({
+    active: true
+  }).return()
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
 function test4() {
-  let result = User.find().one().where({ active: true }).return()
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+  let result = User.find().one().where({
+    active: true
+  }).return()
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
 function test5() {
-  let result = User.count().where({ active: true }).return()
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+  let result = User.count().where({
+    active: true
+  }).return()
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
 function test6() {
-  let result = User.upsert({ name: 'user', firstName: 'John' }, { lastName: 'Smith' })
+  let result = User.upsert({
+      name: 'user',
+      firstName: 'John'
+    }, {
+      lastName: 'Smith'
+    })
     .one()
-    .where({ name: 'user' })
+    .where({
+      name: 'user'
+    })
     .return()
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
 function test7() {
@@ -290,29 +412,52 @@ function test7() {
     .let('num', 1)
     .let('str', 'Hello')
     .let('bool', true)
-    .let('arr', [ 1, 'two', true ])
-    .let('obj', { foo: 'bar' })
+    .let('arr', [1, 'two', true])
+    .let('obj', {
+      foo: 'bar'
+    })
     .return(Model.return().append('num', 'num1').append('bool').merge('arr').id().computed())
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
 function test8() {
-  let result = User.import([ { firstName: 'Jane', lastName: 'Doe' }, { firstName: 'Fred', lastName: 'Flintstone' } ])
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+  let result = User.import([{
+    firstName: 'Jane',
+    lastName: 'Doe'
+  }, {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  }])
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
 function test9() {
-  let result = Like.link('a', 'b', { more: 'data' })
-  let str = JSON.stringify(result)
-  console.log(str.green)
-  fs.writeFileSync('query.json', str, 'utf-8')
+  let result = Like.link('a', 'b', {
+    more: 'data'
+  })
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
-test1()
+function test10() {
+  let result = Like.unlink(null, 'b')
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
+}
+
+function test11() {
+  let result = User.find().byId('12345')
+
+  console.log(formatJSON(result).green)
+  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
+}
+
+// test1()
 // test2()
 // test3()
 // test4()
@@ -321,3 +466,4 @@ test1()
 // test7()
 // test8() // TODO: implement parser
 // test9()
+test10()

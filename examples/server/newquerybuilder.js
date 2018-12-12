@@ -26,7 +26,7 @@ let count = 1
 let query = JSON.parse(fs.readFileSync(__dirname + '/query.json', { encoding: 'utf-8' }))
 
 async function execQuery(query) {
-  let q = await validate(orango.Query, query)
+  let q = await validate(orango.Query, query.q)
   let result = await parseQuery(q)
   console.log(formatAQL(result.aql.toAQL()).green)
 }
@@ -170,8 +170,12 @@ function parseReturn(aql, query, { doc, col }) {
 }
 
 function parseLink(query) {
-  query.data._from = query.data.from
-  query.data._to = query.data.to
+  if(query.data.from) {
+    query.data._from = query.data.from
+  }
+  if(query.data.to) {
+    query.data._to = query.data.to
+  }
   delete query.data.from
   delete query.data.to
 }
@@ -185,6 +189,7 @@ async function parseQuery(query) {
 
   if (query.method === OPERATIONS.IMPORT) {
     parseImport(query)
+    // Nothing can be returned
     return { aql: AQB() }
   }
 
@@ -195,6 +200,9 @@ async function parseQuery(query) {
   } else if (query.method === OPERATIONS.LINK) {
     parseLink(query)
     aql = AQB.insert(AQB(query.data)).in(col)
+  } else if (query.method === OPERATIONS.UNLINK) {
+    parseLink(query)
+    aql = AQB.remove(AQB(query.data)).in(col)
   } else {
     aql = parseForIn(aql, query, { doc, col })
   }
