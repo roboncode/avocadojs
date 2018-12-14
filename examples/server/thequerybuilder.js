@@ -174,6 +174,7 @@ class QueryBuilder {
     this.where({
       _key: id
     })
+    this.one()
     return this
   }
 
@@ -457,6 +458,9 @@ function test11() {
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
+// User.find().byId().and.update()
+// User.update().byId().return()
+
 // test1()
 // test2()
 // test3()
@@ -466,4 +470,5 @@ function test11() {
 // test7()
 // test8() // TODO: implement parser
 // test9()
-test10()
+// test10()
+test11()
