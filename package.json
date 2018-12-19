@@ -4,9 +4,8 @@
   "description": "ArangoDB Object Modeler for Node.js, Foxx and Web Browsers",
   "main": "./index.js",
   "scripts": {
-    "test": "nyc --reporter=html --reporter=text mocha --delay",
-    "test-no-coverage": "mocha --delay",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test": "jest --coverage",
+    "test-no-coverage": "jest",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "examples:setup": "cd examples && ./setup.sh",
@@ -25,10 +24,7 @@
     "uniqid": "^5.0.3"
   },
   "devDependencies": {
-    "chai": "4.2.0",
-    "coveralls": "^3.0.2",
-    "mocha": "^5.2.0",
-    "nyc": "13.1.0",
+    "jest": "^23.6.0",
     "vuepress": "0.14.5"
   },
   "directories": {
