@@ -1,16 +1,9 @@
+const expect = require('chai').expect
 const ORM = require('../lib/ORM')
-
+const orango = require('../lib')
+const { RETURN } = orango.CONSTS
 
 describe('orango.orm', function() {
-
-  let orango;
-  let RETURN;
-
-  beforeAll(async () => {
-    orango = global.__ORANGO__;
-    RETURN = orango.CONSTS.RETURN
-  });
-
   describe('for in', function() {
     const orm = new ORM()
     orm.method('find')
@@ -18,7 +11,7 @@ describe('orango.orm', function() {
 
     it('should do something #1', async function() {
       let aql = await orm.return(RETURN.DOC).toAQL()
-      expect(aql).toBe('FOR $user IN users RETURN $user')
+      expect(aql).to.equal('FOR $user IN users RETURN $user')
     })
   })
 
@@ -32,7 +25,7 @@ describe('orango.orm', function() {
 
     it('should do something #2', async function() {
       let aql = await orm.return(RETURN.DOC).toAQL()
-      expect(aql).toBe('FOR $user IN users FILTER ($user.`name` == "rob") RETURN $user')
+      expect(aql).to.equal('FOR $user IN users FILTER ($user.`name` == "rob") RETURN $user')
     })
   })
 
@@ -46,7 +39,7 @@ describe('orango.orm', function() {
 
     it('should do something', async function() {
       let aql = await orm.return(RETURN.DOC).toAQL()
-      expect(aql).toBe(
+      expect(aql).to.equal(
         'FOR $user IN users FILTER (($user.`name` == "rob") OR ($user.`name` == "john")) RETURN $user'
       )
     })
@@ -67,7 +60,7 @@ describe('orango.orm', function() {
       })
 
       let aql = await orm.toAQL()
-      expect(aql).toBe(
+      expect(aql).to.equal(
         'LET modified = COUNT( FOR $user IN users UPDATE $user WITH {"stats":{"friends":$user.stats.friends+1}} IN users RETURN 1) RETURN { modified }'
       )
     })
@@ -84,7 +77,7 @@ describe('orango.orm', function() {
       })
 
       let aql = await orm.toAQL()
-      expect(aql).toBe(
+      expect(aql).to.equal(
         'LET modified = COUNT( FOR $user IN users UPDATE $user WITH {"friends":$user.friends+1} IN users RETURN 1) RETURN { modified }'
       )
     })
@@ -101,7 +94,7 @@ describe('orango.orm', function() {
       })
 
       let aql = await orm.toAQL()
-      expect(aql).toBe(
+      expect(aql).to.equal(
         'LET modified = COUNT( FOR $user IN users UPDATE $user WITH {"friends":$user.friends+1} IN users RETURN 1) RETURN { modified }'
       )
     })
@@ -116,7 +109,7 @@ describe('orango.orm', function() {
       orm.customQuery(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)
 
       let aql = await orm.return(RETURN.DOC).toAQL(true)
-      expect(aql).toBe('FOR $user IN users FILTER device.user == $user._key RETURN $user')
+      expect(aql).to.equal('FOR $user IN users FILTER device.user == $user._key RETURN $user')
     })
   })
 })

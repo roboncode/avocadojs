@@ -1,3 +1,4 @@
+let expect = require('chai').expect
 let Schema = require('../lib/Schema')
 
 describe('orango schema', function() {
@@ -7,19 +8,7 @@ describe('orango schema', function() {
       let data = await schema.validate({
         _key: 'test'
       })
-      expect(data).toEqual({ _key: 'test' })
-    })
-
-
-    it('should create a new schema that support "_key', async function() {
-      let schema = new Schema({
-        name: String
-      })
-      let data = await schema.validate({
-        _key: 'test',
-        name: 'dummy'
-      })
-      expect(data).toEqual({ _key: 'test', name: 'dummy' })
+      expect(data).to.deep.equal({ _key: 'test' })
     })
   })
 })

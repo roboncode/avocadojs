@@ -1,27 +1,25 @@
+let expect = require('chai').expect
+let orango = require('../lib')
+require('colors')
+
 describe('orango connection', function() {
-  let orango;
-
-  beforeAll(async () => {
-    orango = global.__ORANGO__;
-  });
-
   describe('with no options', function() {
     it('connect to default "test" db', async function() {
       let conn = orango.get('system').connection
-      expect(conn.url + '/' + conn.name).toBe('http://localhost:8529/_system')
+      expect(conn.url + '/' + conn.name).to.equal('http://localhost:8529/_system')
     })
   })
 
   describe('with options', function() {
     it('connect to "test" db', async function() {
       let conn = orango.connection
-      expect(conn.url + '/' + conn.name).toBe('http://localhost:8529/test')
+      expect(conn.url + '/' + conn.name).to.equal('http://localhost:8529/test')
     })
   })
 
   describe('check if connected', function() {
     it('to be connected', async function() {
-      expect(orango.connection.connected).toBe(true)
+      expect(orango.connection.connected).to.equal(true)
     })
   })
 
@@ -29,7 +27,7 @@ describe('orango connection', function() {
     it('create a new databae', async function() {
       let conn = orango.get('system').connection
       let dbs = await conn.db.listDatabases()
-      expect(dbs).toEqual(expect.arrayContaining(['test']))
+      expect(dbs).to.contain('test')
     })
   })
 
@@ -40,7 +38,7 @@ describe('orango connection', function() {
       } catch (e) {
         console.log('ERROR'.bgRed, e.message)
       }
-      expect(orango.get('disconnect').connection.connected).toBe(false)
+      expect(orango.get('disconnect').connection.connected).equal(false)
     })
   })
 
@@ -52,7 +50,7 @@ describe('orango connection', function() {
           password: 'bogus'
         })
       } catch (e) {
-        expect(e.message).toBeDefined()
+        expect(e.message).to.exist
       }
     })
   })

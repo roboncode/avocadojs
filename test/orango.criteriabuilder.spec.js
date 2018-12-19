@@ -1,3 +1,4 @@
+let expect = require('chai').expect
 let criteriaBuilder = require('../lib/helpers/criteriaBuilder')
 let jstr = require('tangjs/lib/helpers/jsonStringify')
 
@@ -6,7 +7,7 @@ describe('orango criteria builder', function() {
     let data = { foo: 'bar' }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo == "bar")')
+      expect(c).to.equal('(foo == "bar")')
     })
   })
 
@@ -14,7 +15,7 @@ describe('orango criteria builder', function() {
     let data = { foo: 'bar', baz: 'qux' }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo == "bar" AND baz == "qux")')
+      expect(c).to.equal('(foo == "bar" AND baz == "qux")')
     })
   })
 
@@ -22,7 +23,7 @@ describe('orango criteria builder', function() {
     let data = { $or: [{ foo: 'bar' }, { baz: 'qux' }] }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('((foo == "bar") OR (baz == "qux"))')
+      expect(c).to.equal('((foo == "bar") OR (baz == "qux"))')
     })
   })
 
@@ -30,7 +31,7 @@ describe('orango criteria builder', function() {
     let data = { foo: { $ne: 'bar' } }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo != "bar")')
+      expect(c).to.equal('(foo != "bar")')
     })
   })
 
@@ -38,7 +39,7 @@ describe('orango criteria builder', function() {
     let data = { foo: { $eq: 'bar' } }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo == "bar")')
+      expect(c).to.equal('(foo == "bar")')
     })
   })
 
@@ -46,7 +47,7 @@ describe('orango criteria builder', function() {
     let data = { foo: { $gt: 'bar' } }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo > "bar")')
+      expect(c).to.equal('(foo > "bar")')
     })
   })
 
@@ -54,7 +55,7 @@ describe('orango criteria builder', function() {
     let data = { foo: { $lt: 'bar' } }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo < "bar")')
+      expect(c).to.equal('(foo < "bar")')
     })
   })
 
@@ -62,7 +63,7 @@ describe('orango criteria builder', function() {
     let data = { foo: { $gte: 'bar' } }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo >= "bar")')
+      expect(c).to.equal('(foo >= "bar")')
     })
   })
 
@@ -70,7 +71,7 @@ describe('orango criteria builder', function() {
     let data = { foo: { $lte: 'bar' } }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo <= "bar")')
+      expect(c).to.equal('(foo <= "bar")')
     })
   })
 
@@ -78,7 +79,7 @@ describe('orango criteria builder', function() {
     let data = { foo: 1 }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo == 1)')
+      expect(c).to.equal('(foo == 1)')
     })
   })
 
@@ -86,7 +87,7 @@ describe('orango criteria builder', function() {
     let data = { foo: true }
     it(jstr(data), function() {
       let c = criteriaBuilder(data)
-      expect(c).toBe('(foo == true)')
+      expect(c).to.equal('(foo == true)')
     })
   })
 
@@ -94,7 +95,7 @@ describe('orango criteria builder', function() {
     let data = { foo: 'bar' }
     it(jstr(data), function() {
       let c = criteriaBuilder(data, 'test')
-      expect(c).toBe('(test.`foo` == "bar")')
+      expect(c).to.equal('(test.`foo` == "bar")')
     })
   })
 
@@ -102,7 +103,7 @@ describe('orango criteria builder', function() {
     let data = { foo: {bar: null}}
     it(jstr(data), function() {
       let c = criteriaBuilder(data, 'test')
-      expect(c).toBe('(test.foo.`bar` == null)')
+      expect(c).to.equal('(test.foo.`bar` == null)')
     })
   })
 
@@ -160,7 +161,7 @@ describe('orango criteria builder', function() {
     }
     it(jstr(data), function() {
       let c = criteriaBuilder(data, 'test')
-      expect(c).toBe(
+      expect(c).to.equal(
         '(test.`_key` == "12345" AND test.`role` == "admin" AND test.`a` != 1 AND test.`b` == true AND test.`c` > "3" AND test.`d` < "four" AND test.`e` >= 5 AND test.`f` <= 6) AND ((test.`x1` == 1 AND test.`x2` == 2) OR (test.`y` > 3) OR ((test.`z` < "four") OR (test.`z` == 10)))'
       )
     })

@@ -1,3 +1,4 @@
+let expect = require('chai').expect
 let arrayOverride = require('../lib/helpers/arrayOverride')
 let convertToSnakecase = require('../lib/helpers/convertToSnakecase')
 let createDefaultTree = require('../lib/helpers/createDefaultTree')
@@ -27,8 +28,8 @@ describe('orango helpers', function() {
     it('[].push(1)', function() {
       let arr = arrayOverride()
       arr.push(1)
-      expect(arr.length).toBe(1)
-      expect(arr).toEqual([1])
+      expect(arr.length).to.equal(1)
+      expect(arr).to.deep.equal([1])
     })
   })
 
@@ -36,9 +37,9 @@ describe('orango helpers', function() {
     it('[].push([{}])', function() {
       let arr = arrayOverride()
       arr.push({})
-      expect(arr.length).toBe(1)
-      expect(arr).toEqual([{}])
-      expect(arr[0].isNew).toBe(true)
+      expect(arr.length).to.equal(1)
+      expect(arr).to.deep.equal([{}])
+      expect(arr[0].isNew).to.equal(true)
     })
   })
 
@@ -47,8 +48,8 @@ describe('orango helpers', function() {
       let arr = arrayOverride()
       arr.push(1, 2, 3)
       arr.splice(0, 1)
-      expect(arr.length).toBe(2)
-      expect(arr).toEqual([2, 3])
+      expect(arr.length).to.equal(2)
+      expect(arr).to.deep.equal([2, 3])
     })
   })
 
@@ -56,28 +57,28 @@ describe('orango helpers', function() {
     it('[].pull(1, 2)', function() {
       let arr = arrayOverride()
       arr.pull(1, 2)
-      expect(arr.pulls).toEqual([1, 2])
+      expect(arr.pulls).to.deep.equal([1, 2])
     })
   })
 
   describe('convertToSnakecase', function() {
     it('converts to snakecase without uppercase', function() {
       let str = convertToSnakecase('test')
-      expect(str).toBe('test')
+      expect(str).to.equal('test')
     })
   })
 
   describe('convertToSnakecase', function() {
     it('converts to snakecase with uppercase', function() {
       let str = convertToSnakecase('TestOne')
-      expect(str).toBe('test_one')
+      expect(str).to.equal('test_one')
     })
   })
 
   describe('createDefaultTree', function() {
     it('create a default tree', function() {
       let tree = createDefaultTree(data)
-      expect(tree).toEqual({
+      expect(tree).to.deep.equal({
         devices: [],
         stats: { friends: [] }
       })
@@ -88,7 +89,7 @@ describe('orango helpers', function() {
     it('should create a unique id', function() {
       let uid_1 = createUniqueId()
       let uid_2 = createUniqueId()
-      expect(uid_1).not.toBe(uid_2)
+      expect(uid_1).to.not.equal(uid_2)
     })
   })
 
@@ -98,7 +99,7 @@ describe('orango helpers', function() {
         john: { name: 'John' },
         jane: { name: 'Jane' }
       })
-      expect(items).toEqual([
+      expect(items).to.deep.equal([
         {
           _key: 'john',
           name: 'John'
@@ -124,7 +125,7 @@ describe('orango helpers', function() {
         }
       ]
       let items = objectToArray(src)
-      expect(items).toBe(src)
+      expect(items).to.equal(src)
     })
   })
 
@@ -132,7 +133,7 @@ describe('orango helpers', function() {
     it('should create an array of paths', function() {
       let data = { foo: [], bar: { baz: [] } }
       let paths = parseArrayPaths(data)
-      expect(paths).toEqual(['foo', 'bar.baz'])
+      expect(paths).to.deep.equal(['foo', 'bar.baz'])
     })
   })
 
@@ -141,7 +142,7 @@ describe('orango helpers', function() {
       let model = {}
       let defaults = { foo: [], bar: { baz: [] } }
       mergeDefaultTree(model, defaults)
-      expect(model).toEqual({ foo: [], bar: { baz: [] } })
+      expect(model).to.deep.equal({ foo: [], bar: { baz: [] } })
     })
   })
 
@@ -163,7 +164,7 @@ describe('orango helpers', function() {
           e: 1
         }
       )
-      expect(result).toEqual({
+      expect(result).to.deep.equal({
         a: null,
         b: { b1: null, b2: 2 },
         c: [null, 2],
@@ -177,7 +178,7 @@ describe('orango helpers', function() {
     let sortStr = 'lastName firstName -id'
     let aql = sortToAQL(sortStr, 'doc')
     it('should convert to aql', function() {
-      expect(aql).toBe('doc.lastName, doc.firstName, doc.id DESC')
+      expect(aql).to.equal('doc.lastName, doc.firstName, doc.id DESC')
     })
   })
 
@@ -191,7 +192,7 @@ describe('orango helpers', function() {
       'doc'
     )
     it('should convert to aql', function() {
-      expect(aql).toBe('doc.lastName, doc.firstName, doc.id DESC')
+      expect(aql).to.equal('doc.lastName, doc.firstName, doc.id DESC')
     })
   })
 })
