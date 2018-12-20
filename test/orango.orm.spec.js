@@ -13,7 +13,7 @@ describe('orango.orm', function() {
 
   describe('for in', function() {
     const orm = new ORM()
-    orm.action('find')
+    orm.method('find')
     orm.collection({ name: 'users' })
 
     it('should do something #1', async function() {
@@ -24,7 +24,7 @@ describe('orango.orm', function() {
 
   describe('for in with filter', function() {
     const orm = new ORM()
-    orm.action('find')
+    orm.method('find')
     orm.collection({ name: 'users' })
     orm.criteria({
       name: 'rob'
@@ -38,7 +38,7 @@ describe('orango.orm', function() {
 
   describe('$or filter', function() {
     const orm = new ORM()
-    orm.action('find')
+    orm.method('find')
     orm.collection({ name: 'users' })
     orm.criteria({
       $or: [ { name: 'rob' }, { name: 'john' } ]
@@ -55,7 +55,7 @@ describe('orango.orm', function() {
   describe('increment filter using $inc', function() {
     it('should do something', async function() {
       const orm = new ORM()
-      orm.action('update')
+      orm.method('update')
       orm.collection({ name: 'users' })
       orm.model(orango.model('Test'))
       orm.data({
@@ -76,7 +76,7 @@ describe('orango.orm', function() {
   describe('increment filter using ++', function() {
     it('should do something', async function() {
       const orm = new ORM()
-      orm.action('update')
+      orm.method('update')
       orm.collection({ name: 'users' })
       orm.model(orango.model('Test'))
       orm.data({
@@ -93,7 +93,7 @@ describe('orango.orm', function() {
   describe('increment filter using EXPR()', function() {
     it('should do something', async function() {
       const orm = new ORM()
-      orm.action('update')
+      orm.method('update')
       orm.collection({ name: 'users' })
       orm.model(orango.model('Test'))
       orm.data({
@@ -110,7 +110,7 @@ describe('orango.orm', function() {
   describe('custom query', function() {
     it('should do something', async function() {
       const orm = new ORM()
-      orm.action('find')
+      orm.method('find')
       orm.collection({ name: 'users' })
       orm.options({ printAQL: 'color' })
       orm.query(`FOR @@doc IN @@collection FILTER device.user == @@doc._key`)

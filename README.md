@@ -12,6 +12,8 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
   [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  
 
+🍊 **[Click here to checkout what is coming up in the next release!](https://github.com/roboncode/orango/wiki/Orango-NEXT)**
+
 **Orango** is an Object Data Modeler (ODM) that provides the following features:
 
 * Central connectivity to ArangoDB
@@ -76,8 +78,9 @@ The method `connect(db:String="_system", [{url:String="http://localhost:8529", u
 
 ```js
 const orango = require('orango')
+const { EVENTS } = orango.CONSTS
 
-orango.events.on('connected', () => {
+orango.events.on(EVENTS.CONNECTED, () => {
   console.log('Orango is connected!')
 })
 
@@ -132,7 +135,7 @@ const UserSchema = orango.Schema({
 	bio: { type: String, regex: /[a-z]/ },
 	updatedAt: Date
 }, {
-	strict: true, // properties not defined will be filtered out
+	strict: true, // unknown properties will be filtered out
 	indexes: [ // create indexes for items we will query against
       {
         type: 'hash',
@@ -159,22 +162,34 @@ UserSchema.computed.name = function() {
 	return this.firstName + ' ' + this.lastName
 }
 
+const User = orango.model('User', UserSchema)
+
 // hooks
-UserSchema.on(HOOKS.UPDATE, payload => {
+User.on(HOOKS.UPDATE, payload => {
 	payload.data.updatedAt = Date.now()
 })
 
+// ... example of using it in a router ... //
 
+app.get('/user', async (req, res) => {
+	let user = await User
+		.findByEmail(req.query.email)
+		.computed()
+		.id()
+	res.send(user)
+})
 
-orango.model('User', UserSchema)
-
-// ... in code somewhere else ... //
-
-let user = async User
-	.findByEmail('john.smith@gmail.com')
-	.computed(true)
-	
-console.log('Hello,', user.name)
+200 Ok
+{
+   "id": "163706"
+   "name": "John Smith",
+   "firstName": "John",
+   "lastName": "Smith",
+   "email": "john.smith@gmail.com",
+   "age": 26,
+   "bio": "Likes mountain biking and camping",
+   "updatedAt": "2018-12-02T16:04:10.026Z"
+}
 ```
 
 # Documentation
