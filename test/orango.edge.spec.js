@@ -1,7 +1,7 @@
-let expect = require('chai').expect
-let orango = require('../lib')
 
 describe('edge connections', function() {
+
+  let orango;
   let john
   let jane
   let post
@@ -9,7 +9,9 @@ describe('edge connections', function() {
   let User
   let Post
 
-  before(async function() {
+
+  beforeAll(async(done) => {
+    orango = global.__ORANGO__;
     // :: USER :: //
     const UserSchema = orango.Schema({
       name: String
@@ -26,6 +28,7 @@ describe('edge connections', function() {
     // :: LIKE :: //
     const LikeSchema = orango.EdgeSchema('User', 'Post')
     Like = await orango.model('Like', LikeSchema)
+    done()
   })
 
   async function createDocs() {
@@ -49,84 +52,84 @@ describe('edge connections', function() {
       const cols = await orango.connection.db.listCollections()
 
       let str = JSON.stringify(cols)
-      expect(str).to.contain('edge_tests')
+      expect(str).toContain('edge_tests')
     })
   })
 
-  describe('findByEdge - find User', function() {
-    it('should use an edge collection to perform joins', async function() {
-      await createDocs()
+//   describe('findByEdge - find User', function() {
+//     it('should use an edge collection to perform joins', async function() {
+//       await createDocs()
 
-      let result = await User.findByEdge(Like, post._key).limit(1)
+//       let result = await User.findByEdge(Like, post._key).limit(1)
 
-      expect(result).to.deep.equal({
-        _key: jane._key,
-        _id: jane._id,
-        _rev: jane._rev,
-        name: jane.name
-      })
-    })
-  })
+//       expect(result).toEqual({
+//         _key: jane._key,
+//         _id: jane._id,
+//         _rev: jane._rev,
+//         name: jane.name
+//       })
+//     })
+//   })
 
-  describe('findByEdge to AQL', function() {
-    it('return an AQL', async function() {
-      await createDocs()
+//   describe('findByEdge to AQL', function() {
+//     it('return an AQL', async function() {
+//       await createDocs()
 
-      let aql
-      try {
-        aql = await User.findByEdge(Like, post._key)
-          // .limit(1)
-          .toAQL()
-      } catch (e) {
-        aql = e.message
-      }
+//       let aql
+//       try {
+//         aql = await User.findByEdge(Like, post._key)
+//           // .limit(1)
+//           .toAQL()
+//       } catch (e) {
+//         aql = e.message
+//       }
 
-      expect(aql).to.match(/FOR \$user IN INBOUND "posts\/\w+" likes RETURN DISTINCT \$user/)
-    })
-  })
+//       expect(aql).toMatch(/FOR \$user IN INBOUND "posts\/\w+" likes RETURN DISTINCT \$user/)
+//     })
+//   })
 
-  describe('findByEdge - find Post', function() {
-    it('should use an edge collection to perform joins', async function() {
-      await createDocs()
+//   describe('findByEdge - find Post', function() {
+//     it('should use an edge collection to perform joins', async function() {
+//       await createDocs()
 
-      let likedPosts = await Post.findByEdge(Like, jane._key)
+//       let likedPosts = await Post.findByEdge(Like, jane._key)
 
-      expect(likedPosts).to.deep.equal([
-        {
-          _key: post._key,
-          _id: post._id,
-          _rev: post._rev,
-          author: john._key,
-          text: post.text
-        }
-      ])
-    })
-  })
+//       expect(likedPosts).toEqual([
+//         {
+//           _key: post._key,
+//           _id: post._id,
+//           _rev: post._rev,
+//           author: john._key,
+//           text: post.text
+//         }
+//       ])
+//     })
+//   })
 
-  describe('remove from Like with post', function() {
-    it('should remove a single item', async function() {
-      await createDocs()
-      let result = await Like.unlink(null, post._key)
-      // .toAQL()
-      expect(result.deleted).to.equal(1)
-    })
-  })
+//   describe('remove from Like with post', function() {
+//     it('should remove a single item', async function() {
+//       await createDocs()
+//       let result = await Like.unlink(null, post._key)
+//       // .toAQL()
+//       expect(result.deleted).toBe(1)
+//     })
+//   })
 
-  describe('remove from Like with user', function() {
-    it('should remove a single item', async function() {
-      await createDocs()
-      let result = await Like.unlink(jane._key)
-      // .return('doc')
-      // .toAQL()
-      expect(result.deleted).to.equal(1)
-    })
-  })
+//   describe('remove from Like with user', function() {
+//     it('should remove a single item', async function() {
+//       await createDocs()
+//       let result = await Like.unlink(jane._key)
+//       // .return('doc')
+//       // .toAQL()
+//       expect(result.deleted).toBe(1)
+//     })
+//   })
 
-  describe('remove from Like with user id and post id', function() {
-    it('should remove a single item', async function() {
-      await createDocs()
-      let result = await Like.unlink(jane._key, post._key)
-      expect(result.deleted).to.equal(1)
-    })
-  })
+//   describe('remove from Like with user id and post id', function() {
+//     it('should remove a single item', async function() {
+//       await createDocs()
+//       let result = await Like.unlink(jane._key, post._key)
+//       expect(result.deleted).toBe(1)
+//     })
+//   })
 })

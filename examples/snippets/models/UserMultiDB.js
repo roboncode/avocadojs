@@ -1,4 +1,5 @@
 const User = (orango) => {
+
   const UserSchema = orango.Schema({
     name: String,
     email: {
