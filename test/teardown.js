@@ -2,7 +2,7 @@
 let orango = require('../lib')
 
 async function globalTeardown (){
-  let dbs = await orango.connection.db.listDatabases()
+  let dbs = await orango.get('system').connection.db.listDatabases()
 
   if (dbs.indexOf('test') !== -1) {
     await orango.get('system').dropDatabase('test')
