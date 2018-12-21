@@ -36,25 +36,30 @@
     ],
     "select": "name",
     "return": {
-      "value": "ident",
-      "actions": [
-        {
-          "action": "append",
-          "target": "user",
-          "as": "myUser"
-        },
-        {
-          "action": "append",
-          "target": "user",
-          "as": "myUser2"
-        },
-        {
-          "action": "merge",
-          "target": "user"
+      "value": {
+        "options": {
+          "value": "ident",
+          "actions": [
+            {
+              "action": "append",
+              "target": "user",
+              "as": "myUser"
+            },
+            {
+              "action": "append",
+              "target": "user",
+              "as": "myUser2"
+            },
+            {
+              "action": "merge",
+              "target": "user"
+            }
+          ],
+          "id": true,
+          "computed": true
         }
-      ],
-      "id": true,
-      "computed": true
+      },
+      "actions": []
     }
   }
 }

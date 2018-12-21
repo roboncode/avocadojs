@@ -1,17 +1,18 @@
 const fs = require('fs')
 const pluralize = require('pluralize')
+const orango = require('../../lib')
 require('colors')
 
-let orango = {
-  model(name, Model) {
-    if (Model) {
-      this.models[name] = Model
-    }
-    return this.models[name]
-  },
+// let orango = {
+//   model(name, Model) {
+//     if (Model) {
+//       this.models[name] = Model
+//     }
+//     return this.models[name]
+//   },
 
-  models: {}
-}
+//   models: {}
+// }
 
 class Model {
   static factory(name, schema) {
@@ -297,9 +298,9 @@ class Return {
 }
 
 // let Tweet = new Model('Tweet')
-let Identity = Model.factory('Identity')
-let User = Model.factory('User')
-let Like = Model.factory('Like', {
+let User = orango.model('User', {})
+let Identity = orango.model('Identity', {})
+let Like = orango.model('Like', {
   from: 'User',
   to: 'Identity'
 })
@@ -309,13 +310,16 @@ let UserQuery = User.update({
   .one()
   .where({
     _key: '@{^.user}'
-  }) // .name('u')
+  })
+  // .name('u')
   .return()
 
 // MOCK, TODO: turn real
-orango.model('Identity', Identity)
-orango.model('User', User)
-orango.model('Like', Like)
+// orango.model('Identity', Identity)
+// orango.model('User', User)
+// orango.model('Like', Like)
+
+// console.log('Whois', User)
 
 // var u = new User()
 // u.firstName = 'Rob'
@@ -430,13 +434,13 @@ function test6() {
 function test7() {
   let result = User.find()
     .one()
-    .let('num', 1)
-    .let('str', 'Hello')
-    .let('bool', true)
-    .let('arr', [1, 'two', true])
-    .let('obj', {
-      foo: 'bar'
-    })
+    // .let('num', 1)
+    // .let('str', 'Hello')
+    // .let('bool', true)
+    // .let('arr', [1, 'two', true])
+    // .let('obj', {
+    //   foo: 'bar'
+    // })
     .return(
       Model.return()
         .append('num', 'num1')
@@ -461,6 +465,8 @@ function test8() {
       lastName: 'Flintstone'
     }
   ])
+    .one()
+    .return()
 
   console.log(formatJSON(result).green)
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
@@ -498,7 +504,7 @@ test1()
 // test5()
 // test6()
 // test7()
-// test8() // TODO: implement parser
-// test9()
-// test10()
+// test8()
+// test9() // FIXME: FAIL
+// test10() // FIXME: FAIL
 // test11()

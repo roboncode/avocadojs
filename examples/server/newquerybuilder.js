@@ -9,8 +9,6 @@ let query = JSON.parse(fs.readFileSync(__dirname + '/query.json', {
 }))
 
 async function execQuery(query) {
-  // let queryToAQL = orango.helpers.queryToAQL(orango)
-  // let result = await queryToAQL.generate(query)
   let result = await orango.queryToAQL(query, true)
   console.log(result.green)
 }
