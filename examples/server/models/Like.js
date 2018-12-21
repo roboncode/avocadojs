@@ -1,3 +1,14 @@
 const orango = require('orango')
-let schema = orango.EdgeSchema('User', 'Tweet')
-module.exports = orango.model('Like', schema)
+module.exports = orango.model(
+  'Like',
+  {
+    _from: String,
+    _to: String
+  },
+  {
+    from: 'User',
+    to: 'Tweet',
+    edge: true,
+    strict: true
+  }
+)

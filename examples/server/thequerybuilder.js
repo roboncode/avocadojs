@@ -4,14 +4,15 @@ require('colors')
 
 let User = orango.model('User', {})
 let Identity = orango.model('Identity', {})
-// let Like = orango.model('Like', {
-//   _from: 'User',
-//   _to: 'Identity'
-// }, null, {
-//   strict: true
-// })
-let LikeSchema = orango.EdgeSchema('User', 'Identity')
-let Like = orango.model('Like', LikeSchema)
+let Like = orango.model('Like', {
+  _from: String,
+  _to: String
+}, {
+  from: 'User',
+  to: 'Identity',
+  strict: true,
+  edge: true
+})
 let UserQuery = User.update({
   firstName: 'John'
 })
