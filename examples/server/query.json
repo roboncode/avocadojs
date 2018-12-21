@@ -4,11 +4,37 @@
     "method": "find",
     "model": "User",
     "return": {
-      "actions": []
+      "actions": [
+        {
+          "action": "append",
+          "target": "num",
+          "as": "num1"
+        },
+        {
+          "action": "append",
+          "target": "bool"
+        },
+        {
+          "action": "merge",
+          "target": "arr"
+        }
+      ],
+      "id": true,
+      "computed": true
     },
-    "where": {
-      "_key": "12345"
-    },
-    "one": true
+    "one": true,
+    "lets": {
+      "num": 1,
+      "str": "Hello",
+      "bool": true,
+      "arr": [
+        1,
+        "two",
+        true
+      ],
+      "obj": {
+        "foo": "bar"
+      }
+    }
   }
 }

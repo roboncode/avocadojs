@@ -4,15 +4,19 @@ require('colors')
 
 let User = orango.model('User', {})
 let Identity = orango.model('Identity', {})
-let Like = orango.model('Like', {
-  _from: String,
-  _to: String
-}, {
-  from: 'User',
-  to: 'Identity',
-  strict: true,
-  edge: true
-})
+let Like = orango.model(
+  'Like',
+  {
+    _from: String,
+    _to: String
+  },
+  {
+    from: 'User',
+    to: 'Identity',
+    strict: true,
+    edge: true
+  }
+)
 let UserQuery = User.update({
   firstName: 'John'
 })
@@ -45,21 +49,21 @@ function test1() {
     verified: true,
     bogus: true
   })
-    // .one()
-    // .where({
-    //   _key: '217388'
-    // })
-    // .name('ident')
-    // .query('user', UserQuery)
-    // .select('name')
-    // .return( // FIXME: THIS DOES NOT WORK
-    //   Model.return('ident')
-    //     .append('user', 'myUser')
-    //     .append('user', 'myUser2')
-    //     .merge('user')
-    //     .id()
-    //     .computed()
-    // )
+    .one()
+    .where({
+      _key: '217388'
+    })
+    .name('ident')
+    .query('user', UserQuery)
+    .select('name')
+    .return(
+      Identity.return('ident')
+        .append('user', 'myUser')
+        .append('user', 'myUser2')
+        .merge('user')
+        .id()
+        .computed()
+    )
 
   console.log(formatJSON(result).green)
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
@@ -145,25 +149,24 @@ function test6() {
 }
 
 function test7() {
-  let result = User.find()
-    .one()
-    // .let('num', 1)
-    // .let('str', 'Hello')
-    // .let('bool', true)
-    // .let('arr', [1, 'two', true])
-    // .let('obj', {
-    //   foo: 'bar'
-    // })
-    // .return(
-    //   Model.return()
-    //     .append('num', 'num1')
-    //     .append('bool')
-    //     .merge('arr')
-    //     .id()
-    //     .computed()
-    // )
+  let result = User.find().one()
+  .let('num', 1)
+  .let('str', 'Hello')
+  .let('bool', true)
+  .let('arr', [1, 'two', true])
+  .let('obj', {
+    foo: 'bar'
+  })
+  .return(
+    User.return()
+      .append('num', 'num1')
+      .append('bool')
+      .merge('arr')
+      .id()
+      .computed()
+  )
 
-  console.log(formatJSON(result).green)
+  // console.log(formatJSON(result).green)
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
@@ -216,7 +219,7 @@ function test11() {
 // test4()
 // test5()
 // test6()
-// test7()
+test7()
 // test8()
 // test9()
 // test10()
