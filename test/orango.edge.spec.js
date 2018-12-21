@@ -56,20 +56,20 @@ describe('edge connections', function() {
     })
   })
 
-//   describe('findByEdge - find User', function() {
-//     it('should use an edge collection to perform joins', async function() {
-//       await createDocs()
+  describe('findByEdge - find User', function() {
+    it('should use an edge collection to perform joins', async function() {
+      await createDocs()
 
-//       let result = await User.findByEdge(Like, post._key).limit(1)
+      let result = await User.findByEdge(Like, post._key).limit(1)
 
-//       expect(result).toEqual({
-//         _key: jane._key,
-//         _id: jane._id,
-//         _rev: jane._rev,
-//         name: jane.name
-//       })
-//     })
-//   })
+      expect(result).toEqual({
+        _key: jane._key,
+        _id: jane._id,
+        _rev: jane._rev,
+        name: jane.name
+      })
+    })
+  })
 
 //   describe('findByEdge to AQL', function() {
 //     it('return an AQL', async function() {

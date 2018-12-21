@@ -185,19 +185,19 @@ describe('orango subdocs', function() {
     })
   })
 
-//   describe('array pulling objects with $pull', function() {
-//     it('to minus', async function() {
-//       const Test = orango.model('Test')
-//       let test = new Test({
-//         _key: '1'
-//       })
-//       test.comments = {
-//         $pull: ['foo', 'bar']
-//       }
-//       let aql = await test.save().toAQL()
-//       expect(aql).toBe(
-//         'LET modified = COUNT( FOR $test IN tests FILTER ($test.`_key` == "1") LIMIT 1 LET comments = MINUS($test.comments, ( FOR item IN $test.comments || [] FOR id IN ["foo","bar"] FILTER item.$id == id RETURN item)) UPDATE $test WITH {"comments":comments} IN tests RETURN 1) RETURN { modified }'
-//       )
-//     })
-//   })
+  describe('array pulling objects with $pull', function() {
+    it('to minus', async function() {
+      const Test = orango.model('Test')
+      let test = new Test({
+        _key: '1'
+      })
+      test.comments = {
+        $pull: ['foo', 'bar']
+      }
+      let aql = await test.save().toAQL()
+      expect(aql).toBe(
+        'LET modified = COUNT( FOR $test IN tests FILTER ($test.`_key` == "1") LIMIT 1 LET comments = MINUS($test.comments, ( FOR item IN $test.comments || [] FOR id IN ["foo","bar"] FILTER item.$id == id RETURN item)) UPDATE $test WITH {"comments":comments} IN tests RETURN 1) RETURN { modified }'
+      )
+    })
+  })
 })

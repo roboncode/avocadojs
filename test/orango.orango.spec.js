@@ -62,28 +62,28 @@ describe('orango', function() {
     })
   })
 
-//   describe('import docs', function() {
-//     it('should import data as documents', async function() {
-//       let result = await orango.importDocs(
-//         'Test',
-//         [
-//           {
-//             name: 'Test 1'
-//           },
-//           {
-//             name: 'Test 2'
-//           },
-//           {
-//             name: 'Test 3'
-//           }
-//         ],
-//         {
-//           truncate: true
-//         }
-//       )
-//       expect(result.created).toBe(3)
-//     })
-//   })
+  describe('import docs', function() {
+    it('should import data as documents', async function() {
+      let result = await orango.importDocs(
+        'Test',
+        [
+          {
+            name: 'Test 1'
+          },
+          {
+            name: 'Test 2'
+          },
+          {
+            name: 'Test 3'
+          }
+        ],
+        {
+          truncate: true
+        }
+      )
+      expect(result.created).toBe(3)
+    })
+  })
 
   xdescribe('import docs without a connection', function() {
     it('throw an error', async function(done) {
@@ -156,25 +156,25 @@ describe('orango', function() {
       })
     })
 
-//     describe('get model collection name', function() {
-//       it('to be pluralized version of name', async function() {
-//         const schema = orango.Schema({
-//           name: String
-//         })
-//         const MyTest = await orango.model('MyTest', schema)
-//         expect(MyTest.collectionName).toBe('my_tests')
-//       })
-//     })
+    describe('get model collection name', function() {
+      it('to be pluralized version of name', async function() {
+        const schema = orango.Schema({
+          name: String
+        })
+        const MyTest = await orango.model('MyTest', schema)
+        expect(MyTest.collectionName).toBe('my_tests')
+      })
+    })
 
-//     describe('get model collection name from overridden name', function() {
-//       it('to use custom name', async function() {
-//         const schema = orango.Schema({
-//           name: String
-//         })
-//         const MyTest = await orango.model('CustomModel', schema, 'tests')
-//         expect(MyTest.collectionName).toBe('tests')
-//       })
-//     })
+    describe('get model collection name from overridden name', function() {
+      it('to use custom name', async function() {
+        const schema = orango.Schema({
+          name: String
+        })
+        const MyTest = await orango.model('CustomModel', schema, 'tests')
+        expect(MyTest.collectionName).toBe('tests')
+      })
+    })
 
     describe('create a model that already exists', function() {
       it('to throw an error', async function() {
@@ -188,21 +188,21 @@ describe('orango', function() {
       })
     })
 
-//     describe('create document models prior to connecting', function() {
-//       it('should create collections', function(done) {
-//         let customOrango = orango.get('custom')
-//         customOrango
-//           .model('CustomModel', {
-//             name: String
-//           })
-//           .once(CONSTS.EVENTS.READY, async () => {
-//             let cols = await customOrango.connection.db.listCollections()
-//             expect(cols[0]).toHaveProperty('custom_model')
-//             done()
-//           })
-//         customOrango.connect('custom')
-//       })
-//     })
+    describe('create document models prior to connecting', function() {
+      it('should create collections', function(done) {
+        let customOrango = orango.get('custom')
+        customOrango
+          .model('CustomModel', {
+            name: String
+          })
+          .once(CONSTS.EVENTS.READY, async () => {
+            let cols = await customOrango.connection.db.listCollections()
+            expect(cols[0]).toHaveProperty('name','custom_models')
+            done()
+          })
+        customOrango.connect('custom')
+      })
+    })
 
     describe('create edge models prior to connecting', function() {
       it('should create collections', function(done) {
@@ -219,20 +219,20 @@ describe('orango', function() {
       })
     })
 
-    // describe('invoke a rawQuery', function() {
-    //   it('should make a raw query', async function() {
-    //     let rawOrango = orango.get('raw')
-    //     await rawOrango.connect('custom')
-    //     const User = await rawOrango.model('User', {
-    //       name: String
-    //     })
+    describe('invoke a rawQuery', function() {
+      it('should make a raw query', async function() {
+        let rawOrango = orango.get('raw')
+        await rawOrango.connect('custom')
+        const User = await rawOrango.model('User', {
+          name: String
+        })
 
-    //     await new User({
-    //       name: 'Mikey'
-    //     }).save()
-    //     results = await rawOrango.rawQuery('FOR doc IN users RETURN doc')
-    //     expect(results[0]._id).toBeDefined()
-    //   })
-    // })
+        await new User({
+          name: 'Mikey'
+        }).save()
+        results = await rawOrango.rawQuery('FOR doc IN users RETURN doc')
+        expect(results[0]._id).toBeDefined()
+      })
+    })
   })
 })
