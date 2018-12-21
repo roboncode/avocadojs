@@ -45,21 +45,21 @@ function test1() {
     verified: true,
     bogus: true
   })
-    .one()
-    .where({
-      _key: '217388'
-    })
-    .name('ident')
-    .query('user', UserQuery)
-    .select('name')
-    .return(
-      Model.return('ident')
-        .append('user', 'myUser')
-        .append('user', 'myUser2')
-        .merge('user')
-        .id()
-        .computed()
-    )
+    // .one()
+    // .where({
+    //   _key: '217388'
+    // })
+    // .name('ident')
+    // .query('user', UserQuery)
+    // .select('name')
+    // .return( // FIXME: THIS DOES NOT WORK
+    //   Model.return('ident')
+    //     .append('user', 'myUser')
+    //     .append('user', 'myUser2')
+    //     .merge('user')
+    //     .id()
+    //     .computed()
+    // )
 
   console.log(formatJSON(result).green)
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
@@ -68,7 +68,8 @@ function test1() {
 function test2() {
   let result = User.insert({
     firstName: 'John',
-    lastName: 'Smith'
+    lastName: 'Smith',
+    bogus: true
   })
     .query(
       'id1',
@@ -124,13 +125,16 @@ function test6() {
   let result = User.upsert(
     {
       name: 'user',
-      firstName: 'John'
+      firstName: 'John',
+      bogus: true
     },
     {
-      lastName: 'Smith'
+      lastName: 'Smith',
+      bogus: true
     }
   )
     .one()
+    .withDefaults()
     .where({
       name: 'user'
     })
@@ -150,14 +154,14 @@ function test7() {
     // .let('obj', {
     //   foo: 'bar'
     // })
-    .return(
-      Model.return()
-        .append('num', 'num1')
-        .append('bool')
-        .merge('arr')
-        .id()
-        .computed()
-    )
+    // .return(
+    //   Model.return()
+    //     .append('num', 'num1')
+    //     .append('bool')
+    //     .merge('arr')
+    //     .id()
+    //     .computed()
+    // )
 
   console.log(formatJSON(result).green)
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
@@ -167,11 +171,13 @@ function test8() {
   let result = User.import([
     {
       firstName: 'Jane',
-      lastName: 'Doe'
+      lastName: 'Doe',
+      bogus: true
     },
     {
       firstName: 'Fred',
-      lastName: 'Flintstone'
+      lastName: 'Flintstone',
+      bogus: true
     }
   ])
     .one()
@@ -182,9 +188,7 @@ function test8() {
 }
 
 function test9() {
-  let result = Like.link('a', 'b', {
-    more: 'data'
-  })
+  let result = Like.link('a', 'b', { bogus: true, notes: 'This is a test' })
 
   console.log(formatJSON(result).green)
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
@@ -214,6 +218,7 @@ function test11() {
 // test6()
 // test7()
 // test8()
-test9() // FIXME: FAIL
-// test10() // FIXME: FAIL
+// test9()
+// test10()
 // test11()
+// test12() // TODO: new Model().save()

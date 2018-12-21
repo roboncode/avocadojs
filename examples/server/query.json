@@ -1,12 +1,14 @@
 {
   "v": 1,
   "q": {
-    "method": "link",
-    "model": "Like",
-    "data": {
-      "more": "data",
-      "from": "users/a",
-      "to": "identities/b"
-    }
+    "method": "find",
+    "model": "User",
+    "return": {
+      "actions": []
+    },
+    "where": {
+      "_key": "12345"
+    },
+    "one": true
   }
 }

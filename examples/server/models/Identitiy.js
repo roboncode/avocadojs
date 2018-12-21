@@ -1,6 +1,7 @@
 const orango = require('orango')
 const bcrypt = require('bcrypt')
 const { CONNECTION, PROVIDER } = require('../consts')
+const tang = require('tangjs')
 
 function filterIdentity(identity) {
   delete identity.passwordHash
@@ -16,8 +17,8 @@ const IdentitySchema = orango.Schema(
     identifier: String, // email, phone#
     passwordHash: String,
     connection: String, // Username-Password-Authentication, google-oauth2, etc
-    isSocial: { type: Boolean },
-    verified: { type: Boolean }
+    isSocial: Boolean,
+    verified: Boolean
   },
   {
     strict: true,
