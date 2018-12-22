@@ -220,6 +220,36 @@ function test12() {
   fs.writeFileSync('query.json', formatJSON(query, true), 'utf-8')
 }
 
+async function test13() {
+  let result = Identity.update({
+    verified: true,
+    bogus: true
+  })
+    .one()
+    .where({
+      _key: '217388'
+    })
+    .name('ident')
+    .query('user', UserQuery)
+    .select('name')
+    .return(
+      Identity.return('ident')
+        .append('user', 'myUser')
+        .append('user', 'myUser2')
+        .merge('user')
+        .id()
+        .computed()
+        .model()
+    )
+
+  // let aql = await orango.queryToAQL(result, true)
+  // console.log(aql.green)
+  console.log(formatJSON(result).green)
+  let aql = await orango.queryToAQL(result, true)
+  console.log(aql.magenta)
+  // fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
+}
+
 // test1()
 // test2()
 // test3()
@@ -231,4 +261,5 @@ function test12() {
 // test9()
 // test10()
 // test11()
-test12() // TODO: new Model().save()
+// test12() // TODO: new Model().save()
+test13()

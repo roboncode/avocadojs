@@ -2,14 +2,58 @@
   "v": 1,
   "q": {
     "method": "update",
-    "model": "User",
+    "model": "Identity",
     "data": {
-      "lastName": "Doe",
-      "firstName": "Jane"
+      "verified": true,
+      "bogus": true
     },
+    "one": true,
     "where": {
-      "_key": "123"
+      "_key": "217388"
     },
-    "return": {}
+    "name": "ident",
+    "queries": [
+      {
+        "id": "user",
+        "query": {
+          "v": 1,
+          "q": {
+            "method": "update",
+            "model": "User",
+            "data": {
+              "firstName": "John"
+            },
+            "one": true,
+            "where": {
+              "_key": "@{^.user}"
+            },
+            "return": {}
+          }
+        }
+      }
+    ],
+    "select": "name",
+    "return": {
+      "actions": [
+        {
+          "action": "append",
+          "target": "user",
+          "as": "myUser"
+        },
+        {
+          "action": "append",
+          "target": "user",
+          "as": "myUser2"
+        },
+        {
+          "action": "merge",
+          "target": "user"
+        }
+      ],
+      "value": "ident",
+      "id": true,
+      "computed": true,
+      "model": "Identity"
+    }
   }
 }
