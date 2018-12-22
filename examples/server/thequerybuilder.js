@@ -239,10 +239,11 @@ async function test13() {
         .merge('user')
         .id()
         .computed()
-        .model()
+        .as("model")
     )
 
-  // console.log(formatJSON(result).green)
+  console.log(formatJSON(result, false).green)
+  // fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
   // let aql = await orango.queryToAQL(result, true)
   let aql = await result.toAQL(true)
   console.log(aql.cyan)

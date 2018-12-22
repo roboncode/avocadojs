@@ -1,59 +1,52 @@
 {
-  "v": 1,
-  "q": {
-    "method": "update",
+  "model": "Identity",
+  "method": "update",
+  "data": {
+    "verified": true,
+    "bogus": true
+  },
+  "one": true,
+  "where": {
+    "_key": "217388"
+  },
+  "name": "ident",
+  "queries": [
+    {
+      "let": "user",
+      "query": {
+        "model": "User",
+        "method": "update",
+        "data": {
+          "firstName": "John"
+        },
+        "one": true,
+        "where": {
+          "_key": "@{^.user}"
+        },
+        "return": true
+      }
+    }
+  ],
+  "select": "name",
+  "return": {
     "model": "Identity",
-    "data": {
-      "verified": true,
-      "bogus": true
-    },
-    "one": true,
-    "where": {
-      "_key": "217388"
-    },
-    "name": "ident",
-    "queries": [
+    "actions": [
       {
-        "id": "user",
-        "query": {
-          "v": 1,
-          "q": {
-            "method": "update",
-            "model": "User",
-            "data": {
-              "firstName": "John"
-            },
-            "one": true,
-            "where": {
-              "_key": "@{^.user}"
-            },
-            "return": {}
-          }
-        }
+        "action": "append",
+        "target": "user",
+        "as": "myUser"
+      },
+      {
+        "action": "append",
+        "target": "user",
+        "as": "myUser2"
+      },
+      {
+        "action": "merge",
+        "target": "user"
       }
     ],
-    "select": "name",
-    "return": {
-      "actions": [
-        {
-          "action": "append",
-          "target": "user",
-          "as": "myUser"
-        },
-        {
-          "action": "append",
-          "target": "user",
-          "as": "myUser2"
-        },
-        {
-          "action": "merge",
-          "target": "user"
-        }
-      ],
-      "value": "ident",
-      "id": true,
-      "computed": true,
-      "model": "Identity"
-    }
+    "value": "ident",
+    "as": "model"
   }
 }
