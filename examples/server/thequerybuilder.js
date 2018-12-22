@@ -5,13 +5,38 @@ const orango = require('orango')
 require('colors')
 
 let Identity, User, UserQuery
+let o = orango.get('sample')
 
 function formatJSON(data, indent = false) {
   return JSON.stringify(data, null, indent ? 2 : 0)
 }
 
+async function parseQuery(query, execute = false) {
+  console.log('===================================================')
+  console.log('connected'.magenta, o.name, o.connection.connected)
+  console.log()
+  console.log(formatJSON(query).green)
+  console.log()
+
+  fs.writeFileSync('query.json', formatJSON(query, true), 'utf-8')
+
+  let aql = await orango.queryToAQL(query, true)
+  console.log(aql.cyan)
+  if (execute) {
+    let cursor = await o.connection.db.query(aql)
+    let result
+    if (query.one) {
+      result = await cursor.next()
+    } else {
+      result = await cursor.all()
+    }
+    console.log()
+    console.log(formatJSON(result).grey)
+  }
+}
+
 function test1() {
-  let result = Identity.update({
+  let query = Identity.update({
     verified: true,
     bogus: true
   })
@@ -30,8 +55,9 @@ function test1() {
         .as('model')
     )
 
-  console.log(formatJSON(result).green)
-  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
+  // console.log(formatJSON(result).green)
+  // fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
+  parseQuery(query)
 }
 
 function test2() {
@@ -212,24 +238,13 @@ async function test13() {
 }
 
 async function test14() {
-  let o = orango.get('sample')
   let query = User.insert({
     firstName: 'Eddie',
     lastName: 'VanHalen',
     bogus: true
   }).return()
-  console.log('connected'.magenta, o.connection.connected)
-  console.log(formatJSON(query).green)
-  let aql = await orango.queryToAQL(query, true)
-  console.log(aql.cyan)
-  let cursor = await o.connection.db.query(aql)
-  let result
-  if(query.one) {
-    result = await cursor.next()
-  } else {
-    result = await cursor.all()
-  }
-  console.log(formatJSON(result).grey)
+
+  parseQuery(query)
 }
 
 async function main() {
@@ -250,7 +265,7 @@ async function main() {
     // .name('u')
     .return()
 
-  // test1()
+  test1()
   // test2()
   // test3()
   // test4()
@@ -263,7 +278,7 @@ async function main() {
   // test11()
   // test12() // TODO: new Model().save()
   // test13()
-  test14()
+  // test14()
 }
 
 main()
