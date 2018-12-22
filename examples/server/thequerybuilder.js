@@ -1,44 +1,10 @@
 const fs = require('fs')
-const orango = require('../../lib')
+require('app-module-path').addPath(__dirname)
+const readFiles = require('./helpers/readFiles')
+const orango = require('orango')
 require('colors')
 
-let User = orango.model('User', {})
-let Identity = orango.model('Identity', {})
-let Like = orango.model(
-  'Like',
-  {
-    _from: String,
-    _to: String
-  },
-  {
-    from: 'User',
-    to: 'Identity',
-    strict: true,
-    edge: true
-  }
-)
-let UserQuery = User.update({
-  firstName: 'John'
-})
-  .one()
-  .where({
-    _key: '@{^.user}'
-  })
-  // .name('u')
-  .return()
-
-// MOCK, TODO: turn real
-// orango.model('Identity', Identity)
-// orango.model('User', User)
-// orango.model('Like', Like)
-
-// console.log('Whois', User)
-
-// var u = new User()
-// u.firstName = 'Rob'
-// u.lastName = 'Taylor'
-
-// console.log(u.toJSON())
+let Identity, User, UserQuery
 
 function formatJSON(data, indent = false) {
   return JSON.stringify(data, null, indent ? 2 : 0)
@@ -235,7 +201,7 @@ async function test13() {
         .append('user', 'myUser')
         .append('user', 'myUser2')
         .merge('user')
-        .as("model")
+        .as('model')
     )
 
   console.log(formatJSON(result, false).green)
@@ -245,16 +211,59 @@ async function test13() {
   console.log(aql.cyan)
 }
 
-// test1()
-// test2()
-// test3()
-// test4()
-// test5()
-// test6()
-// test7()
-// test8()
-// test9()
-// test10()
-// test11()
-// test12() // TODO: new Model().save()
-test13()
+async function test14() {
+  let o = orango.get('sample')
+  let query = User.insert({
+    firstName: 'Eddie',
+    lastName: 'VanHalen',
+    bogus: true
+  }).return()
+  console.log('connected'.magenta, o.connection.connected)
+  console.log(formatJSON(query).green)
+  let aql = await orango.queryToAQL(query, true)
+  console.log(aql.cyan)
+  let cursor = await o.connection.db.query(aql)
+  let result
+  if(query.one) {
+    result = await cursor.next()
+  } else {
+    result = await cursor.all()
+  }
+  console.log(formatJSON(result).grey)
+}
+
+async function main() {
+  readFiles(__dirname + '/models')
+
+  await orango.get('sample').connect()
+
+  Identity = orango.model('Identity')
+  User = orango.model('User')
+
+  UserQuery = User.update({
+    firstName: 'John'
+  })
+    .one()
+    .where({
+      _key: '@{^.user}'
+    })
+    // .name('u')
+    .return()
+
+  // test1()
+  // test2()
+  // test3()
+  // test4()
+  // test5()
+  // test6()
+  // test7()
+  // test8()
+  // test9()
+  // test10()
+  // test11()
+  // test12() // TODO: new Model().save()
+  // test13()
+  test14()
+}
+
+main()

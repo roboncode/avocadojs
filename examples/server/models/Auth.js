@@ -1,6 +1,5 @@
 const orango = require('orango')
 const bcrypt = require('bcrypt')
-const human = require('humanparser')
 const config = require('../config')
 const CONSTS = require('../consts')
 

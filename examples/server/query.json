@@ -1,52 +1,26 @@
 {
-  "model": "Identity",
-  "method": "update",
+  "model": "User",
+  "method": "insert",
   "data": {
-    "verified": true,
+    "firstName": "John",
+    "lastName": "Smith",
     "bogus": true
   },
-  "one": true,
-  "where": {
-    "_key": "217388"
-  },
-  "name": "ident",
   "queries": [
     {
-      "let": "user",
+      "let": "id1",
       "query": {
-        "model": "User",
+        "model": "Identity",
         "method": "update",
         "data": {
-          "firstName": "John"
+          "provider": "hello",
+          "verified": true
         },
-        "one": true,
         "where": {
-          "_key": "@{^.user}"
-        },
-        "return": true
+          "_key": "123"
+        }
       }
     }
   ],
-  "select": "name",
-  "return": {
-    "model": "Identity",
-    "actions": [
-      {
-        "action": "append",
-        "target": "user",
-        "as": "myUser"
-      },
-      {
-        "action": "append",
-        "target": "user",
-        "as": "myUser2"
-      },
-      {
-        "action": "merge",
-        "target": "user"
-      }
-    ],
-    "value": "ident",
-    "as": "model"
-  }
+  "return": true
 }
