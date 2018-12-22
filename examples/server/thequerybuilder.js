@@ -242,12 +242,10 @@ async function test13() {
         .model()
     )
 
+  // console.log(formatJSON(result).green)
   // let aql = await orango.queryToAQL(result, true)
-  // console.log(aql.green)
-  console.log(formatJSON(result).green)
-  let aql = await orango.queryToAQL(result, true)
-  console.log(aql.magenta)
-  // fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
+  let aql = await result.toAQL(true)
+  console.log(aql.cyan)
 }
 
 // test1()
