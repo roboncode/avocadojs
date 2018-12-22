@@ -30,30 +30,32 @@ async function parseQuery(query, execute = false) {
     } else {
       result = await cursor.all()
     }
-    console.log()
-    console.log(formatJSON(result).grey)
+    if(result) {
+      console.log()
+      console.log(formatJSON(result).grey)
+    }
+    return result
   }
+  return aql
 }
 
 function test1() {
-  let query = Identity.update({
-    verified: true,
-    bogus: true
-  })
+  let query = Identity.update({ verified: true, bogus: true })
     .one()
-    .where({
-      _key: '217388'
-    })
+    .where({ _key: '217388' })
     .name('ident')
-    .query('user', UserQuery)
+    // .query('user', UserQuery)
     .select('name')
     .return(
-      Identity.return('ident')
+      orango
+        .Return()
         .append('user', 'myUser')
         .append('user', 'myUser2')
         .merge('user')
-        .as('model')
+        .one()
     )
+
+  // let results = orango.unmarshal(data, Identity)
 
   // console.log(formatJSON(result).green)
   // fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
@@ -247,6 +249,18 @@ async function test14() {
   parseQuery(query)
 }
 
+async function test15() {
+  let query = await User.insert({
+    firstName: 'Eddie',
+    lastName: 'VanHalen',
+    bogus: true
+  })
+  .return()
+
+  let result = await parseQuery(query, true)
+  // result = orango.convert(User, result)
+}
+
 async function main() {
   readFiles(__dirname + '/models')
 
@@ -265,7 +279,7 @@ async function main() {
     // .name('u')
     .return()
 
-  test1()
+  // test1()
   // test2()
   // test3()
   // test4()
@@ -279,6 +293,7 @@ async function main() {
   // test12() // TODO: new Model().save()
   // test13()
   // test14()
+  test15()
 }
 
 main()
