@@ -63,6 +63,7 @@ function test1() {
         .merge('user')
         .id()
         .computed()
+        .model()
     )
 
   console.log(formatJSON(result).green)
@@ -213,13 +214,13 @@ function test11() {
 // User.find().byId().and.update()
 // User.update().byId().return()
 
-// test1()
+test1()
 // test2()
 // test3()
 // test4()
 // test5()
 // test6()
-test7()
+// test7()
 // test8()
 // test9()
 // test10()

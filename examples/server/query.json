@@ -1,40 +1,58 @@
 {
   "v": 1,
   "q": {
-    "method": "find",
-    "model": "User",
+    "method": "update",
+    "model": "Identity",
+    "data": {
+      "verified": true,
+      "bogus": true
+    },
+    "one": true,
+    "where": {
+      "_key": "217388"
+    },
+    "name": "ident",
+    "queries": [
+      {
+        "id": "user",
+        "query": {
+          "v": 1,
+          "q": {
+            "method": "update",
+            "model": "User",
+            "data": {
+              "firstName": "John"
+            },
+            "one": true,
+            "where": {
+              "_key": "@{^.user}"
+            }
+          }
+        }
+      }
+    ],
+    "select": "name",
     "return": {
       "actions": [
         {
           "action": "append",
-          "target": "num",
-          "as": "num1"
+          "target": "user",
+          "as": "myUser"
         },
         {
           "action": "append",
-          "target": "bool"
+          "target": "user",
+          "as": "myUser2"
         },
         {
           "action": "merge",
-          "target": "arr"
+          "target": "user"
         }
       ],
+      "value": "ident",
       "id": true,
-      "computed": true
-    },
-    "one": true,
-    "lets": {
-      "num": 1,
-      "str": "Hello",
-      "bool": true,
-      "arr": [
-        1,
-        "two",
-        true
-      ],
-      "obj": {
-        "foo": "bar"
-      }
+      "computed": true,
+      "model": "Identity"
     }
   }
 }
