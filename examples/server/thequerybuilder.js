@@ -150,22 +150,23 @@ function test6() {
 }
 
 function test7() {
-  let result = User.find().one()
-  .let('num', 1)
-  .let('str', 'Hello')
-  .let('bool', true)
-  .let('arr', [1, 'two', true])
-  .let('obj', {
-    foo: 'bar'
-  })
-  .return(
-    User.return()
-      .append('num', 'num1')
-      .append('bool')
-      .merge('arr')
-      .id()
-      .computed()
-  )
+  let result = User.find()
+    .one()
+    .let('num', 1)
+    .let('str', 'Hello')
+    .let('bool', true)
+    .let('arr', [1, 'two', true])
+    .let('obj', {
+      foo: 'bar'
+    })
+    .return(
+      User.return()
+        .append('num', 'num1')
+        .append('bool')
+        .merge('arr')
+        .id()
+        .computed()
+    )
 
   // console.log(formatJSON(result).green)
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
@@ -211,10 +212,15 @@ function test11() {
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
-// User.find().byId().and.update()
-// User.update().byId().return()
+function test12() {
+  let user = new User({ _key: '123', lastName: 'Doe' })
+  user.firstName = 'Jane'
+  let query = user.toQuery()
+  console.log(formatJSON(query).green)
+  fs.writeFileSync('query.json', formatJSON(query, true), 'utf-8')
+}
 
-test1()
+// test1()
 // test2()
 // test3()
 // test4()
@@ -225,4 +231,4 @@ test1()
 // test9()
 // test10()
 // test11()
-// test12() // TODO: new Model().save()
+test12() // TODO: new Model().save()
