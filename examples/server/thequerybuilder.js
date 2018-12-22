@@ -61,9 +61,7 @@ function test1() {
         .append('user', 'myUser')
         .append('user', 'myUser2')
         .merge('user')
-        .id()
-        .computed()
-        .model()
+        .as('model')
     )
 
   console.log(formatJSON(result).green)
@@ -237,8 +235,6 @@ async function test13() {
         .append('user', 'myUser')
         .append('user', 'myUser2')
         .merge('user')
-        .id()
-        .computed()
         .as("model")
     )
 
