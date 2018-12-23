@@ -273,7 +273,18 @@ async function test15() {
 }
 
 async function test16() {
-  let user = new User()
+  User.on('hook:insert', (payload) => {
+    console.log('INSERT'.magenta, payload.query)
+  })
+
+  User.on('hook:inserted', payload => {
+    console.log('INSERTED'.magenta, payload.data)
+  })
+
+  let user = new User({
+    firstName: "James",
+    lastName: "Dean"
+  })
   await user.save()
   console.log('Name:'.green, user.fullName)
   user.firstName = 'Rob'
@@ -323,8 +334,8 @@ async function main() {
   // test13()
   // test14()
   // test15()
-  // test16()
-  test17()
+  test16()
+  // test17()
 }
 
 main()

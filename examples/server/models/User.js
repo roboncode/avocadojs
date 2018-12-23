@@ -2,11 +2,6 @@ module.exports = orango => {
   class User extends orango.Model {
     constructor(data) {
       super(data, User.schema)
-      // this.firstName = 'Steve'
-      // this.lastName = 'Vai'
-      if (data) {
-        Object.assign(this, data)
-      }
     }
 
     get fullName() {
