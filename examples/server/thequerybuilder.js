@@ -60,12 +60,13 @@ function test1() {
     .name('ident')
     // .query('user', UserQuery)
     .select('name')
-    .return(sampleDB
-        .Return()
+    .return(
+      orango.return
         .append('user', 'myUser')
         .append('user', 'myUser2')
         .merge('user')
-        .one())
+        .one()
+    )
 
   // let results = orango.unmarshal(data, Identity)
 
@@ -209,19 +210,22 @@ function test10() {
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
-function test11() {
-  let result = User.find().byId('12345')
-
-  console.log(formatJSON(result).green)
-  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
+async function test11() {
+  let result = await User.find()
+    .limit(1)
+    .return({ one: true })
+  console.log(result)
 }
 
-function test12() {
-  let user = new User({ _key: '123', lastName: 'Doe' })
-  user.firstName = 'Jane'
-  let query = user.toQuery()
-  console.log(formatJSON(query).green)
-  fs.writeFileSync('query.json', formatJSON(query, true), 'utf-8')
+async function test12() {
+  // this will try and update because you are passing a key
+  let user = new User({
+    _key: '67027',
+    lastName: 'Doe'
+  })
+  user.firstName = 'John'
+  await user.save()
+  console.log(user)
 }
 
 async function test13() {
@@ -237,11 +241,10 @@ async function test13() {
     .query('user', UserQuery)
     .select('name')
     .return(
-      Identity.return('ident')
+      orango.return
         .append('user', 'myUser')
         .append('user', 'myUser2')
         .merge('user')
-        .as('model')
     )
 
   console.log(formatJSON(result, false).green)
@@ -250,30 +253,27 @@ async function test13() {
 }
 
 async function test14() {
-  let query = User.insert({
+  let result = await User.insert({
     firstName: 'Eddie',
     lastName: 'VanHalen',
     bogus: true
   }).return()
 
-  parseQuery(query)
+  console.log(result)
 }
 
 async function test15() {
-  let query = await User.insert({
+  let result = await User.insert({
     firstName: 'Eddie',
     lastName: 'VanHalen',
     bogus: true
-  }).return()
+  }).return(orango.return.one())
 
-  let result = await parseQuery(query, true)
-  let users = User.fromJSON(result)
-  console.log(users[0].isHuman)
-  console.log(JSON.stringify(users))
+  console.log(result)
 }
 
 async function test16() {
-  User.on('hook:insert', (payload) => {
+  User.on('hook:insert', payload => {
     console.log('INSERT'.magenta, payload.query)
   })
 
@@ -282,8 +282,8 @@ async function test16() {
   })
 
   let user = new User({
-    firstName: "James",
-    lastName: "Dean"
+    firstName: 'James',
+    lastName: 'Dean'
   })
   await user.save()
   console.log('Name:'.green, user.fullName)
@@ -295,13 +295,12 @@ async function test16() {
 }
 
 async function test17() {
-  let result = await User.find().byId(56941)
+  let result = await User.find().byId(64667)
   let user = User.fromJSON(result)
   console.log(user.fullName.green, user)
 }
 
 async function main() {
-
   await sampleDB.connect()
 
   read(__dirname + '/models', sampleDB)
@@ -312,7 +311,6 @@ async function main() {
   UserQuery = User.update({
     firstName: 'John'
   })
-    .one()
     .where({
       _key: '@{^.user}'
     })
@@ -329,13 +327,13 @@ async function main() {
   // test8()
   // test9()
   // test10()
-  // test11()
-  // test12() // TODO: new Model().save()
-  // test13()
-  // test14()
-  // test15()
-  test16()
-  // test17()
+  test11()
+  // test12() // pass
+  // test13() // pass
+  // test14() // pass
+  // test15() // pass
+  // test16() // pass
+  // test17() // pass
 }
 
 main()
