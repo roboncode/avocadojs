@@ -131,27 +131,27 @@ function test5() {
   fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
 }
 
-function test6() {
-  let result = User.upsert(
+async function test6() {
+  let result = await User.upsert(
     {
       name: 'user',
-      firstName: 'John',
+      firstName: 'David',
       bogus: true
     },
     {
-      lastName: 'Smith',
+      lastName: 'Lee Roth',
       bogus: true
     }
   )
     .one()
     .withDefaults()
     .where({
-      name: 'user'
+      firstName: 'David'
     })
-    .return()
-
-  console.log(formatJSON(result).green)
-  fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
+    .return({ one: true })
+  
+  let user = User.fromJSON(result)
+  console.log(user)
 }
 
 function test7() {
@@ -327,12 +327,12 @@ async function main() {
   // test8()
   // test9()
   // test10()
-  test11()
+  // test11()
   // test12() // pass
   // test13() // pass
   // test14() // pass
   // test15() // pass
-  // test16() // pass
+  test16() // pass
   // test17() // pass
 }
 
