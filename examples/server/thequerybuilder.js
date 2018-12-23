@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
 require('app-module-path').addPath(__dirname)
-// const readFiles = require('./helpers/readFiles')
 const orango = require('orango')
 require('colors')
 
@@ -246,8 +245,6 @@ async function test13() {
     )
 
   console.log(formatJSON(result, false).green)
-  // fs.writeFileSync('query.json', formatJSON(result, true), 'utf-8')
-  // let aql = await orango.queryToAQL(result, true)
   let aql = await result.toAQL(true)
   console.log(aql.cyan)
 }
@@ -273,7 +270,6 @@ async function test15() {
   let users = User.fromJSON(result)
   console.log(users[0].isHuman)
   console.log(JSON.stringify(users))
-  // result = orango.convert(User, result)
 }
 
 async function test16() {
@@ -285,16 +281,15 @@ async function test16() {
   user.bogus = true
   await user.save()
   console.log('Name:'.green, user.fullName)
-  console.log(JSON.stringify(user))
 }
 
 async function test17() {
-  let result = await User.find().byId(52603)
-  console.log(result.toJSON())
+  let result = await User.find().byId(56941)
+  let user = User.fromJSON(result)
+  console.log(user)
 }
 
 async function main() {
-  // readFiles(__dirname + '/models')
 
   await sampleDB.connect()
 

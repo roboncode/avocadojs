@@ -10,6 +10,6 @@ module.exports = orango => {
     locale: 'Locale'
   }
 
-  return Settings
+  return orango.model('Settings', Settings, false)
 }
 
