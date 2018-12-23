@@ -286,7 +286,7 @@ async function test16() {
 async function test17() {
   let result = await User.find().byId(56941)
   let user = User.fromJSON(result)
-  console.log(user)
+  console.log(user.fullName.green, user)
 }
 
 async function main() {
