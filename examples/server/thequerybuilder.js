@@ -1,14 +1,28 @@
 const fs = require('fs')
+const path = require('path')
 require('app-module-path').addPath(__dirname)
-const readFiles = require('./helpers/readFiles')
+// const readFiles = require('./helpers/readFiles')
 const orango = require('orango')
 require('colors')
 
 let Identity, User, UserQuery
-let o = orango.get('sample')
+let sampleDB = orango.get('sample')
 
 function formatJSON(data, indent = false) {
   return JSON.stringify(data, null, indent ? 2 : 0)
+}
+
+function read(dir, ...injections) {
+  let files = fs.readdirSync(dir)
+  for (var i = 0; i < files.length; i++) {
+    let file = files[i]
+    if (file.match(/.js$/)) {
+      let item = require(path.join(dir, file))
+      if (typeof item === 'function') {
+        item.apply(item, injections)
+      }
+    }
+  }
 }
 
 async function parseQuery(query, execute = false) {
@@ -18,19 +32,20 @@ async function parseQuery(query, execute = false) {
   console.log(formatJSON(query).green)
   console.log()
 
-  fs.writeFileSync('query.json', formatJSON(query, true), 'utf-8')
+  // fs.writeFileSync('query.json', formatJSON(query, true), 'utf-8')
 
-  let aql = await orango.queryToAQL(query, true)
+  let json = query.toJSON ? query.toJSON() : query
+  let aql = await sampleDB.queryToAQL(json, true)
   console.log(aql.cyan)
   if (execute) {
     let cursor = await o.connection.db.query(aql)
     let result
-    if (query.one) {
+    if (json.one) {
       result = await cursor.next()
     } else {
       result = await cursor.all()
     }
-    if(result) {
+    if (result) {
       console.log()
       console.log(formatJSON(result).grey)
     }
@@ -46,14 +61,12 @@ function test1() {
     .name('ident')
     // .query('user', UserQuery)
     .select('name')
-    .return(
-      orango
+    .return(sampleDB
         .Return()
         .append('user', 'myUser')
         .append('user', 'myUser2')
         .merge('user')
-        .one()
-    )
+        .one())
 
   // let results = orango.unmarshal(data, Identity)
 
@@ -254,20 +267,41 @@ async function test15() {
     firstName: 'Eddie',
     lastName: 'VanHalen',
     bogus: true
-  })
-  .return()
+  }).return()
 
   let result = await parseQuery(query, true)
+  let users = User.fromJSON(result)
+  console.log(users[0].isHuman)
+  console.log(JSON.stringify(users))
   // result = orango.convert(User, result)
 }
 
+async function test16() {
+  let user = new User()
+  await user.save()
+  console.log('Name:'.green, user.fullName)
+  user.firstName = 'Rob'
+  user.lastName = 'Taylor'
+  user.bogus = true
+  await user.save()
+  console.log('Name:'.green, user.fullName)
+  console.log(JSON.stringify(user))
+}
+
+async function test17() {
+  let result = await User.find().byId(52603)
+  console.log(result.toJSON())
+}
+
 async function main() {
-  readFiles(__dirname + '/models')
+  // readFiles(__dirname + '/models')
 
-  await orango.get('sample').connect()
+  await sampleDB.connect()
 
-  Identity = orango.model('Identity')
-  User = orango.model('User')
+  read(__dirname + '/models', sampleDB)
+
+  Identity = sampleDB.model('Identity')
+  User = sampleDB.model('User')
 
   UserQuery = User.update({
     firstName: 'John'
@@ -293,7 +327,9 @@ async function main() {
   // test12() // TODO: new Model().save()
   // test13()
   // test14()
-  test15()
+  // test15()
+  // test16()
+  test17()
 }
 
 main()
