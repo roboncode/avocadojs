@@ -9,29 +9,34 @@ const DATABASE = 'examples'
 orango.logger.level = 'info'
 
 async function initCollections(db) {
-
   const User = db.model('User')
 
   await User.import([
     {
+      _key: 'eddie',
       firstName: 'Eddie',
       lastName: 'VanHalen',
+      tags: ['guitar'],
       born: 'January 26, 1955'
     },
     {
       firstName: 'Steve',
-      lastName: 'Vai'
+      lastName: 'Vai',
+      tags: ['guitar', 'vocals']
     },
     {
       firstName: 'Randy',
-      lastName: 'Rhoads'
+      lastName: 'Rhoads',
+      tags: ['guitar']
     },
     {
       firstName: 'Alex',
-      lastName: 'Lifeson'
+      lastName: 'Lifeson',
+      tags: ['guitar', 'vocals']
     },
     {
-      firstName: 'Slash'
+      firstName: 'Slash',
+      tags: ['guitar']
     }
   ])
   console.log(`✅  Populated "${User.collectionName}" collection`.green)

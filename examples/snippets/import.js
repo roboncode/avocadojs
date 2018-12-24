@@ -1,22 +1,28 @@
-require('colors')
-const setup = require(__dirname + '/../helpers/setup')
-
-;(async function() {
-  // get sample db
-  const db = await setup()
-
+module.exports = async db => {
   // get a reference to User model
   const User = db.model('User')
 
+  // create query
+  let query = User.import([
+    {
+      firstName: 'Axl',
+      lastName: 'Rose'
+    },
+    {
+      firstName: 'David',
+      lastName: 'Lee Roth'
+    }
+  ]).return()
+
   // FOR DEMO ONLY - show the AQL
-  let aql = await User.find().one().toAQL(true)
+  let aql = await query.toAQL(true)
   console.log(aql.cyan)
 
   // find first item in users collection
-  let rawData = await User.find().one()
+  let rawData = await query.exec()
   console.log('rawData'.green, rawData)
 
   // convert data to model
   let user = User.fromJSON(rawData)
   console.log('modelData'.green, user)
-})()
+}

@@ -18,37 +18,20 @@ module.exports = orango => {
    */
   User.schema = orango.Schema(
     {
+      active: Boolean,
       email: String,
-      screenName: String,
       firstName: String,
       lastName: String,
-      created: Date,
+      tags: [String],
       updated: Date
     },
     {
       // strict: false,
       // removeOnMatchDefault: true, // TODO: Deprecated???
       indexes: [
-        {
-          type: 'hash',
-          fields: ['email']
-        },
-        {
-          type: 'hash',
-          fields: ['screenName']
-        },
-        {
-          type: 'skipList',
-          fields: ['screenName']
-        },
-        {
-          type: 'skipList',
-          fields: ['firstName']
-        },
-        {
-          type: 'skipList',
-          fields: ['lastName']
-        }
+        { type: 'hash', fields: ['active'] },
+        { type: 'hash', fields: ['tags'] },
+        { type: 'hash', fields: ['firstName', 'lastName'] }
       ]
     }
   )
@@ -57,8 +40,7 @@ module.exports = orango => {
    * Unmarshal data coming from ArangoDB
    */
   User.struct = {
-    settings: 'Settings',
-    tags: ['Tag']
+    settings: 'Settings'
   }
 
   /**
