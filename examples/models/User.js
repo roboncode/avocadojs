@@ -24,7 +24,7 @@ module.exports = orango => {
       lastName: String
     },
     {
-      strict: true,
+      // strict: false,
       // removeOnMatchDefault: true, // TODO: Deprecated???
       indexes: [
         {

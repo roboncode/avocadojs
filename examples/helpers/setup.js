@@ -15,7 +15,8 @@ async function initCollections(db) {
   await User.import([
     {
       firstName: 'Eddie',
-      lastName: 'VanHalen'
+      lastName: 'VanHalen',
+      born: 'January 26, 1955'
     },
     {
       firstName: 'Steve',
