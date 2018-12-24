@@ -14,7 +14,7 @@ module.exports = orango => {
   }
 
   /**
-   * Validates data going to Ara1ngoDB
+   * Validates data going to ArangoDB
    */
   User.schema = orango.Schema(
     {

@@ -22,7 +22,8 @@
     "lodash": "4.17.11",
     "pluralize": "^7.0.0",
     "tangjs": "0.2.3",
-    "uniqid": "^5.0.3"
+    "uniqid": "^5.0.3",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "chai": "4.2.0",

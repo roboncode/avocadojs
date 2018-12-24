@@ -6,6 +6,8 @@ const EVENTS = require('lib/consts/events')
 const invoke = require('./invoke')
 const DATABASE = 'examples'
 
+orango.logger.level = 'info'
+
 async function initCollections(db) {
 
   const User = db.model('User')
@@ -31,22 +33,13 @@ async function initCollections(db) {
       firstName: 'Slash'
     }
   ])
+  console.log(`✅  Populated "${User.collectionName}" collection`.green)
 }
 
 async function initDatabase() {
   await orango.connect()
-  console.log('✅ Connected to:'.green, orango.connection.url + '/' + orango.connection.name)
-
   await orango.dropDatabase(DATABASE)
-  console.log('✅ Drop database:'.green, DATABASE)
-
   await orango.createDatabase(DATABASE)
-  console.log('✅ Create database:'.green, DATABASE)
-
-  let names = await orango.connection.db.listDatabases()
-  console.log('ℹ️ Available databases:'.cyan, names)
-
-  console.log('✅ Disconnecting from:'.green, orango.connection.name)
   await orango.disconnect()
 }
 
@@ -58,7 +51,7 @@ module.exports = async function() {
 
   // listen for connection to ArangoDB
   db.events.on(EVENTS.CONNECTED, conn => {
-    console.log('✅ Connected to:'.green, conn.url + '/' + conn.name)
+    console.log('✅  Connected to:'.green, conn.url + '/' + conn.name)
   })
 
   // initialze models and inject db
