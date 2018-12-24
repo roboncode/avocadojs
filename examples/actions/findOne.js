@@ -1,9 +1,13 @@
 require('colors')
-const setup = require('./helpers/setup')
+const setup = require(__dirname + '/../helpers/setup')
+
+const sleep = ms => new Promise(res => setTimeout(res, ms))
 
 ;(async function() {
   // get sample db
   const db = await setup()
+
+  // await sleep(1000)
 
   // get a reference to User model
   const User = db.model('User')
