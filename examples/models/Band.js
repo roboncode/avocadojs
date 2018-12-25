@@ -36,9 +36,11 @@ module.exports = orango => {
    * Hooks allow you to modify the data before stored in database.
    * You have access to the model instance so properties can be invoked.
    */
-  Band.hooks = { lastUpdated(model) {
+  Band.hooks = {
+    lastUpdated(model) {
       model.updated = Date.now()
-    } }
+    }
+  }
 
   return orango.model('Band', Band)
 }

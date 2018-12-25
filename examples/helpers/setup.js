@@ -45,6 +45,14 @@ async function initCollections(db) {
     }
   ])
   console.log(`✅  Populated "${User.collectionName}" collection`.green)
+
+  const Band = db.model('Band')
+  await Band.import([
+    {
+      name: "Rush"
+    }
+  ])
+
 }
 
 async function initDatabase() {
