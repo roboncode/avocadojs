@@ -3,7 +3,9 @@ module.exports = async db => {
   const User = db.model('User')
 
   // create query
-  let query = User.count().return({ one: true })
+  let query = User.count()
+    .where({ active: true })
+    .return({ one: true })
 
   // FOR DEMO ONLY - show the AQL
   let aql = await query.toAQL(true)

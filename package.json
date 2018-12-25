@@ -4,6 +4,7 @@
   "description": "ArangoDB Object Modeler for Node.js, Foxx and Web Browsers",
   "main": "./index.js",
   "scripts": {
+    "examples" : "node examples",
     "test": "nyc --reporter=html --reporter=text mocha --delay",
     "test-no-coverage": "mocha --delay",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
