@@ -1,6 +1,7 @@
 .DS_Store
 .vscode/
 .idea/
+coverage/
 docker/
 docs/
 examples/
@@ -8,6 +9,11 @@ node_modules/
 test/
 tmp/
 tools/
+.prettierrc
+jest.config.js
+Gemfile
+*.sh
+*.md
 wallaby.js
 .travis.yml
 *.log
