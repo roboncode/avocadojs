@@ -4,15 +4,11 @@
   "description": "ArangoDB Object Modeler for Node.js, Foxx and Web Browsers",
   "main": "./index.js",
   "scripts": {
-    "examples" : "node examples",
-    "test": "nyc --reporter=html --reporter=text mocha --delay",
-    "test-no-coverage": "mocha --delay",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "examples": "node examples",
+    "test": "jest --coverage",
+    "test-no-coverage": "jest",
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
-    "examples:setup": "cd examples && ./setup.sh",
-    "examples:server": "cd examples/server && yarn serve",
-    "examples:client": "cd examples/client && yarn serve"
+    "docs:build": "vuepress build docs"
   },
   "author": "Rob Taylor <roboncode@gmail.com> (https://www.linkedin.com/in/roboncode/)",
   "license": "MIT",
@@ -27,10 +23,7 @@
     "winston": "^3.1.0"
   },
   "devDependencies": {
-    "chai": "4.2.0",
-    "coveralls": "^3.0.2",
-    "mocha": "^5.2.0",
-    "nyc": "13.1.0",
+    "jest": "^23.6.0",
     "vuepress": "0.14.8"
   },
   "directories": {
