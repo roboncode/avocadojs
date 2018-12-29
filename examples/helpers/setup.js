@@ -8,8 +8,6 @@ const DATABASE = 'examples'
 
 orango.logger.level = 'info'
 
-const sleep = ms => new Promise(res => setTimeout(res, ms))
-
 async function initCollections(db) {
   const User = db.model('User')
 
@@ -55,6 +53,8 @@ async function initCollections(db) {
       text: 'Hello, world!'
     }
   ])
+
+  console.log(`✅  Populated "${Tweet.collectionName}" collection`.green)
 }
 
 async function initDatabase() {
@@ -71,17 +71,23 @@ module.exports = async function() {
   let db = orango.get(DATABASE)
 
   // listen for connection to ArangoDB
-  db.events.on(EVENTS.CONNECTED, conn => {
+  db.events.on(EVENTS.READY, conn => {
     console.log('✅  Connected to:'.green, conn.url + '/' + conn.name)
   })
 
-  // initialze models and inject db
-  di.injectDir(__dirname + '/../models', { orango: db })
-
-  await sleep(1000)
-
-  // connect to db
-  await db.connect()
+  // :: What do you want to do? :: //
+  let initializeConnectionFirst = false
+  if (initializeConnectionFirst) {
+    // connect to db
+    await db.connect()
+    // initialze models and inject db
+    await di.injectDir(__dirname + '/../models', { orango: db })
+  } else {
+    // initialze models and inject db
+    di.injectDir(__dirname + '/../models', { orango: db })
+    // connect to db
+    await db.connect()
+  }
 
   // create collections
   await initCollections(db)
