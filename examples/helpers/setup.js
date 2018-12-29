@@ -3,10 +3,12 @@ require('colors')
 
 const orango = require('lib')
 const EVENTS = require('lib/consts/events')
-const invoke = require('./invoke')
+const di = require('./di')
 const DATABASE = 'examples'
 
 orango.logger.level = 'info'
+
+const sleep = ms => new Promise(res => setTimeout(res, ms))
 
 async function initCollections(db) {
   const User = db.model('User')
@@ -46,13 +48,13 @@ async function initCollections(db) {
   ])
   console.log(`✅  Populated "${User.collectionName}" collection`.green)
 
-  const Band = db.model('Band')
-  await Band.import([
+  const Tweet = db.model('Tweet')
+  await Tweet.import([
     {
-      name: "Rush"
+      user: 'eddie',
+      text: 'Hello, world!'
     }
   ])
-
 }
 
 async function initDatabase() {
@@ -74,7 +76,9 @@ module.exports = async function() {
   })
 
   // initialze models and inject db
-  invoke(__dirname + '/../models', db)
+  di.injectDir(__dirname + '/../models', { orango: db })
+
+  await sleep(1000)
 
   // connect to db
   await db.connect()

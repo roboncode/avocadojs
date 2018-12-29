@@ -1,5 +1,5 @@
-module.exports = async db => {
-  const User = db.model('User')
+module.exports = async ({ orango }) => {
+  const User = orango.model('User')
 
   let query = User.find()
     .one()
@@ -9,7 +9,7 @@ module.exports = async db => {
     .let('arr', [1, 'two', true])
     .let('obj', { foo: 'bar' })
     .return(
-      db.return
+      orango.return
         .append('num', 'num1')
         .append('bool')
         .append('arr')

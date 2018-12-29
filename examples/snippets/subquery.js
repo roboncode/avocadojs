@@ -1,6 +1,6 @@
-module.exports = async db => {
-  const User = db.model('User')
-  const Identity = db.model('Identity')
+module.exports = async ({ orango }) => {
+  const User = orango.model('User')
+  const Identity = orango.model('Identity')
 
   let UserQuery = User.update({
     firstName: 'John'
@@ -23,7 +23,7 @@ module.exports = async db => {
     .query('user', UserQuery)
     .select('name')
     .return(
-      db.return
+      orango.return
         .append('user', 'myUser')
         .append('user', 'myUser2')
         .merge('user')

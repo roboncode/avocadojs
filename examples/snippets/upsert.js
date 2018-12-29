@@ -1,6 +1,6 @@
-module.exports = async db => {
+module.exports = async ({ orango }) => {
   // get a reference to User model
-  const User = db.model('User')
+  const User = orango.model('User')
 
   // create query
   let query = User.upsert(
@@ -15,7 +15,7 @@ module.exports = async db => {
     }
   )
     .where({ firstName: 'Neal', lastName: 'Peart' })
-    .return(db.return.one())
+    .return(orango.return.one())
 
   // FOR DEMO ONLY - show the AQL
   let aql = await query.toAQL(true)

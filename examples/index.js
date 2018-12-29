@@ -1,12 +1,7 @@
 const fs = require('fs')
 const inquirer = require('inquirer')
+const di = require('./helpers/di')
 require('colors')
-// const setup = require(__dirname + '/../helpers/setup')
-
-// get sample db
-// const db = await setup()
-
-// console.log(files)
 
 function humanize(str) {
   var frags = str.split('_')
@@ -38,6 +33,6 @@ inquirer
   ])
   .then(async answers => {
     const setup = require('./helpers/setup')
-    const db = await setup()
-    require('./snippets/' + answers.snippet)(db)
+    const orango = await setup()
+    di.injectFile(__dirname + '/snippets/' + answers.snippet, { orango })
   })

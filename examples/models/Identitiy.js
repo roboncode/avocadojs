@@ -1,4 +1,4 @@
-module.exports = orango => {
+module.exports = ({ orango }) => {
 
   class Identity extends orango.Model {}
 

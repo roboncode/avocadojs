@@ -1,8 +1,8 @@
-module.exports = async db => {
+module.exports = async ({ orango }) => {
   // let result = Like.link('a', 'b', { bogus: true, notes: 'This is a test' })
 
   // get a reference to User model
-  const Like = db.model('Like')
+  const Like = orango.model('Like')
 
   // create query
   let query = Like.link('a', 'b', { message: 'Hello, world!' })

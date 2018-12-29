@@ -1,4 +1,4 @@
-module.exports = orango => {
+module.exports = ({ orango }) => {
   class Settings extends orango.Model {
     constructor(data) {
       super(data)
@@ -10,6 +10,7 @@ module.exports = orango => {
     locale: 'Locale'
   }
 
+  // do not create a collection for model (false)
   return orango.model('Settings', Settings, false)
 }
 

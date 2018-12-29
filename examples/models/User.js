@@ -1,4 +1,4 @@
-module.exports = orango => {
+module.exports = ({ orango }) => {
   class User extends orango.Model {
     constructor(data) {
       super(data, User.schema)

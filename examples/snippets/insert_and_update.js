@@ -1,6 +1,6 @@
-module.exports = async db => {
-  const User = db.model('User')
-  const Identity = db.model('Identity')
+module.exports = async ({ orango }) => {
+  const User = orango.model('User')
+  const Identity = orango.model('Identity')
 
   let query = User.insert({
     firstName: 'John',
