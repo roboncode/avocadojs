@@ -8,55 +8,6 @@ const DATABASE = 'examples'
 
 orango.logger.level = 'info'
 
-async function initCollections(db) {
-  const User = db.model('User')
-
-  await User.import([
-    {
-      _key: 'eddie',
-      active: true,
-      firstName: 'Eddie',
-      lastName: 'VanHalen',
-      tags: ['guitar'],
-      born: 'January 26, 1955'
-    },
-    {
-      active: true,
-      firstName: 'Steve',
-      lastName: 'Vai',
-      tags: ['guitar', 'vocals']
-    },
-    {
-      active: false,
-      firstName: 'Randy',
-      lastName: 'Rhoads',
-      tags: ['guitar']
-    },
-    {
-      active: true,
-      firstName: 'Alex',
-      lastName: 'Lifeson',
-      tags: ['guitar', 'vocals']
-    },
-    {
-      active: true,
-      firstName: 'Slash',
-      tags: ['guitar']
-    }
-  ])
-  console.log(`✅  Populated "${User.collectionName}" collection`.green)
-
-  const Tweet = db.model('Tweet')
-  await Tweet.import([
-    {
-      user: 'eddie',
-      text: 'Hello, world!'
-    }
-  ])
-
-  console.log(`✅  Populated "${Tweet.collectionName}" collection`.green)
-}
-
 async function initDatabase() {
   await orango.connect()
   await orango.dropDatabase(DATABASE)
@@ -89,8 +40,12 @@ module.exports = async function() {
     await db.connect()
   }
 
-  // create collections
-  await initCollections(db)
+  // populate collections
+  await di.injectFile(__dirname + '/../migrations/users.js', { orango: db })
+  await di.injectFile(__dirname + '/../migrations/tweets.js', { orango: db })
+
+  // make sure edge collections are populate last
+  await di.injectFile(__dirname + '/../migrations/comments.js', { orango: db })
 
   // return db
   return db
