@@ -102,6 +102,7 @@ main()
 
 ```js
 module.exports = orango => {
+
   class BlogPost extends orango.Model {
     constructor(data) {
       super(data, BlogPost.schema)
@@ -116,6 +117,7 @@ module.exports = orango => {
   })
 
   return orango.model('blog', BlogPost)
+  
 }
 ```
 Aside from defining the structure of your documents and data types, Orango models can handle the definition of:
@@ -135,69 +137,74 @@ The following example shows some of these features:
 ```js
 module.exports = orango => {
 
-const Joi = require('joi')
-const { HOOKS } = orango.CONSTS
+  const Joi = require('joi')
+  const { HOOKS } = orango.CONSTS
 
-class User extends orango.Model {
-  constructor(data) {
-    super(data, User.schema)
-  }
-
-  // static methods
-  static async findByEmail = async function(email) {
-    return await this.find().one().where({ email })
-  }
-
-  // computed properties
-  get name = function() {
-    return this.firstName + ' ' + this.lastName
-  }
-
-  // custom return object
-  toJSON() {
-    return Object.assign({}, this, { name: this.name })
-  }
-}
-
-User.schema = orango.schema({
-  firstName: String,
-  lastName: String,
-  email: Joi.string().email(), // Joi can be used directly
-  age: { type: Number, min: 18 }, // JSON gets converted to Joi data types automatically
-  bio: { type: String, regex: /[a-z]/ },
-  updatedAt: Date
-}, {
-  indexes: [ // create indexes for items we will query against
-    {
-      type: 'hash',
-      fields: ['email']
-    },
-    {
-      type: 'skipList',
-      fields: ['firstName']
-    },
-    {
-      type: 'skipList',
-      fields: ['lastName']
+  class User extends orango.Model {
+    
+    constructor(data) {
+      super(data, User.schema)
     }
-  ]
-})
 
-// hooks
-User.hooks = {
-  update(model) {
-    model.updatedAt = Date.now()  
+    // static methods
+    static async findByEmail = async function(email) {
+      return await this.find().one().where({ email })
+    }
+
+    // computed properties
+    get name = function() {
+      return this.firstName + ' ' + this.lastName
+    }
+
+    // custom return object
+    toJSON() {
+      return Object.assign({}, this, { name: this.name })
+    }
+    
   }
+
+  User.schema = orango.schema({
+    firstName: String,
+    lastName: String,
+    email: Joi.string().email(), // Joi can be used directly
+    age: { type: Number, min: 18 }, // JSON gets converted to Joi data types automatically
+    bio: { type: String, regex: /[a-z]/ },
+    updatedAt: Date
+  }, {
+    indexes: [ // create indexes for items we will query against
+      {
+        type: 'hash',
+        fields: ['email']
+      },
+      {
+        type: 'skipList',
+        fields: ['firstName']
+      },
+      {
+        type: 'skipList',
+        fields: ['lastName']
+      }
+    ]
+  })
+
+  // hooks
+  User.hooks = {
+    update(model) {
+      model.updatedAt = Date.now()  
+    }
+  }
+
+  orango.model('User', User)
+
 }
+```
 
-orango.model('User', User)
+**In code somewhere else**
 
-// ... in code somewhere else ... //
-
+```js
 let rawData = await User.findByEmail('john.smith@gmail.com')
 let user = User.fromJSON(rawData) // convert result to model
 console.log('Hello,', user.name) // access model getter
-}
 ```
 
 ## Documentation
