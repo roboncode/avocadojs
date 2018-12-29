@@ -193,6 +193,10 @@ module.exports = orango => {
 **In code somewhere else**
 
 ```js
+const User = orango.model('User')
+
+...
+
 let rawData = await User.findByEmail('john.smith@gmail.com')
 let user = User.fromJSON(rawData) // convert result to model
 console.log('Hello,', user.name) // access model getter
