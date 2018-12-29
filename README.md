@@ -30,16 +30,21 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 * Model-driven data
 * Focus on data instead of queries
 * Optimized query creation
-* Validation prevents bad data from being injected into database
+* Validation
+* Filter unknown data from being injected into database
 * Cleaner interfaces
 * Single point of change for bug fixes, features, etc
-* Computed properties on return values
+* Save on redundancy - DRY implementation
 * Default values
 * and more...
 
-### Documentation
+### Documentation & Articles
 
-**(In Progress)** Official documentation can be found at **[orango.js.org](https://orango.js.org)**.
+Official documentation can be found at **[orango.js.org](https://orango.js.org)**.
+
+I will be regularly posting articles on CodeBurst.io (Medium). Follow me there https://codeburst.io/@roboncode
+
+Follow me on Twitter https://twitter.com/@roboncode for updates
 
 ### Project Status
 
@@ -73,9 +78,9 @@ import orango from 'orango'
 
 ### Connecting to ArangoDB
 
-First, we need to define a connection. If your app uses only one database, you should use `orango.connect()`. If you need to create additional connections, use `orango.get( instanceName:String ).connect()`.
+First, we need to define a connection. If your app uses the default `_system` database, you can connect using `orango.connect()`. If you need to create additional connections, use `orango.get( database:String ).connect()`.
 
-The method `connect(db:String="_system", [{url:String="http://localhost:8529", username:String, password:String}])` takes database name with options to establish a connection. Otherwise, it will use the default values.
+The method `connect([{url:String="http://localhost:8529", username:String, password:String}])` takes database name with options to establish a connection. Otherwise, it will use the default values.
 
 ```js
 const orango = require('orango')
@@ -96,26 +101,31 @@ main()
 ### Defining a Model
 
 ```js
-const BlogPost = orango.Schema({
-	author: String,
-	title: String,
-	body: String,
-	date: Date	
-})
+module.exports = orango => {
+  class BlogPost extends orango.Model {
+    constructor(data) {
+      super(data, BlogPost.schema)
+    }
+  }
 
-orango.model('blog', BlogPost)
+  BlogPost.schema = orango.schema({
+    author: String,
+    title: String,
+    body: String,
+    date: Date
+  })
+
+  return orango.model('blog', BlogPost)
+}
 ```
-Aside from defining the structure of your documents and data types, a Schema handles the definition of:
+Aside from defining the structure of your documents and data types, Orango models can handle the definition of:
 
 * Validators
 * Default values
 * Indexes
-* Middleware
-* Methods definitions
-* Statics definitions
+* Static methods
 * Computed properties
 * Pre and post hooks
-* Real-joins (thanks ArangoDB!)
 * Custom queries
 * Filtering out unknown properties
 * Joi syntax support
@@ -123,90 +133,81 @@ Aside from defining the structure of your documents and data types, a Schema han
 The following example shows some of these features:
 
 ```js
-const orango = require('orango')
+module.exports = orango => {
+
 const Joi = require('joi')
 const { HOOKS } = orango.CONSTS
 
-const UserSchema = orango.Schema({
-	firstName: String,
-	lastName: String,
-	email: Joi.string().email(), // Joi can be used directly
-	age: { type: Number, min: 18 }, // JSON gets converted to Joi data types automatically
-	bio: { type: String, regex: /[a-z]/ },
-	updatedAt: Date
+class User extends orango.Model {
+  constructor(data) {
+    super(data, User.schema)
+  }
+
+  // static methods
+  static async findByEmail = async function(email) {
+    return await this.find().one().where({ email })
+  }
+
+  // computed properties
+  get name = function() {
+    return this.firstName + ' ' + this.lastName
+  }
+
+  // custom return object
+  toJSON() {
+    return Object.assign({}, this, { name: this.name })
+  }
+}
+
+User.schema = orango.schema({
+  firstName: String,
+  lastName: String,
+  email: Joi.string().email(), // Joi can be used directly
+  age: { type: Number, min: 18 }, // JSON gets converted to Joi data types automatically
+  bio: { type: String, regex: /[a-z]/ },
+  updatedAt: Date
 }, {
-	strict: true, // properties not defined will be filtered out
-	indexes: [ // create indexes for items we will query against
-      {
-        type: 'hash',
-        fields: ['email']
-      },
-      {
-        type: 'skipList',
-        fields: ['firstName']
-      },
-      {
-        type: 'skipList',
-        fields: ['lastName']
-      }
-    ]
+  indexes: [ // create indexes for items we will query against
+    {
+      type: 'hash',
+      fields: ['email']
+    },
+    {
+      type: 'skipList',
+      fields: ['firstName']
+    },
+    {
+      type: 'skipList',
+      fields: ['lastName']
+    }
+  ]
 })
-
-// static methods
-UserSchema.statics.findByEmail = async function(email) {
-	return this.findOne({ email })
-}
-
-// computed properties
-UserSchema.computed.name = function() {
-	return this.firstName + ' ' + this.lastName
-}
 
 // hooks
-UserSchema.on(HOOKS.UPDATE, payload => {
-	payload.data.updatedAt = Date.now()
-})
+User.hooks = {
+  update(model) {
+    model.updatedAt = Date.now()  
+  }
+}
 
-
-
-orango.model('User', UserSchema)
+orango.model('User', User)
 
 // ... in code somewhere else ... //
 
-let user = async User
-	.findByEmail('john.smith@gmail.com')
-	.computed(true)
-	
-console.log('Hello,', user.name)
+let rawData = await User.findByEmail('john.smith@gmail.com')
+let user = User.fromJSON(rawData) // convert result to model
+console.log('Hello,', user.name) // access model getter
+}
 ```
 
-# Documentation
+## Documentation
 
 Go to https://orango.js.org for detailed documentation and tutorials.
 
-# Examples
+## Examples
 
-A growing set of examples are available [here](examples/snippets). 
+A growing set of examples are available [here](examples). 
 
-# Roadmap
-
-### Current
-
-* Create a proper CHANGELOG
-* Bug fixes
-* Documentation
-* Examples
-
-### Future
-* autoIndex in schema - will create indexes as properties become part of query
-* Support upsert option
-* Getter / Setters in schema
-* Integrate [Arango Chair](https://www.arangodb.com/2017/03/arangochair-tool-listening-changes-arangodb/)
-* web browser compatible
-* Better error handler / dispatching
-* Upgrade to TypeScript
-* Add lint support
-
-## MIT License
+### MIT License
 
 This library is under the MIT license. [See LICENSE](LICENSE)
