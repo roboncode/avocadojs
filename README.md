@@ -40,9 +40,9 @@ I will be regularly posting articles on CodeBurst.io (Medium). Follow me there h
 
 Follow me on Twitter https://twitter.com/@roboncode for updates
 
-### Project Status
+### Examples
 
-Orango is in `alpha`. Working on bug fixes, cleanup, documentation and examples.
+A growing set of examples are available [here](examples). 
 
 ### Installation
 
@@ -198,14 +198,6 @@ let user = User.fromJSON(rawData) // convert result to model
 console.log('Hello,', user.name) // access model getter
 ```
 
-## Documentation
-
-Go to https://orango.js.org for detailed documentation and tutorials.
-
-## Examples
-
-A growing set of examples are available [here](examples). 
-
-### MIT License
+#### MIT License
 
 This library is under the MIT license. [See LICENSE](LICENSE)
