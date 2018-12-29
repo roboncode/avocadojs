@@ -3,17 +3,11 @@
 
 ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
 
-Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
-Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a>
-
 <a href="https://npmcharts.com/compare/orango?minimal=true"><img src="https://img.shields.io/npm/dm/orango.svg" alt="Downloads"></a>
   <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/v/orango.svg" alt="Version"></a>
   <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/l/orango.svg" alt="License"></a>
   [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  
-
-🍊 **[Click here to checkout what is coming up in the next release!](https://github.com/roboncode/orango/wiki/Orango-NEXT)**
-
 
 **Orango** is an Object Data Modeler (ODM) that provides the following features:
 
@@ -24,7 +18,7 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
 * Pre-populate database
 * and more...
 
-### Why use an ODM?
+### Why use Orango with ArangoDB?
 
 * Ease of use
 * Model-driven data
@@ -135,13 +129,11 @@ Aside from defining the structure of your documents and data types, Orango model
 The following example shows some of these features:
 
 ```js
+const Joi = require('joi')
+  
 module.exports = orango => {
 
-  const Joi = require('joi')
-  const { HOOKS } = orango.CONSTS
-
   class User extends orango.Model {
-    
     constructor(data) {
       super(data, User.schema)
     }
@@ -160,7 +152,6 @@ module.exports = orango => {
     toJSON() {
       return Object.assign({}, this, { name: this.name })
     }
-    
   }
 
   User.schema = orango.schema({
