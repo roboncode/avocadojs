@@ -41,11 +41,7 @@ module.exports = async function() {
   }
 
   // populate collections
-  await di.injectFile(__dirname + '/../migrations/users.js', { orango: db })
-  await di.injectFile(__dirname + '/../migrations/tweets.js', { orango: db })
-
-  // make sure edge collections are populate last
-  await di.injectFile(__dirname + '/../migrations/comments.js', { orango: db })
+  await di.injectDir(__dirname + '/../migrations', { orango: db })
 
   // return db
   return db

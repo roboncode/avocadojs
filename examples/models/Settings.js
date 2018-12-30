@@ -1,9 +1,14 @@
 module.exports = ({ orango }) => {
   class Settings extends orango.Model {
     constructor(data) {
-      super(data)
+      super(data, Settings.schema)
       this.online = false
     }
+  }
+
+  Settings.schema = {
+    online: false,
+    locale: String
   }
 
   Settings.struct = {
