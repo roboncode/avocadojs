@@ -1,12 +1,9 @@
 let arrayOverride = require('../lib/helpers/arrayOverride')
 let convertToSnakecase = require('../lib/helpers/convertToSnakecase')
 let createDefaultTree = require('../lib/helpers/createDefaultTree')
-let createUniqueId = require('../lib/helpers/createUniqueId')
 let mergeDefaultTree = require('../lib/helpers/mergeDefaultTree')
 let parseArrayPaths = require('../lib/helpers/parseArrayPaths')
 let setDefaultsToNull = require('../lib/helpers/setDefaultsToNull')
-let sortToAQL = require('../lib/helpers/sortToAQL')
-let objectToArray = require('../lib/helpers/objectToArray')
 
 test('arrayOverride [].push(1)', () => {
   let arr = arrayOverride()
@@ -66,35 +63,6 @@ test('createDefaultTree should create a default tree', () => {
     devices: [],
     stats: { friends: [] }
   })
-})
-
-test('createUniqueId should create a unique id', () => {
-  let uid_1 = createUniqueId()
-  let uid_2 = createUniqueId()
-  expect(uid_1).not.toBe(uid_2)
-})
-
-test('objectToArray with object should convert object to array', () => {
-  let items = objectToArray({
-    john: { name: 'John' },
-    jane: { name: 'Jane' }
-  })
-  expect(items).toEqual([
-    {
-      _key: 'john',
-      name: 'John'
-    },
-    {
-      _key: 'jane',
-      name: 'Jane'
-    }
-  ])
-})
-
-test('objectToArray with array should use existing array', () => {
-  let src = [{ _key: 'john', name: 'John' }, { _key: 'jane', name: 'Jane' }]
-  let items = objectToArray(src)
-  expect(items).toBe(src)
 })
 
 test('parseArrayPaths should create an array of paths', () => {

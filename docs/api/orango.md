@@ -35,14 +35,6 @@ Connects to an instance of ArangoDB
 orango.connect(name: String = '_system', url: String = 'http://localhost:8529')
 ```
 
-### uid()
-
-Returns a unique id. It uses the same mechanics as Mongo's ObjectId()
-
-``` js
-orango.uid():String
-```
-
 ### Schema()
 
 Returns an instance of [Schema](./schema.md)
