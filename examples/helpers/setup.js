@@ -2,7 +2,7 @@ require('app-module-path').addPath(__dirname + '/../../')
 require('colors')
 
 const orango = require('lib')
-const EVENTS = require('lib/consts/events')
+const { EVENTS } = orango.CONSTS
 const di = require('./di')
 const DATABASE = 'examples'
 

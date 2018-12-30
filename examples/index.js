@@ -31,8 +31,13 @@ inquirer
       }
     }
   ])
-  .then(async answers => {
-    const setup = require('./helpers/setup')
-    const orango = await setup()
-    di.injectFile(__dirname + '/snippets/' + answers.snippet, { orango })
+  .then(async ({ snippet }) => {
+    if (snippet.match(/connect/gi)) {
+      const orango = require('../lib')
+      di.injectFile(__dirname + '/snippets/' + snippet, { orango })
+    } else {
+      const setup = require('./helpers/setup')
+      const orango = await setup()
+      di.injectFile(__dirname + '/snippets/' + snippet, { orango })
+    }
   })
