@@ -6,7 +6,12 @@ module.exports = async ({ orango }) => {
   let query = User.insert({
     firstName: 'Axl',
     lastName: 'Rose'
-  }).return(orango.return.one())
+  }).return(orango.return.one()
+  .value('new'))
+
+  // FOR DEMO ONLY - show the raw query data
+  let queryData = JSON.stringify(query)
+  console.log(queryData.green)
 
   // FOR DEMO ONLY - show the AQL
   let aql = await query.toAQL(true)

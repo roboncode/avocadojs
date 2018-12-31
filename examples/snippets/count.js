@@ -7,6 +7,10 @@ module.exports = async ({ orango }) => {
     .where({ active: true })
     .return({ one: true })
 
+    // FOR DEMO ONLY - show the raw query data
+  let queryData = JSON.stringify(query)
+  console.log(queryData.green)
+
   // FOR DEMO ONLY - show the AQL
   let aql = await query.toAQL(true)
   console.log(aql.cyan)
