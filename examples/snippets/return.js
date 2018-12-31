@@ -1,5 +1,7 @@
 module.exports = async ({ orango }) => {
-  const Model = orango.model()
+  // This returns the orango model (not associated with a collection)
+  // Can be used to create return queries
+  const Model = orango.model() 
   // const { append } = orango.funcs
   // const { countDistinct } = orango.funcs
   const { append, concatSeparator, currentUser, length, nth, zip } = orango.funcs
