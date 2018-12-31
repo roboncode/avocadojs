@@ -5,8 +5,15 @@ module.exports = async ({ orango }) => {
 
   let query = Stats.update({
     friends: `++${val}`,
-    likes: `--${val}`
-  }).byId('1')
+    likes: `--${val}`,
+    following: `@{@doc.friends + ${val}}`
+  })
+  .name('s') // this is not required. this just demos @doc will parse into 's'
+  .byId('1')
+
+  // FOR DEMO ONLY - show the raw query data
+  let queryData = JSON.stringify(query)
+  console.log(queryData.green)
 
   // FOR DEMO ONLY - show the AQL
   let aql = await query.toAQL(true)

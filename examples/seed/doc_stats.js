@@ -7,7 +7,8 @@ module.exports = async ({ orango }) => {
       _key: '1',
       user: 'eddie',
       likes: 100,
-      friends: 100
+      friends: 100,
+      following: 100
     }
   ]).withDefaults()
 
