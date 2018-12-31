@@ -1,20 +1,11 @@
 module.exports = async ({ orango }) => {
   const User = orango.model('User')
+  const { append } = orango.funcs
 
   let query = User.find()
     .one()
-    .let('num', 1)
-    .let('str', 'Hello')
-    .let('bool', true)
-    .let('arr', [1, 'two', true])
-    .let('obj', { foo: 'bar' })
-    .return(
-      orango.return
-        .append('num', 'num1')
-        .append('bool')
-        .append('arr')
-        .merge('obj')
-    )
+    .let('numbers', append([1, 2, 3], [3, 4, 5], true))
+    .return(orango.return.append('numbers'))
 
   // FOR DEMO ONLY - show the raw query data
   let queryData = JSON.stringify(query)

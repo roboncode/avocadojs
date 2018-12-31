@@ -9,11 +9,11 @@ module.exports = async ({ orango }) => {
   let aql = await query.toAQL(true)
   console.log(aql.cyan)
 
-  // find first item in users collection
+  // exec query
   let rawData = await query.exec()
   console.log('rawData'.green, rawData)
 
-  // convert data to model
+  // exec query
   let user = User.fromJSON(rawData)
   console.log('modelData'.green, user)
 }

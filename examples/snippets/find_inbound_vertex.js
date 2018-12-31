@@ -7,15 +7,15 @@ module.exports = async ({ orango }) => {
     .limit(1)
     .return(orango.return.distinct())  
 
-  // // FOR DEMO ONLY - show the AQL
+  // FOR DEMO ONLY - show the AQL
   let aql = await query.toAQL(true)
   console.log(aql.cyan)
 
-  // // find first item in users collection
+  // exec query
   let rawData = await query.exec()
   console.log('rawData'.green, rawData)
 
-  // // convert data to model
+  // convert data to model
   let users = User.fromJSON(rawData)
   console.log('modelData'.green, users)
 }

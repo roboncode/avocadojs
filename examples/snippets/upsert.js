@@ -25,6 +25,7 @@ module.exports = async ({ orango }) => {
   let rawData = await query.exec()
   console.log('rawData'.green, rawData)
 
+  // exec query
   rawData = await query.exec()
   console.log('rawData'.green, rawData)
 

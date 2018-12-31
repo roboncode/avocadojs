@@ -42,12 +42,12 @@ module.exports = async function() {
 
   // populate collections
   // TODO: There is something not working in DI
-  // await di.injectDir(__dirname + '/../sample_data', { orango: db })
+  // await di.injectDir(__dirname + '/../seed', { orango: db })
 
-  await di.injectFile(__dirname + '/../sample_data/doc_stats.js', { orango: db })
-  await di.injectFile(__dirname + '/../sample_data/doc_tweets.js', { orango: db })
-  await di.injectFile(__dirname + '/../sample_data/doc_users.js', { orango: db })
-  await di.injectFile(__dirname + '/../sample_data/edge_comments.js', { orango: db })
+  await di.injectFile(__dirname + '/../seed/doc_stats.js', { orango: db })
+  await di.injectFile(__dirname + '/../seed/doc_tweets.js', { orango: db })
+  await di.injectFile(__dirname + '/../seed/doc_users.js', { orango: db })
+  await di.injectFile(__dirname + '/../seed/edge_comments.js', { orango: db })
 
   // return db
   return db
