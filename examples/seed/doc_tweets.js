@@ -6,13 +6,14 @@ module.exports = async ({ orango }) => {
     {
       _key: '1',
       user: 'eddie',
-      text: 'My first tweet'
+      text: 'My first tweet',
+      tags: ['guitar', 'band']
     },
     {
       _key: '2',
       user: 'eddie',
-      text: 'My second tweet'
+      text: 'My second tweet',
+      tags: ['guitar', 'band']
     }
   ])
-
 }
