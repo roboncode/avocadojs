@@ -16,7 +16,7 @@ module.exports = async ({ orango }) => {
         _key: '123'
       })
     )
-    .return()
+    .return(orango.return.one())
 
   // FOR DEMO ONLY - show the raw query data
   let queryData = JSON.stringify(query)

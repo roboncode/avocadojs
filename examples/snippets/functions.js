@@ -4,6 +4,7 @@ module.exports = async ({ orango }) => {
 
   let query = User.find()
     .one()
+    // example of using AQL functions in query
     .let('numbers', append([1, 2, 3], [3, 4, 5], true))
     .return(orango.return.append('numbers'))
 

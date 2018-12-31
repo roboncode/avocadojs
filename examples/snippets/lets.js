@@ -14,6 +14,7 @@ module.exports = async ({ orango }) => {
         .append('bool')
         .append('arr')
         .merge('obj')
+        .one()
     )
 
   // FOR DEMO ONLY - show the raw query data

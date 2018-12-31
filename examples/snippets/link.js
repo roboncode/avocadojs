@@ -7,7 +7,7 @@ module.exports = async ({ orango }) => {
     { user: 'eddie', tweet: '1' },
     { message: 'This is the first comment' }
   )
-  .return()
+  .return(orango.return.one())
 
   // FOR DEMO ONLY - show the AQL
   let aql = await query.toAQL(true)
