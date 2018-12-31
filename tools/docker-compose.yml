@@ -2,7 +2,7 @@ version: '3.7'
 services: 
   arangodb:
     container_name: orango
-    image: arangodb
+    image: arangodb:3.4.1
     ports: 
       - 8529:8529
     environment: 
