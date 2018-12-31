@@ -8,8 +8,8 @@ module.exports = ({ orango }) => {
   Stats.schema = orango.Schema(
     {
       user: String,
-      friends: { type: String, default: 0 },
-      likes: { type: String, default: 0 }
+      friends: { type: orango.Types.Any, default: 0 },
+      likes: { type: orango.Types.Any, default: 0 }
     },
     {
       indexes: [{ type: 'hash', fields: ['user'] }]
