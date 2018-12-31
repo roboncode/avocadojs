@@ -1,12 +1,12 @@
 module.exports = async ({ orango }) => {
   // get a reference to User model
   const Tweet = orango.model('Tweet')
-  const { append } = orango.funcs
+  const { append, minus } = orango.funcs
 
   // create query
   let query = Tweet.update({
     text: 'Orango rocks!',
-    tags: append('@{tweet.tags}', ['orango'])
+    tags: minus(append('@{@doc.tags}', ['orango']), ['band'])
   })
     .byId(1)
     .return(orango.return.one())
