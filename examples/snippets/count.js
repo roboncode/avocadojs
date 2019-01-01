@@ -5,7 +5,7 @@ module.exports = async ({ orango }) => {
   // create query
   let query = User.count()
     .where({ active: true })
-    .return({ one: true })
+    .return(orango.return.one())
 
     // FOR DEMO ONLY - show the raw query data
   let queryData = JSON.stringify(query)

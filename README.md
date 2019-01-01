@@ -9,13 +9,14 @@ ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
   [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  
 
-**Orango** is an Object Data Modeler (ODM) that provides the following features:
+**Orango** is an **ODM** (Object Data Modeler), an **ORM** (Object Relational Mapper) and an **OGM** (Object Graphical Mapper) in one that provides the following features:
 
 * Central connectivity to ArangoDB
 * Automated creation of collections and indexes
 * Create schemas for data
 * Interact with models to handle data-centric functionality
 * Pre-populate database
+* Graph linking and querying
 * and more...
 
 ### Why use Orango with ArangoDB?
@@ -121,10 +122,11 @@ Aside from defining the structure of your documents and data types, Orango model
 * Indexes
 * Static methods
 * Computed properties
-* Pre and post hooks
+* Hooks
 * Custom queries
-* Filtering out unknown properties
-* Joi syntax support
+* Unknown property filters
+* JSON to model structures
+* Joi definitions
 
 The following example shows some of these features:
 
