@@ -25,9 +25,7 @@ module.exports = ({ orango }) => {
       lastName: String,
       tags: [String],
       updated: Date,
-      settings: Joi.lazy(function() {
-        return orango.model('Settings').schema.joi
-      })
+      settings: orango.Types.Schema('Settings')
     },
     {
       // strict: false,

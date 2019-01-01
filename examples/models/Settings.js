@@ -11,9 +11,7 @@ module.exports = ({ orango }) => {
 
   Settings.schema = orango.Schema({
     online: Boolean,
-    custom: Joi.lazy(function() {
-      return orango.model('Custom').schema.joi
-    })
+    custom: orango.Types.Schema('Custom')
   })
 
   Settings.struct = {
