@@ -29,7 +29,7 @@ module.exports = ({ orango }) => {
     },
     {
       // strict: false,
-      // removeOnMatchDefault: true, // TODO: Deprecated???
+      // removeOnMatchDefault: true, // TODO: Finish
       indexes: [
         { type: 'hash', fields: ['active'] },
         { type: 'hash', fields: ['tags'] },
