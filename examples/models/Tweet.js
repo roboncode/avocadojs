@@ -5,7 +5,7 @@ module.exports = ({ orango }) => {
     }
   }
 
-  Tweet.schema = orango.Schema({
+  Tweet.schema = orango.schema({
     user: String,
     text: String,
     tags: orango.Types.Array,

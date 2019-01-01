@@ -5,7 +5,7 @@ module.exports = ({ orango }) => {
     }
   }
 
-  Stats.schema = orango.Schema(
+  Stats.schema = orango.schema(
     {
       user: String,
       friends: { type: orango.Types.Any, default: 0 },

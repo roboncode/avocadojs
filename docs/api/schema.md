@@ -35,7 +35,7 @@ const schema = Joi.object()
   .with('username', 'birthyear')
   .without('password', 'access_token')
 
-const UserSchema = orango.Schema(schema)
+const UserSchema = orango.schema(schema)
 ```
 
 If you are not familiar with Joi, or are coming from Mongoose or just prefer to build using JSON, 
@@ -50,7 +50,7 @@ const schema = {
   email: { type: String, email: { minDomainAtoms: 2 } }
 }
 
-const UserSchema = orango.Schema(schema)
+const UserSchema = orango.schema(schema)
 UserSchema.joi = UserSchema.joi
   .with('username', 'birthyear')
   .without('password', 'access_token')
@@ -73,7 +73,7 @@ const schema = {
   email: { type: String, email: { minDomainAtoms: 2 }, required: 'create' }
 }
 
-const UserSchema = orango.Schema(schema)
+const UserSchema = orango.schema(schema)
 UserSchema.joi = UserSchema.joi
   .with('username', 'birthyear')
   .without('password', 'access_token')

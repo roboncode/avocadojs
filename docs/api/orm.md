@@ -11,7 +11,7 @@ ORM methods can be daisy-chained. To invoke the query builder, you can wither us
 `Method` Returns document with computed properties. Computed properties are virtual properties that are not stored in the database.
 
 ```js
-const UserSchema = orango.Schema({
+const UserSchema = orango.schema({
   firstName: String,
   lastName: String,
 })

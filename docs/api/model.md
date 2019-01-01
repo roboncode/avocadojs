@@ -37,7 +37,7 @@ orango.model('User', {
 
 Declaring the schema separately
 ```js
-let schema = orango.Schema({
+let schema = orango.schema({
   name: String
 })
 orango.model('User', schema)
@@ -48,7 +48,7 @@ orango.model('User', schema)
 Strict mode will prevent any unknown properties from being inserted into the database.
 
 ```js
-let schema = orango.Schema({
+let schema = orango.schema({
   name: String
 }, {
   strict: true
@@ -59,7 +59,7 @@ orango.model('User', schema)
 ### Indexing properties
 
 ```js
-let schema = orango.Schema({
+let schema = orango.schema({
   name: String,
   email: String
 }, {
@@ -77,7 +77,7 @@ orango.model('User', schema)
 > Not currently implemented
 
 ```js
-let schema = orango.Schema({
+let schema = orango.schema({
   name: String,
   email: String
 }, {
@@ -90,7 +90,7 @@ orango.model('User', schema)
 ### Keeping your documents clean
 
 ```js
-let schema = orango.Schema({
+let schema = orango.schema({
   name: String,
   email: String,
   language: { type: String, default: 'en_US' }

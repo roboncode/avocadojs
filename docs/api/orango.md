@@ -40,7 +40,7 @@ orango.connect(name: String = '_system', url: String = 'http://localhost:8529')
 Returns an instance of [Schema](./schema.md)
 
 ``` js
-orango.Schema(json: Object, options: Object = {
+orango.schema(json: Object, options: Object = {
   strict: Boolean = false,
   edge: Boolean = false,
   indexes: Array = [

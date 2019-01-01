@@ -5,7 +5,7 @@ module.exports = ({ orango }) => {
     }
   }
 
-  Comment.schema = orango.Schema(
+  Comment.schema = orango.schema(
     {
       message: String
     },

@@ -2,7 +2,7 @@ module.exports = ({ orango }) => {
 
   class Identity extends orango.Model {}
 
-  Identity.schema = orango.Schema(
+  Identity.schema = orango.schema(
     {
       user: String, // user ID
       provider: String, // mendy, auth0, google, facebook, etc

@@ -5,7 +5,7 @@ module.exports = ({ orango }) => {
     }
   }
 
-  Custom.schema = orango.Schema({
+  Custom.schema = orango.schema({
     avatar: String,
     primaryColor: String,
     secondaryColor: String,

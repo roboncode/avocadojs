@@ -17,7 +17,7 @@ module.exports = ({ orango }) => {
   /**
    * Validates data going to ArangoDB
    */
-  User.schema = orango.Schema(
+  User.schema = orango.schema(
     {
       active: Boolean,
       email: String,
