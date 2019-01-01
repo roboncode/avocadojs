@@ -1,4 +1,4 @@
-const Joi = require('joi')
+const sleep = require('../helpers/sleep')
 
 module.exports = ({ orango }) => {
   class User extends orango.Model {
@@ -50,11 +50,14 @@ module.exports = ({ orango }) => {
    * You have access to the model instance so properties can be invoked.
    */
   User.hooks = {
-    insert(model) {
+    async insert(model) {
+      // console.log('before sleep'.yellow)
+      // await sleep(1000)
+      // console.log('before after'.green)
       model.created = Date.now()
       model.foo = 'bar' // invalid data will still be removed
     },
-    update(model) {
+    async update(model) {
       model.updated = Date.now()
     }
   }

@@ -3,7 +3,7 @@ module.exports = async ({ orango }) => {
   // THIS WILL FAIL
   try {
     await db.connect({
-      url: 'http://localhost:10529',
+      url: 'http://localhost:8529',
       username: 'admin',
       password: 'secret'
     })

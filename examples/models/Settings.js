@@ -3,9 +3,7 @@ const Joi = require('joi')
 module.exports = ({ orango }) => {
   class Settings extends orango.Model {
     constructor(data) {
-      // Settings.schema.custom = orango.model('Custom').schema
       super(data, Settings.schema)
-      this.online = false
     }
   }
 
@@ -16,6 +14,12 @@ module.exports = ({ orango }) => {
 
   Settings.struct = {
     custom: 'Custom'
+  }
+
+  Settings.hooks = {
+    async insert(model) {
+      model.online = false
+    }
   }
 
   // do not create a collection for model (false)
