@@ -9,6 +9,13 @@ module.exports = async ({ orango }) => {
       firstName: 'Eddie',
       lastName: 'VanHalen',
       tags: ['guitar'],
+      settings: {
+        online: false, 
+        custom: {
+          avatar: 'http://vanhalen.com/eddie/profile/avatar',
+          bogus: true // will be stripped
+        }
+      },
       born: 'January 26, 1955'
     },
     {

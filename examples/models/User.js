@@ -1,3 +1,5 @@
+const Joi = require('joi')
+
 module.exports = ({ orango }) => {
   class User extends orango.Model {
     constructor(data) {
@@ -12,7 +14,6 @@ module.exports = ({ orango }) => {
       return Object.assign({}, this, { fullName: this.fullName })
     }
   }
-
   /**
    * Validates data going to ArangoDB
    */
@@ -23,7 +24,10 @@ module.exports = ({ orango }) => {
       firstName: String,
       lastName: String,
       tags: [String],
-      updated: Date
+      updated: Date,
+      settings: Joi.lazy(function() {
+        return orango.model('Settings').schema.joi
+      })
     },
     {
       // strict: false,
