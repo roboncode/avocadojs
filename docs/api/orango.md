@@ -3,64 +3,123 @@ pageClass: api
 sidebarDepth: 3
 ---
 
-# Orango
-
-## Static
+# orango
 
 ### get()
 
-Static method gets an instance of Orango
+Returns an instance of Orango under the database name.
 
 ``` js
-Orango.get(name:String): Orango
+orango.get(database: String = '_system'): Orango
 ```
 
 ## Properties
 
 ### connection
 
-Returns an instance of [Connection](./connection.md)
+References the connection instance used to connect to ArangoDB [Connection](./connection.md)
 
 ``` js
 orango.connection: Connection
 ```
 
+### CONSTS
+
+References a hashmap of constants available in Orango. [Click here for a full list.](./consts.md)
+
+### events
+
+References an instance of `EventDispatcher`. Orango uses this to dispatch events in the system. [You can find a list of events here](./consts.md#events).
+
+### funcs
+
+References Arango functions
+
+**Example**
+
+```js
+const { append } = orango.funcs
+
+append({ foo: 1 }, { bar: 2 })
+// AQL => APPEND({ foo: 1 }, { bar: 2 })
+```
+
+### logger
+
+References an Winston logger instance
+
+To enable logging, change the level on the logger
+
+```js
+orango.logger.level = 'info'
+```
+
+### Model
+
+References `OrangoModel`. Models extend from `orango.Model` in their definition.
+
+```js
+class User extends orango.Model {
+  ...
+}
+```
+
+### return
+
+Returns a new instance of `Return` class.
+
 ## Methods
 
-### connect()
+### checkConnected()
+
+Checks if there is an active connection. If there is not, an error *"Not connected to database"* will be thrown.
+
+### connect() <Badge text="async"/>
 
 Connects to an instance of ArangoDB
 
 ``` js
-orango.connect(name: String = '_system', url: String = 'http://localhost:8529')
+await orango.connect(url: String = 'http://localhost:8529')
 ```
 
-### Schema()
+### disconnect()  <Badge text="async"/>
+
+Disonnects the Orango instance from its connected database.
+
+```js
+await orango.disconnect()
+```
+
+### log()
+
+Shortcut to Winston logger.log(). See [WinsontJS](https://github.com/winstonjs/winston#readme) for details.
+
+### schema()
 
 Returns an instance of [Schema](./schema.md)
 
 ``` js
 orango.schema(json: Object, options: Object = {
-  strict: Boolean = false,
-  edge: Boolean = false,
+  strict: Boolean = true,
+  type: String,
   indexes: Array = [
     {
         type: String,
-        fields: [String]
+        fields: [ String ]
     },
     ...
   ],
-})
+}): OrangoSchema
 ```
 #### options
 
-##### strict: Boolean (default = false)
+##### strict: Boolean (default = true)
 
-If `strict` is `true`, the schema will strip any unknown properties during validation
+When `strict` is `true`, the schema will strip any unknown properties during validation. When it is `false` no checks or validations are performed against unknown properties.
 
-##### edge: Boolean (default = false)
+##### type: String
 
-If `edge` is `true`, the model will generate a edge collection when defined
+If `type` is `edge`, the model will generate a edge collection when defined
 
 ##### indexes: []
 
@@ -68,36 +127,75 @@ Defines the indexes that will be created in the collection
 
 ### model()
 
-Registers a model with a schema. The `name` of the model should be capitalized. The collection name will automatically be created as a pluralized lowercase version of the name. The optional `collectionName` can be provided to override the default name.
+Registers a model with a `class`. The `name` of the model should be capitalized. The collection name will automatically be created as a pluralized lowercase version of the name. The optional `collectionName` can be provided to override the default name.
 
 ``` js
-orango.model(name:String, schema:Schema 
-[, collectionName: String = '']): DocumentModel
+orango.model(name:String, class, [, collectionName: String ]): class
 ```
 
-### createCollection() <Badge text="async" type="error"/>
+### createCollection() <Badge text="async"/>
 
 Creates a document collection in the connected database. This is used internally by `Orango` when models are defined and a connection is established.
 
 ``` js
-await orango.createCollection(name: String 
-[, indexes: Array]): DocumentCollection
+await orango.createCollection(name: String [, indexes: Array = []]): DocumentCollection
 ```
 
-### createEdgeCollection() <Badge text="async" type="error"/>
+### createEdgeCollection() <Badge text="async"/>
 
 Creates an edge collection in the connected database.
 This is used internally by `Orango` when models are defined and a connection is established.
 
 ``` js
-await orango.createEdgeCollection(name: String): EdgeCollection
+await orango.createEdgeCollection(name: String [, indexes: Array = []]): EdgeCollection
 ```
 
-### ensureIndexes() <Badge text="async" type="error"/>
+### ensureIndexes() <Badge text="async" />
 
 Creates indexes for the collection.
 This is used internally by `Orango` when models are defined and a connection is established.
 
 ``` js
 await ensureIndexes(collectionName: String [, indexes:Array = [] ])
+```
+
+### query() <Badge text="async" />
+
+Performs a query call to ArangoDB
+
+```js
+await orango.query(aql: String): Cursor
+```
+
+### queryToAQL() <Badge text="async" />
+
+Converts an Orango query JSON object and converts it into working AQL.
+
+```JS
+await orango.queryToAQL(query:Object, formatted:Booleand = false): String
+```
+
+**Usage**
+
+```js
+let query = {
+  "model": "User",
+  "method": "count", 
+  "return": {
+    "actions":[],
+    "one": true
+  },
+  "where": {
+    "active": true
+  }
+}
+
+let aql = orango.queryToAQL(query, true)
+
+/*
+FOR user IN users
+   FILTER user.`active` == true
+   COLLECT WITH COUNT INTO length
+RETURN length
+*/
 ```

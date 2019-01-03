@@ -79,9 +79,10 @@ The method `connect([{url:String="http://localhost:8529", username:String, passw
 
 ```js
 const orango = require('orango')
+const { READY } = orango.CONSTS
 
-orango.events.on('connected', () => {
-  console.log('Orango is connected!')
+orango.events.on(READY, () => {
+  console.log('Orango is ready!')
 })
 
 async function main() {
