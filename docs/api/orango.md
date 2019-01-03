@@ -5,6 +5,23 @@ sidebarDepth: 3
 
 # orango
 
+> The default instance is used in the API documentation below but you can optionally replace `orango` with your own instance name like so...
+
+**Using the default instance**
+
+```js
+orango.connect() // connects to "_system"
+...
+orango.model('User', User)
+```
+
+**Using orango with reference**
+```js
+const db = orango.get('myapp')
+...
+db.model('User, User)
+```
+
 ### get()
 
 Returns an instance of Orango under the database name.
@@ -152,6 +169,26 @@ This is used internally by `Orango` when models are defined and a connection is 
 
 ``` js
 await orango.createEdgeCollection(name: String [, indexes: Array = []]): EdgeCollection
+```
+
+### createDatabase() <Badge text="async" />
+
+Creates a database if the database does not exist. Must be connected to the `_system ` database when performing this operation.
+
+```js
+await orango.createDatabase(database, users = [{ 
+  url: String,
+  username: String,
+  password: String
+}])
+```
+
+### dropDatabase() <Badge text="async" />
+
+Removes a database if the database exists. Must be connected to the `_system` database when performing this operation.
+
+```js
+await orango.dropDatabase(database)
 ```
 
 ### ensureIndexes() <Badge text="async" />
