@@ -8,9 +8,9 @@ module.exports = ({ orango }) => {
   Stats.schema = orango.schema(
     {
       user: String,
-      friends: { type: orango.Types.Any, default: 0 },
-      likes: { type: orango.Types.Any, default: 0 },
-      following: { type: orango.Types.Any, default: 0 }
+      friends: { type: orango.types.Any, default: 0 },
+      likes: { type: orango.types.Any, default: 0 },
+      following: { type: orango.types.Any, default: 0 }
     },
     {
       indexes: [{ type: 'hash', fields: ['user'] }]
