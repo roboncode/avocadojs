@@ -12,7 +12,7 @@ class MockOrango {
     // this.events = EventDispatcher.getInstance(name)
     this.connection = new Connection(MockDatabase)
     // this.helpers = helpers
-    // this.CONSTS = CONSTS
+    // this.consts = consts
     // this.Model = Model
     // this.logger = logger
   }
