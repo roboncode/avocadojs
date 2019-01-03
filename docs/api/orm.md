@@ -56,7 +56,7 @@ await User.find({ active: true }).offset(10)
 
 ## return
 
-`Method` See [CONSTS.RETURN](http://localhost:8080/api/consts.html#return)
+`Method` See [consts.RETURN](http://localhost:8080/api/consts.html#return)
 
 ### Returning docs as models on find()
 

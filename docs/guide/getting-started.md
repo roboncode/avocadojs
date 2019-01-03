@@ -48,7 +48,7 @@ The method `connect([{url:String="http://localhost:8529", username:String, passw
 
 ```js
 const orango = require('orango')
-const { EVENTS } = orango.CONSTS
+const { EVENTS } = orango.consts
 
 orango.events.on(EVENTS.READY, () => {
   console.log('Orango is ready!')

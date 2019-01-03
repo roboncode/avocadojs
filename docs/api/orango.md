@@ -23,7 +23,7 @@ References the connection instance used to connect to ArangoDB [Connection](./co
 orango.connection: Connection
 ```
 
-### CONSTS
+### consts
 
 References a hashmap of constants available in Orango. [Click here for a full list.](./consts.md)
 
@@ -67,6 +67,10 @@ class User extends orango.Model {
 ### return
 
 Returns a new instance of `Return` class.
+
+### Types
+
+Returns a hashmap of types for reference. There are only a few cases where you need to reference this.
 
 ## Methods
 
