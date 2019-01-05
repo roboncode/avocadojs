@@ -4,7 +4,7 @@ const Connection = require('../../lib/Connection')
 class MockOrango {
   constructor(name = '_system') {
     this.name = name
-    // this.Types = Schema.Types
+    // this.types = Schema.types
     // this.models = {}
     // this.collectionsCreated = []
     // this.pendingModels = []
@@ -12,7 +12,7 @@ class MockOrango {
     // this.events = EventDispatcher.getInstance(name)
     this.connection = new Connection(MockDatabase)
     // this.helpers = helpers
-    // this.CONSTS = CONSTS
+    // this.consts = consts
     // this.Model = Model
     // this.logger = logger
   }

@@ -1,6 +1,19 @@
 # Installation
 
-Orango can be installed using [NPM](https://www.npmjs.com/). So we suggest you already have installed [Node.js](http://nodejs.org/) and NPM in your system.
+## Pre-requisites
+
+- [Node.js](https://nodejs.org)
+- Running instance of ArangoDB
+
+If you have docker installed you can quickly run an instance 
+
+```sh
+unix> docker run -e ARANGO_NO_AUTH=1 -p 8529:8529 -d arangodb@3.4.1
+```
+
+## Adding Orango to your project
+
+Orango can be installed using [NPM](https://www.npmjs.com/).
 
 Run this in the terminal in your project folder:
 
@@ -14,4 +27,14 @@ $ npm i orango --save
 
 ``` bash
 $ yarn add orango
+```
+
+### Importing
+
+```js
+// Using Node.js `require()`
+const orango = require('orango')
+
+// Using ES6 imports
+import orango from 'orango'
 ```

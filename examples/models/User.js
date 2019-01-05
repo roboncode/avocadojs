@@ -25,7 +25,7 @@ module.exports = ({ orango }) => {
       lastName: String,
       tags: [String],
       updated: Date,
-      settings: orango.Types.Schema('Settings')
+      settings: orango.types.Schema('Settings')
     },
     {
       // strict: false,

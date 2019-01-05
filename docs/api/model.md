@@ -4,114 +4,95 @@ pageClass: api
 
 # Model
 
-## Declaring models
+Models represent a concrete data structure. They can contain a schema and structure that will be used to 
+validate the data it represents and extend the data's functionality with methods and properties.
 
-This section will focus on declaring models. There separate sections for the API and defining schemas.
-
-### Async / Await
-
-Examples that have and await need to be used inside an `async` function . To avoid redundancy, the examples have been omitted this step. Alternatively, if you prefer the traditional `Promise`, you could use this method in place of `await`.
+## Defining a model
 
 ```js
-async function myFunc() {
-  await content_here
+orango.model(name: String, classRef:OrangoModel [, collectionName:String])
+```
+
+Models are JavaScript classes. The class extends `OrangoModel`. Once you have a class defined, you 
+register it as a model with Orango.
+
+```js
+class User extends orango.Model {}
+
+orango.model('User', User)
+```
+
+Once Orango is connected to ArangoDB, a collection for the model will be created. By default, Orango will
+create the collection as a pluralized name of the class. The collection for our model `User` would be
+`users`.
+
+You can override the default name with the last parameter.
+
+```js
+orango.model('User', User, 'my_users')
+```
+
+## Adding a schema
+
+Models can use a schema to validate and filter properties. The schema is added as a static property on the
+class. It also is passed into the `super()`
+
+```js
+class User extends orango.Model { 
+  constructor(data) {
+    super(data, User.schema)
+  }
+}
+
+User.schema = orango.schema({
+  firstName: String,
+  lastName: String
+})
+
+orango.model('User', User)
+```
+
+### Adding a struct
+
+Structs are used to link models with other models. By defining structs you can
+convert a plain old JSON object into a fully instantiated model with subnodes
+as models. Structs can go any level deep.
+
+```js
+class User extends orango.Model {}
+
+User.struct = {
+  settings: 'Settings' // references another model
 }
 ```
 
-### Declaring a model
+## Putting it all together
 
-You do not need to declare _key.  It will be added automatically to all models.
-
-```js
-orango.model('User', {
-  name: String
-})
-```
-
-### Declaring the collection
-```js
-orango.model('User', {
-  name: String
-}, 'my_users')
-```
-
-Declaring the schema separately
-```js
-let schema = orango.schema({
-  name: String
-})
-orango.model('User', schema)
-```
-
-### Declaring strict mode
-
-Strict mode will prevent any unknown properties from being inserted into the database.
+Here is an example defining a model with a schema and struct.
 
 ```js
-let schema = orango.schema({
-  name: String
-}, {
-  strict: true
-})
-orango.model('User', schema)
-```
+class User extends orango.Model {
+  constructor(data) {
+    super(data, User.schema)
+  }
+}
 
-### Indexing properties
-
-```js
-let schema = orango.schema({
-  name: String,
-  email: String
-}, {
-  strict: true,
-  indexes: [{
-    type: 'hash',
-    fields: ['email']
-  }]
-})
-orango.model('User', schema)
-```
-
-### Auto-Indexing properties
-
-> Not currently implemented
-
-```js
-let schema = orango.schema({
-  name: String,
-  email: String
-}, {
-  strict: true,
-  autoIndex: true
-})
-orango.model('User', schema)
-```
-
-### Keeping your documents clean
-
-```js
-let schema = orango.schema({
-  name: String,
+User.schema = orango.schema({
   email: String,
-  language: { type: String, default: 'en_US' }
-}, {
-  strict: true,
-  removeOnMatchDefault: true
+  firstName: String,
+  lastName: String
 })
-orango.model('User', schema)
-```
-Let's look at two examples...
 
-```js
-// will be saved into document
-user.language = 'es_SP'
+User.struct = {
+  settings: 'Settings'
+}
 
-// will not be saved into document
-user.language = 'es_US'
+User.model('User', User)
 ```
 
+## Retrieving a model
 
-## Referencing a model
+To reference a registered model, use the same `model` function as a getter.
 
 ```js
 const User = orango.model('User')

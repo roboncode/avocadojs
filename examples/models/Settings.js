@@ -9,7 +9,7 @@ module.exports = ({ orango }) => {
 
   Settings.schema = orango.schema({
     online: Boolean,
-    custom: orango.Types.Schema('Custom')
+    custom: orango.types.Schema('Custom')
   })
 
   Settings.struct = {

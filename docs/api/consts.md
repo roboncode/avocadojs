@@ -10,7 +10,7 @@ A list of constants used in Orango.
 
 ```js
 const orango = require('orango')
-const { DEFAULTS, EVENTS } orango.CONSTS
+const { DEFAULTS, EVENTS } orango.consts
 
 ...
 

@@ -8,7 +8,7 @@ module.exports = ({ orango }) => {
   Tweet.schema = orango.schema({
     user: String,
     text: String,
-    tags: orango.Types.Array,
+    tags: orango.types.Array,
     created: Date,
     updated: Date
   })
