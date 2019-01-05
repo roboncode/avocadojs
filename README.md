@@ -79,9 +79,10 @@ The method `connect([{url:String="http://localhost:8529", username:String, passw
 
 ```js
 const orango = require('orango')
+const { EVENTS } = orango.consts
 
-orango.events.on('connected', () => {
-  console.log('Orango is connected!')
+orango.events.on(EVENTS.READY, () => {
+  console.log('Orango is ready!')
 })
 
 async function main() {
@@ -132,6 +133,7 @@ The following example shows some of these features:
 
 ```js
 const Joi = require('joi')
+const { SCHEMA } = const.consts
   
 module.exports = orango => {
 
@@ -166,15 +168,15 @@ module.exports = orango => {
   }, {
     indexes: [ // create indexes for items we will query against
       {
-        type: 'hash',
+        type: SCHEMA.INDEX.HASH,
         fields: ['email']
       },
       {
-        type: 'skipList',
+        type: SCHEMA.INDEX.SKIP_LIST,
         fields: ['firstName']
       },
       {
-        type: 'skipList',
+        type: SCHEMA.INDEX.SKIP_LIST,
         fields: ['lastName']
       }
     ]
