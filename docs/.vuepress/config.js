@@ -68,7 +68,8 @@ module.exports = {
         collapsable: false,
         children: [
           '/guide/installation',
-          '/guide/getting-started'
+          '/guide/getting-started',
+          '/guide/working-with-models'
         ]
       },
       {
