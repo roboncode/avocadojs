@@ -26,6 +26,8 @@
 * Default values
 * and more...
 
+> The goal of this library is to perform common tasks while still leaving the developer in control of their data.
+
 ### Official Documentation & Updates
 
 Official documentation can be found at **[orango.js.org](https://orango.js.org)**.

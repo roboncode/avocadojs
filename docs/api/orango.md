@@ -17,9 +17,9 @@ orango.model('User', User)
 
 **Using orango with reference**
 ```js
-const db = orango.get('myapp')
+const myapp = orango.get('myapp')
 ...
-db.model('User, User)
+myapp.model('User, User)
 ```
 
 ### get()
@@ -100,7 +100,11 @@ Checks if there is an active connection. If there is not, an error *"Not connect
 Connects to an instance of ArangoDB
 
 ``` js
-await orango.connect(url: String = 'http://localhost:8529')
+await orango.connect({
+  url: String = 'http://localhost:8529', 
+  username: String = 'root',
+  password: String = ''
+})
 ```
 
 ### disconnect()  <Badge text="async"/>

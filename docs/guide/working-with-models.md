@@ -85,11 +85,46 @@ User.schema = orango.schema({
 orango.model('User', User)
 ```
 
+### Schema strict mode
+
+A schema is `strict` by default. Strict schemas filter out any properties that
+have not been defined in the schema. To relax this restriction, you can set `strict`
+to `false` in the schema options. In the example, the schema will still validate
+against known properties but will not do anything with unknown properties.
+
+```js
+class User extends orango.Model { 
+  constructor(data) {
+    super(data, User.schema)
+  }
+}
+
+User.schema = orango.schema({
+  firstName: String,
+  lastName: String
+}, {
+  strict: false
+})
+
+orango.model('User', User)
+
+
+// in code somewhere
+
+await User.insert({
+  firstName: 'John',
+  lastName: 'Smith',
+  role: 'admin' // will be inserted without any validation
+})
+```
+
 ## Adding a struct
 
 Structs are used to link models with other models. Structs define how to
-convert a plain old JSON object into a fully instantiated set of models. 
-Structs can go any level deep in their definition.
+convert JSON into a fully instantiated set of models. 
+Structs can go any level deep in their definition. Structs do not have to 
+match the schema because its possible that you are merging data from 
+different collections into a single result.
 
 ```js
 class User extends orango.Model {}
@@ -98,6 +133,7 @@ User.struct = {
   settings: 'Settings' // references another model
 }
 ```
+> Structs do not filter data, they only convert.
 
 ## Adding hooks
 

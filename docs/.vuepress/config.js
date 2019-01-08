@@ -69,7 +69,8 @@ module.exports = {
         children: [
           '/guide/installation',
           '/guide/getting-started',
-          '/guide/working-with-models'
+          '/guide/working-with-models',
+          '/guide/best-practices',
         ]
       },
       {
@@ -84,7 +85,6 @@ module.exports = {
           '/api/orm',
         ]
       },
-      '/roadmap'
     ],
     // Assumes GitHub. Can also be a full GitLab url.
     repo: 'roboncode/orango',
