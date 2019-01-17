@@ -1,11 +1,5 @@
 module.exports = ({ orango }) => {
-  class Comment extends orango.Model {
-    constructor(data) {
-      super(data, Comment.schema)
-    }
-  }
-
-  Comment.schema = orango.schema(
+  const schema = new orango.Schema(
     {
       message: String
     },
@@ -16,5 +10,5 @@ module.exports = ({ orango }) => {
     }
   )
 
-  return orango.model('Comment', Comment)
+  return orango.model('Comment', schema)
 }

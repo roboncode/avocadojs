@@ -1,8 +1,6 @@
 module.exports = ({ orango }) => {
 
-  class Identity extends orango.Model {}
-
-  Identity.schema = orango.schema(
+  let schema = new orango.Schema(
     {
       user: String, // user ID
       provider: String, // mendy, auth0, google, facebook, etc
@@ -31,6 +29,6 @@ module.exports = ({ orango }) => {
     }
   )
 
-  return orango.model('Identity', Identity)
+  return orango.model('Identity', schema)
 }
 
