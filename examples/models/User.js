@@ -1,7 +1,13 @@
 // const sleep = require('../helpers/sleep')
 
 module.exports = ({ orango }) => {
+  const { OPERATIONS } = orango.consts
+
   class UserSchema extends orango.Schema {
+    constructor(json, options = {}) {
+      super(json, options)
+    }
+
     get fullName() {
       return (this.firstName + ' ' + this.lastName).trim()
     }
@@ -17,9 +23,9 @@ module.exports = ({ orango }) => {
     firstName: String,
     lastName: String,
     tags: [String],
-    // role: { type: String, onInsert: 'user' },
-    // created: { type: Date, onInsert: Date.now },
-    // updated: { type: Date, onUpdate: Date.now },
+    role: { type: String, onInsert: 'user', onUpdate: 'admin'},
+    created: { type: Date, onInsert: Date.now },
+    updated: { type: Date, onUpdate: Date.now },
     // settings: orango.types.Schema('Settings')
   })
 
@@ -30,15 +36,16 @@ module.exports = ({ orango }) => {
 
   // schema.struct({ settings: 'Settings' })
 
-  schema.on('insert', async model => {
-    console.log('onInsert~~~~~~~~~~~~~~~~~~~~~'.bgMagenta)
-    model.created = Date.now()
-    model.foo = 'bar' // invalid data will still be removed
-  })
+  const User = orango.model('User', schema)
 
-  schema.on('update', async model => {
-    model.updated = Date.now()
-  })
+  // User.on(OPERATIONS.INSERT, async model => {
+  //   model.created = Date.now()
+  //   model.foo = 'bar' // invalid data will stripped
+  // })
 
-  return orango.model('User', schema)
+  // User.on(OPERATIONS.UPDATE, async model => {
+  //   model.updated = Date.now()
+  // })
+
+  return User
 }
