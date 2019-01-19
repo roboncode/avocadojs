@@ -39,7 +39,7 @@ module.exports = ({ orango }) => {
   const User = orango.model('User', schema)
 
   // User.on(OPERATIONS.INSERT, async model => {
-  //   model.created = Date.now()
+  //   // model.created = Date.now()
   //   model.foo = 'bar' // invalid data will stripped
   // })
 

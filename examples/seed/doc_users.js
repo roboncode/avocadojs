@@ -16,7 +16,8 @@ module.exports = async ({ orango }) => {
           bogus: true // will be stripped
         }
       },
-      born: 'January 26, 1955'
+      born: 'January 26, 1955',
+      bogus: true
     },
     {
       active: true,
