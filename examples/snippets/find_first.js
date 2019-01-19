@@ -16,4 +16,10 @@ module.exports = async ({ orango }) => {
   // convert data to model
   let user = User.fromJSON(rawData)
   console.log('modelData'.green, user)
+  
+  // computed properties supported as getters
+  console.log('fullName'.green, user.fullName)
+
+  // toJSON automatically includes computed properties
+  console.log('JSON'.green, JSON.stringify(user, null, 3))
 }
