@@ -6,9 +6,19 @@ module.exports = async ({ orango }) => {
   })
 
   const FooBarBaz = orango.model('FooBarBaz', schema)
-  FooBarBaz.update({})
-    .where({ _key: '123' })
-    .exec()
-  // let foo = new FooBarBaz()
+  let result = await FooBarBaz.insert({
+    foo: 'a',
+    baz: 'a'
+  }).toAQL(true)
+  console.log(result)
+
+  // FooBarBaz.update({})
+  //   .where({ _key: '123' })
+  //   .exec()
+
+  // let foo = new FooBarBaz({
+  //   foo: 'hello',
+  //   baz: 'goodbye'
+  // })
   // foo.save()
 }
