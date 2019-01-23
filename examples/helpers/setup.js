@@ -22,8 +22,12 @@ module.exports = async function() {
   let db = orango.get(DATABASE)
 
   // listen for connection to ArangoDB
-  db.events.on(EVENTS.READY, conn => {
-    console.log('✅  Connected to:'.green, conn.url + '/' + conn.name)
+  db.events.once(EVENTS.CONNECTED, conn => {
+    console.log('🥑  Connected to ArangoDB:'.green, conn.url + '/' + conn.name)
+  })
+
+  db.events.once(EVENTS.READY, () => {
+    console.log('🍊  Orango is ready!'.green)
   })
 
   // :: What do you want to do? :: //
