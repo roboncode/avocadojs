@@ -4,7 +4,8 @@ module.exports = ({ orango }) => {
 
   let schema = new orango.Schema({
     online: Boolean,
-    custom: orango.types.Schema('Custom'),
+    custom: 'Custom'
+    // custom: orango.types.Schema('Custom'), // TODO: Add back
     // online: { type: Boolean, onInsert: false } // TODO: default props
   })
 

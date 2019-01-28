@@ -3,12 +3,17 @@ module.exports = ({ orango }) => {
     {
       message: String
     },
-    {
-      type: 'edge',
-      from: 'User',
-      to: ['Tweet', 'Comment']
-    }
+    // {
+    //   type: 'edge',
+    //   from: 'User',
+    //   to: ['Tweet', 'Comment']
+    // }
   )
+
+  schema.type('edge', {
+    from: 'User',
+    to: ['Tweet', 'Comment']
+  })
 
   return orango.model('Comment', schema)
 }

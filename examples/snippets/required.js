@@ -5,6 +5,9 @@ module.exports = async ({ orango }) => {
     baz: { type: String, required: true }
   })
 
+  // If you are going to create a model in code and then use it right after,
+  // you will need to wait for a "ready" state so it can connect to 
+  // the collection, ensure indicies etc
   const FooBarBaz = orango.model('FooBarBaz', schema)
   // wait for model to be initialized
   await FooBarBaz.ready()
