@@ -148,7 +148,7 @@ let schema = new UserSchema({
   created: { type: Date, default: Date.now }
 })
 
-schema.addIndex(SCHEMA.INDEX.HASH, 'email)
+schema.addIndex(SCHEMA.INDEX.HASH, 'email')
 schema.addIndex(SCHEMA.INDEX.SKIP_LIST, ['firstName', 'lastName'])
 
 let User = orango.model('User', schema)
