@@ -25,6 +25,10 @@ module.exports = ({ orango }) => {
 
   const User = orango.model('User', schema)
 
+  User.findById = async function(id) {
+    return await this.find().byId(id)
+  }
+
   User.on(OPERATIONS.INSERT, async model => {
     model.settings.custom.backgroundImage = '#FFCC00'
     model.foo = 'bar' // invalid data will stripped
