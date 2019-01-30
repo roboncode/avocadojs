@@ -1,4 +1,6 @@
 module.exports = ({ orango }) => {
+  const { SCHEMA } = orango.consts
+
   const schema = new orango.Schema(
     {
       user: String,
@@ -8,7 +10,7 @@ module.exports = ({ orango }) => {
     }
   )
 
-  schema.addIndex('hash', 'user')
+  schema.addIndex(SCHEMA.INDEX.HASH, 'user')
 
   return orango.model('Stats', schema)
 }

@@ -1,5 +1,5 @@
 module.exports = ({ orango }) => {
-  const { OPERATIONS } = orango.consts
+  const { OPERATIONS, SCHEMA } = orango.consts
 
   class UserSchema extends orango.Schema {
     get fullName() {
@@ -19,13 +19,14 @@ module.exports = ({ orango }) => {
     settings: 'Settings'
   })
 
-  schema.addIndex('hash', 'active')
-  schema.addIndex('hash', 'tags')
-  schema.addIndex('hash', ['firstName', 'lastName'])
+  schema.addIndex(SCHEMA.INDEX.HASH, 'active')
+  schema.addIndex(SCHEMA.INDEX.HASH, 'tags')
+  schema.addIndex(SCHEMA.INDEX.HASH, ['firstName', 'lastName'])
 
   const User = orango.model('User', schema)
 
   User.on(OPERATIONS.INSERT, async model => {
+    model.settings.custom.backgroundImage = '#FFCC00'
     model.foo = 'bar' // invalid data will stripped
   })
 

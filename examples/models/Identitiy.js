@@ -1,5 +1,6 @@
 module.exports = ({ orango }) => {
-
+  const { SCHEMA } = orango.consts
+  
   let schema = new orango.Schema(
     {
       user: String, // user ID
@@ -14,15 +15,15 @@ module.exports = ({ orango }) => {
       strict: true,
       indexes: [
         {
-          type: 'hash',
+          type: SCHEMA.INDEX.HASH,
           fields: ['provider']
         },
         {
-          type: 'hash',
+          type: SCHEMA.INDEX.HASH,
           fields: ['connection']
         },
         {
-          type: 'hash',
+          type: SCHEMA.INDEX.HASH,
           fields: ['identifier']
         }
       ]
@@ -31,4 +32,3 @@ module.exports = ({ orango }) => {
 
   return orango.model('Identity', schema)
 }
-

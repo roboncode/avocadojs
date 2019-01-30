@@ -1,5 +1,3 @@
-const Joi = require('joi')
-
 module.exports = ({ orango }) => {
 
   let schema = new orango.Schema({
