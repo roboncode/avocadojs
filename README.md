@@ -1,4 +1,4 @@
-# <img alt="orango" src="https://dzwonsemrish7.cloudfront.net/items/2e201w2446332m0o2h2n/orango_logo.png" width="250px">
+# <img alt="orango" src="docs/images/orango_logo.png" width="400px">
 
 
 ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
@@ -33,6 +33,10 @@ ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
 * Default values
 * and more...
 
+### Community Support 
+
+<a href="https://discord.gg/7fHadJj"><img src="docs/images/discord.svg" alt="Join the Orango community" width="300"></a>
+
 ### Documentation & Articles
 
 Official documentation can be found at **[orango.js.org](https://orango.js.org)**.
@@ -56,7 +60,7 @@ $ docker-compose up -d
 Next, install Orango from the command line using `npm`:
 
 ```cmd
-$ npm install orango
+$ npm install orango@next
 ```
 
 ### Importing
@@ -97,24 +101,14 @@ main()
 ### Defining a Model
 
 ```js
-module.exports = orango => {
+const schema = new orango.Schema({
+  author: String,
+  title: String,
+  body: String,
+  date: Date
+})
 
-  class BlogPost extends orango.Model {
-    constructor(data) {
-      super(data, BlogPost.schema)
-    }
-  }
-
-  BlogPost.schema = orango.schema({
-    author: String,
-    title: String,
-    body: String,
-    date: Date
-  })
-
-  return orango.model('blog', BlogPost)
-  
-}
+orango.model('Blog', schema)
 ```
 Aside from defining the structure of your documents and data types, Orango models can handle the definition of:
 
@@ -135,63 +129,35 @@ The following example shows some of these features:
 const Joi = require('joi')
 const { SCHEMA } = const.consts
   
-module.exports = orango => {
-
-  class User extends orango.Model {
-    constructor(data) {
-      super(data, User.schema)
-    }
-
-    // static methods
-    static async findByEmail = async function(email) {
-      return await this.find().one().where({ email })
-    }
-
-    // computed properties
-    get name = function() {
-      return this.firstName + ' ' + this.lastName
-    }
-
-    // custom return object
-    toJSON() {
-      return Object.assign({}, this, { name: this.name })
-    }
+class UserSchema extends orango.Schema {
+  // computed properties
+  get fullName() {
+    return (this.firstName + ' ' + this.lastName).trim()
   }
-
-  User.schema = orango.schema({
-    firstName: String,
-    lastName: String,
-    email: Joi.string().email(), // Joi can be used directly
-    age: { type: Number, min: 18 }, // JSON gets converted to Joi data types automatically
-    bio: { type: String, regex: /[a-z]/ },
-    updatedAt: Date
-  }, {
-    indexes: [ // create indexes for items we will query against
-      {
-        type: SCHEMA.INDEX.HASH,
-        fields: ['email']
-      },
-      {
-        type: SCHEMA.INDEX.SKIP_LIST,
-        fields: ['firstName']
-      },
-      {
-        type: SCHEMA.INDEX.SKIP_LIST,
-        fields: ['lastName']
-      }
-    ]
-  })
-
-  // hooks
-  User.hooks = {
-    update(model) {
-      model.updatedAt = Date.now()  
-    }
-  }
-
-  orango.model('User', User)
-
 }
+
+let schema = new UserSchema({
+  firstName: String,
+  lastName: String,
+  // Joi can be used directly
+  email: Joi.string().email(),
+  // JSON gets converted to Joi data types automatically
+  age: { type: Number, min: 18 },
+  bio: { type: String, regex: /[a-z]/ },
+  // default values are supported on insert and update
+  created: { type: Date, default: Date.now }
+})
+
+schema.addIndex(SCHEMA.INDEX.HASH, 'email)
+schema.addIndex(SCHEMA.INDEX.SKIP_LIST, ['firstName', 'lastName'])
+
+let User = orango.model('User', schema)
+
+// extend your model with custom functions
+User.findByEmail = async function(email) {
+  return await this.find().one().where({ email })
+}
+
 ```
 
 **In code somewhere else**
