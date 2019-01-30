@@ -20,7 +20,7 @@ module.exports = async ({ orango }) => {
   console.log('modelData'.green, user)
 
   // get computed property
-  console.log('Computed property'.green, user.fullName)
+  console.log('\nComputed property'.green, user.fullName, '\n')
 
   // convert to JSON (with computed properties)
   // let json = user.toJSON()
