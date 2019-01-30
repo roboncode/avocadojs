@@ -13,10 +13,10 @@ module.exports = ({ orango }) => {
     firstName: String,
     lastName: String,
     tags: [String],
-    role: { type: String, onInsert: 'user', onUpdate: 'admin' },
-    created: { type: Date, onInsert: Date.now },
-    updated: { type: Date, onUpdate: Date.now },
-    settings: 'Settings' 
+    role: { type: String, default: 'user', defaultOnUpdate: 'admin' },
+    created: { type: Date, default: Date.now },
+    updated: { type: Date, defaultOnUpdate: Date.now },
+    // settings: 'Settings'  // FIXME: This does not work
   })
 
   schema.addIndex('hash', 'active')
