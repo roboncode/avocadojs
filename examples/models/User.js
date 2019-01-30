@@ -16,7 +16,7 @@ module.exports = ({ orango }) => {
     role: { type: String, default: 'user', defaultOnUpdate: 'admin' },
     created: { type: Date, default: Date.now },
     updated: { type: Date, defaultOnUpdate: Date.now },
-    // settings: 'Settings'  // FIXME: This does not work
+    settings: 'Settings'
   })
 
   schema.addIndex('hash', 'active')
