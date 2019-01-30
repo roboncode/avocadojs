@@ -22,4 +22,7 @@ module.exports = async ({ orango }) => {
   // convert data to model
   let user = User.fromJSON(rawData)
   console.log('modelData'.green, user)
+
+  // get 
+  console.log('Who is user?'.green, user.fullName)
 }
