@@ -1,10 +1,7 @@
-# <img alt="orango" src="https://dzwonsemrish7.cloudfront.net/items/2e201w2446332m0o2h2n/orango_logo.png" width="250px">
+# <img alt="orango" src="https://github.com/roboncode/orango/blob/next/docs/images/orango_logo.png" width="400px">
 
 
 ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
-
-Inspired by <a href="http://mongoosejs.com/">Mongoose</a>. 
-Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https://github.com/hapijs/joi">Joi</a> and <a href="https://github.com/arangodb/arangojs">ArangoJS</a>
 
 <a href="https://npmcharts.com/compare/orango?minimal=true"><img src="https://img.shields.io/npm/dm/orango.svg" alt="Downloads"></a>
   <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/v/orango.svg" alt="Version"></a>
@@ -12,37 +9,55 @@ Built using <a href="https://github.com/roboncode/tang">Tang</a>, <a href="https
   [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)  
 
-🍊 **[Click here to checkout what is coming up in the next release!](https://github.com/roboncode/orango/wiki/Orango-NEXT)**
+> Major changes to Orango are coming in the next release. It is recommended that you install the **@next** version in order to have the best experience. Please refer to the examples in the **next** branch until the documentation has been updated.
 
-**Orango** is an Object Data Modeler (ODM) that provides the following features:
+### Install orango
+
+```cmd
+$ npm install orango@next
+```
+
+[Click here for examples](https://github.com/roboncode/orango/tree/next/examples)
+
+**Orango** is an **ODM** (Object Data Modeler), an **ORM** (Object Relational Mapper) and an **OGM** (Object Graphical Mapper) in one that provides the following features:
 
 * Central connectivity to ArangoDB
 * Automated creation of collections and indexes
 * Create schemas for data
 * Interact with models to handle data-centric functionality
 * Pre-populate database
+* Graph linking and querying
 * and more...
 
-### Why use an ODM?
+### Why use Orango with ArangoDB?
 
 * Ease of use
 * Model-driven data
 * Focus on data instead of queries
 * Optimized query creation
-* Validation prevents bad data from being injected into database
+* Validation
+* Filter unknown data from being injected into database
 * Cleaner interfaces
 * Single point of change for bug fixes, features, etc
-* Computed properties on return values
+* Save on redundancy - DRY implementation
 * Default values
 * and more...
 
-### Documentation
+### Community Support 
 
-**(In Progress)** Official documentation can be found at **[orango.js.org](https://orango.js.org)**.
+<a href="https://discord.gg/7fHadJj"><img src="https://github.com/roboncode/orango/raw/next/docs/images/discord.svg?sanitize=true" alt="Join the Orango community" width="300"></a>
 
-### Project Status
+### Documentation & Articles
 
-Orango is in `alpha`. Working on bug fixes, cleanup, documentation and examples.
+Official documentation can be found at **[orango.js.org](https://orango.js.org)**.
+
+I will be regularly posting articles on CodeBurst.io (Medium). Follow me there https://codeburst.io/@roboncode
+
+Follow me on Twitter https://twitter.com/@roboncode for updates
+
+### Examples
+
+A growing set of examples are available [here](examples). 
 
 ### Installation
 
@@ -55,7 +70,7 @@ $ docker-compose up -d
 Next, install Orango from the command line using `npm`:
 
 ```cmd
-$ npm install orango
+$ npm install orango@next
 ```
 
 ### Importing
@@ -72,16 +87,16 @@ import orango from 'orango'
 
 ### Connecting to ArangoDB
 
-First, we need to define a connection. If your app uses only one database, you should use `orango.connect()`. If you need to create additional connections, use `orango.get( instanceName:String ).connect()`.
+First, we need to define a connection. If your app uses the default `_system` database, you can connect using `orango.connect()`. If you need to create additional connections, use `orango.get( database:String ).connect()`.
 
-The method `connect(db:String="_system", [{url:String="http://localhost:8529", username:String, password:String}])` takes database name with options to establish a connection. Otherwise, it will use the default values.
+The method `connect([{url:String="http://localhost:8529", username:String, password:String}])` takes database name with options to establish a connection. Otherwise, it will use the default values.
 
 ```js
 const orango = require('orango')
-const { EVENTS } = orango.CONSTS
+const { EVENTS } = orango.consts
 
-orango.events.on(EVENTS.CONNECTED, () => {
-  console.log('Orango is connected!')
+orango.events.on(EVENTS.READY, () => {
+  console.log('Orango is ready!')
 })
 
 async function main() {
@@ -96,129 +111,77 @@ main()
 ### Defining a Model
 
 ```js
-const BlogPost = orango.Schema({
-	author: String,
-	title: String,
-	body: String,
-	date: Date	
+const schema = new orango.Schema({
+  author: String,
+  title: String,
+  body: String,
+  date: Date
 })
 
-orango.model('blog', BlogPost)
+orango.model('Blog', schema)
 ```
-Aside from defining the structure of your documents and data types, a Schema handles the definition of:
+Aside from defining the structure of your documents and data types, Orango models can handle the definition of:
 
 * Validators
 * Default values
 * Indexes
-* Middleware
-* Methods definitions
-* Statics definitions
+* Static methods
 * Computed properties
-* Pre and post hooks
-* Real-joins (thanks ArangoDB!)
+* Hooks
 * Custom queries
-* Filtering out unknown properties
-* Joi syntax support
+* Unknown property filters
+* JSON to model structures
+* Joi definitions
 
 The following example shows some of these features:
 
 ```js
-const orango = require('orango')
 const Joi = require('joi')
-const { HOOKS } = orango.CONSTS
-
-const UserSchema = orango.Schema({
-	firstName: String,
-	lastName: String,
-	email: Joi.string().email(), // Joi can be used directly
-	age: { type: Number, min: 18 }, // JSON gets converted to Joi data types automatically
-	bio: { type: String, regex: /[a-z]/ },
-	updatedAt: Date
-}, {
-	strict: true, // unknown properties will be filtered out
-	indexes: [ // create indexes for items we will query against
-      {
-        type: 'hash',
-        fields: ['email']
-      },
-      {
-        type: 'skipList',
-        fields: ['firstName']
-      },
-      {
-        type: 'skipList',
-        fields: ['lastName']
-      }
-    ]
-})
-
-// static methods
-UserSchema.statics.findByEmail = async function(email) {
-	return this.findOne({ email })
+const { SCHEMA } = const.consts
+  
+class UserSchema extends orango.Schema {
+  // computed properties
+  get fullName() {
+    return (this.firstName + ' ' + this.lastName).trim()
+  }
 }
 
-// computed properties
-UserSchema.computed.name = function() {
-	return this.firstName + ' ' + this.lastName
-}
-
-const User = orango.model('User', UserSchema)
-
-// hooks
-User.on(HOOKS.UPDATE, payload => {
-	payload.data.updatedAt = Date.now()
+let schema = new UserSchema({
+  firstName: String,
+  lastName: String,
+  // Joi can be used directly
+  email: Joi.string().email(),
+  // JSON gets converted to Joi data types automatically
+  age: { type: Number, min: 18 },
+  bio: { type: String, regex: /[a-z]/ },
+  // default values are supported on insert and update
+  created: { type: Date, default: Date.now }
 })
 
-// ... example of using it in a router ... //
+schema.addIndex(SCHEMA.INDEX.HASH, 'email')
+schema.addIndex(SCHEMA.INDEX.SKIP_LIST, ['firstName', 'lastName'])
 
-app.get('/user', async (req, res) => {
-	let user = await User
-		.findByEmail(req.query.email)
-		.computed()
-		.id()
-	res.send(user)
-})
+let User = orango.model('User', schema)
 
-200 Ok
-{
-   "id": "163706"
-   "name": "John Smith",
-   "firstName": "John",
-   "lastName": "Smith",
-   "email": "john.smith@gmail.com",
-   "age": 26,
-   "bio": "Likes mountain biking and camping",
-   "updatedAt": "2018-12-02T16:04:10.026Z"
+// extend your model with custom functions
+User.findByEmail = async function(email) {
+  return await this.find().one().where({ email })
 }
+
 ```
 
-# Documentation
+**In code somewhere else**
 
-Go to https://orango.js.org for detailed documentation and tutorials.
+```js
+const User = orango.model('User')
 
-# Examples
+...
 
-A growing set of examples are available [here](examples/snippets). 
+let rawData = await User.findByEmail('john.smith@gmail.com')
+let user = User.fromJSON(rawData) // convert result to model
+console.log('Hello,', user.name) // access model getter
+```
 
-# Roadmap
-
-### Current
-
-* Create a proper CHANGELOG
-* Bug fixes
-* Documentation
-* Examples
-
-### Future
-* autoIndex in schema - will create indexes as properties become part of query
-* Support upsert option
-* Getter / Setters in schema
-* Integrate [Arango Chair](https://www.arangodb.com/2017/03/arangochair-tool-listening-changes-arangodb/)
-* web browser compatible
-* Better error handler / dispatching
-* Upgrade to TypeScript
-* Add lint support
-
-## MIT License
+#### MIT License
 
 This library is under the MIT license. [See LICENSE](LICENSE)
