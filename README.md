@@ -172,6 +172,35 @@ let user = User.fromJSON(rawData) // convert result to model
 console.log('Hello,', user.name) // access model getter
 ```
 
+### Debugging with Visual Studio Code (VSCode)
+
+Setup your config like the example below. You can launch any number of the snippets by placing the snippet you would like to start in the `args` array. Then run the debugger. The output will be in the `Debug Console`.
+
+```json
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Count",
+      "program": "${workspaceFolder}/examples/debug.js",
+      "args": ["count"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Find First",
+      "program": "${workspaceFolder}/examples/debug.js",
+      "args": ["find_first"]
+    }
+  ]
+}
+```
+
 #### MIT License
 
 This library is under the MIT license. [See LICENSE](LICENSE)
