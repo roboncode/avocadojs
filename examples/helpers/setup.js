@@ -48,6 +48,7 @@ module.exports = async function() {
   // TODO: There is something not working in DI
   // await di.injectDir(__dirname + '/../seed', { orango: db })
 
+  await di.injectFile(__dirname + '/../seed/doc_identities.js', { orango: db })
   await di.injectFile(__dirname + '/../seed/doc_stats.js', { orango: db })
   await di.injectFile(__dirname + '/../seed/doc_tweets.js', { orango: db })
   await di.injectFile(__dirname + '/../seed/doc_users.js', { orango: db })

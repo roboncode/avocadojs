@@ -4,7 +4,7 @@ module.exports = ({ orango }) => {
   let schema = new orango.Schema(
     {
       user: String, // user ID
-      provider: String, // mendy, auth0, google, facebook, etc
+      provider: String, // google, facebook, etc
       identifier: String, // email, phone#
       passwordHash: String,
       connection: String, // Username-Password-Authentication, google-oauth2, etc
@@ -12,7 +12,6 @@ module.exports = ({ orango }) => {
       verified: Boolean
     },
     {
-      strict: true,
       indexes: [
         {
           type: SCHEMA.INDEX.HASH,
