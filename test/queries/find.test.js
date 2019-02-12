@@ -43,3 +43,34 @@ test('find one as model', async () => {
   expect(result).toEqual(MockCursor.returnVal)
   expect(result[0].fullName).toBe('John Smith')
 })
+
+test('find sort with string', async () => {
+  const query = User.find().sort('-lastName firstName')
+
+  let aql = await query.toAQL()
+  expect(aql).toBe('FOR user IN users SORT user.lastName DESC, user.firstName RETURN user')
+})
+
+// test('find sort with object', async () => {
+//   const query = User.find().sort({
+//     lastName: -1,
+//     firstName: 1
+//   })
+
+//   let aql = await query.toAQL()
+//   expect(aql).toBe('FOR user IN users SORT user.lastName DESC, user.firstName RETURN user')
+// })
+
+test('find by id', async () => {
+  const query = User.find().byId('12345')
+
+  let aql = await query.toAQL()
+  expect(aql).toEqual('FOR user IN users FILTER user.`_key` == "12345" RETURN user')
+})
+
+test('find with limit and offset', async () => {
+  const query = User.find().limit(10).offset(100)
+
+  let aql = await query.toAQL()
+  expect(aql).toEqual('FOR user IN users LIMIT 100, 10 RETURN user')
+})
