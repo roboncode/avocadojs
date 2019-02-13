@@ -19,8 +19,15 @@ test('find all', async () => {
 })
 
 test('find one', async () => {
-  const aql = await User.find().one().toAQL()
+
+  MockCursor.returnVal = [{ firstName: 'John', lastName: 'Smith' }]
+  
+  const query = User.find().one()
+  const aql = await query.toAQL()
   expect(aql).toBe('FOR user IN users LIMIT 1 RETURN user')
+
+  const result = await query.exec()
+  expect(result).toEqual(MockCursor.returnVal[0])
 })
 
 test('find where', async () => {
