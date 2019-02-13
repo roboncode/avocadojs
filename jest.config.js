@@ -3,6 +3,7 @@ module.exports = {
   // globalSetup: './test/setup.js',
   // globalTeardown: './test/teardown.js',
   // testEnvironment: './test/environment.js',
+  // setupFiles: ['./test/helpers.js'],
   coverageThreshold: {
     global: {
       branches: 30,
@@ -10,5 +11,5 @@ module.exports = {
       lines: 30,
       statements: 0
     }
-  }
+  },
 }

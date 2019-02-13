@@ -1,4 +1,11 @@
 const MockCursor = require('./MockCursor')
+
+class MockDatabaseCollection {
+  exists() {
+    return true
+  }
+}
+
 class MockDatabase {
   constructor(url) {
     this.url = url
@@ -16,6 +23,10 @@ class MockDatabase {
 
   async query() {
     return new MockCursor()
+  }
+
+  collection() {
+    return new MockDatabaseCollection()
   }
 
   close() {

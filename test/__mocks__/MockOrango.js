@@ -21,13 +21,13 @@ class MockOrango extends Orango {
     this.connect()
   }
 
-  model(name, schema, collectionName) {
-    let model = super.model(name, schema, collectionName)
-    if(schema) {
-      model.init(this)
-    }
-    return model
-  }
+  // model(name, schema, collectionName) {
+  //   let model = super.model(name, schema, collectionName)
+  //   if(schema) {
+  //     model.init(this)
+  //   }
+  //   return model
+  // }
 }
 
 module.exports = MockOrango
