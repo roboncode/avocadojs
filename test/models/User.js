@@ -12,16 +12,16 @@ module.exports = ({ orango }) => {
     firstName: String,
     lastName: String,
     likes: Number,
-    tags: [ String ], 
-    // settings: 'Settings',
+    tags: [String],
+    settings: 'Settings',
     created: { type: Date, default: Date.now },
-    updated: { type: Date, defaultOnUpdate: Date.now },
+    updated: { type: Date, defaultOnUpdate: Date.now }
   })
 
   const User = orango.model('User', schema)
 
-  User.findById = async function (id) {
-    return await this.find().byId(id)
+  User.findById = function(id) {
+    return this.find().byId(id)
   }
 
   User.on(OPERATIONS.INSERT, async model => {

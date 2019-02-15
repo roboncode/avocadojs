@@ -1,7 +1,7 @@
 module.exports = ({ orango }) => {
 
   let schema = new orango.Schema({
-    online: { type: Boolean, default: true },
+    online: { type: Boolean, default: false },
     custom: 'Custom'
   })
 

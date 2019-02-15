@@ -1,5 +1,4 @@
 const Orango = require('../../lib/Orango')
-// const Connection = require('../../lib/Connection')
 const MockConnection = require('./MockConnection')
 const { DEFAULTS } = require('../../lib/consts')
 
@@ -22,10 +21,13 @@ class MockOrango extends Orango {
   }
 
   // model(name, schema, collectionName) {
+  //   super(name, schema, collectionName)
+    
   //   let model = super.model(name, schema, collectionName)
   //   if(schema) {
   //     model.init(this)
   //   }
+
   //   return model
   // }
 }

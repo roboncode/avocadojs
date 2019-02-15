@@ -4,6 +4,7 @@ module.exports = {
   // globalTeardown: './test/teardown.js',
   // testEnvironment: './test/environment.js',
   // setupFiles: ['./test/helpers.js'],
+  // coveragePathIgnorePatterns: ["/models/"],
   coverageThreshold: {
     global: {
       branches: 30,
