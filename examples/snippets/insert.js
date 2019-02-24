@@ -5,7 +5,8 @@ module.exports = async ({ orango }) => {
   // create query
   let query = User.insert({
     firstName: 'Axl',
-    lastName: 'Rose'
+    lastName: 'Rose',
+    tags: ['lead', 'vocals']
   }).return(orango.return.one())
 
   // FOR DEMO ONLY - show the raw query data
