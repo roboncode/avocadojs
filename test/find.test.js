@@ -3,11 +3,11 @@ describe('find queries', () => {
   let orango, User, MockCursor
 
   beforeAll(async () => {
-    orango = require('../__mocks__/orango')
-    MockCursor = require('../__mocks__/MockCursor')
-    require('../models/Custom')({ orango })
-    require('../models/Settings')({ orango })
-    User = require('../models/User')({ orango })
+    orango = require('./__mocks__/orango')
+    MockCursor = require('./__mocks__/MockCursor')
+    require('./models/Custom')({ orango })
+    require('./models/Settings')({ orango })
+    User = require('./models/User')({ orango })
     User.init(orango) // force init for tests only
   })
   
