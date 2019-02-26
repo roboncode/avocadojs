@@ -6,8 +6,8 @@ ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
 <a href="https://npmcharts.com/compare/orango?minimal=true"><img src="https://img.shields.io/npm/dm/orango.svg" alt="Downloads"></a>
   <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/v/orango.svg" alt="Version"></a>
   <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/l/orango.svg" alt="License"></a>
-  <!-- [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
-[![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)   -->
+[![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
+[![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)
 
 **Orango** is an **ODM** (Object Data Modeler), an **ORM** (Object Relational Mapper) and an **OGM** (Object Graphical Mapper) in one that provides the following features:
 
@@ -39,28 +39,20 @@ ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
 
 ### Documentation & Articles
 
-Official documentation can be found at **[orango.js.org](https://orango.js.org)**.
+Official documentation can be found at **[orango.js.org](https://orango.js.org)**. *(This is a work in progress)*
 
 I will be regularly posting articles on CodeBurst.io (Medium). Follow me there https://codeburst.io/@roboncode
 
 Follow me on Twitter https://twitter.com/@roboncode for updates
 
-### Examples
-
-A growing set of examples are available [here](examples). 
-
 ### Installation
 
-First be sure you have ArangoDB and Node.js installed. You can easily install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). There is also a `docker-compose.yml` file that is in the `tools` directory if you want to copy it to your project, then all you have to do is run the code below to start an instance of ArangoDB.
-
-```cmd
-$ docker-compose up -d
-```
+First be sure you have ArangoDB and Node.js installed. You can install ArangoDB using the [official docker container](https://hub.docker.com/r/arangodb/arangodb/). 
 
 Next, install Orango from the command line using `npm`:
 
 ```cmd
-$ npm install orango@next
+$ npm install orango
 ```
 
 ### Importing
@@ -85,8 +77,12 @@ The method `connect([{url:String="http://localhost:8529", username:String, passw
 const orango = require('orango')
 const { EVENTS } = orango.consts
 
-orango.events.on(EVENTS.READY, () => {
-  console.log('Orango is ready!')
+orango.events.once(EVENTS.CONNECTED, conn => {
+   console.log('🥑  Connected to ArangoDB:'.green, conn.url + '/' + conn.name)
+})
+
+orango.events.once(EVENTS.READY, () => {
+   console.log('🍊  Orango is ready!'.green)
 })
 
 async function main() {
@@ -96,7 +92,7 @@ async function main() {
 main()
 ```
 
-> Orango buffers model definitions, so they can be defined before or after a connection is established.
+> **Note:** Orango buffers model definitions, so they can be defined before or after a connection is established.
 
 ### Defining a Model
 
@@ -145,7 +141,8 @@ let schema = new UserSchema({
   age: { type: Number, min: 18 },
   bio: { type: String, regex: /[a-z]/ },
   // default values are supported on insert and update
-  created: { type: Date, default: Date.now }
+  created: { type: Date, default: Date.now },
+  updated: { type: Date, defaultOnUpdate: Date.now }
 })
 
 schema.addIndex(SCHEMA.INDEX.HASH, 'email')
@@ -167,12 +164,47 @@ const User = orango.model('User')
 
 ...
 
-let rawData = await User.findByEmail('john.smith@gmail.com')
-let user = User.fromJSON(rawData) // convert result to model
+let user = await User.findByEmail('john.smith@gmail.com').return({ model: true })
 console.log('Hello,', user.name) // access model getter
 ```
 
-### Debugging with Visual Studio Code (VSCode)
+### Examples
+
+A growing set of examples are available [here](examples). To run the examples, `clone` this project and then run the Orango docker containers.
+
+#### Install dependencies
+
+```cmd
+npm install
+```
+
+#### Run the docker containers provided by Orango
+
+**Linux and Mac**
+
+Run the ArangoDB containers provided by Orango.
+
+```cmd
+$ make dbs
+```
+
+**Windows**
+
+```cmd
+$ cd docker & docker-compose up -d
+```
+
+#### Run examples
+
+```cmd
+npm run examples
+```
+
+You will be presented with a wizard where you can run different examples files.
+
+![Terminal Screenshot](examples/img/ss1.png)
+
+#### Debugging the examples with VSCode
 
 Setup your config like the example below. You can launch any number of the snippets by placing the snippet you would like to start in the `args` array. Then run the debugger. The output will be in the `Debug Console`.
 
