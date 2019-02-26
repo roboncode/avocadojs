@@ -47,10 +47,10 @@ module.exports = async function(config) {
   // TODO: There is something not working in DI
   // await di.injectDir(__dirname + '/../seed', { orango: db })
 
-  await di.injectFile(__dirname + '/../seed/doc_stats.js', { orango: db })
-  await di.injectFile(__dirname + '/../seed/doc_tweets.js', { orango: db })
-  await di.injectFile(__dirname + '/../seed/doc_users.js', { orango: db })
-  await di.injectFile(__dirname + '/../seed/edge_comments.js', { orango: db })
+  await di.injectFile(__dirname + '/../seed/doc_stats.js', { orango: db, config })
+  await di.injectFile(__dirname + '/../seed/doc_tweets.js', { orango: db, config })
+  await di.injectFile(__dirname + '/../seed/doc_users.js', { orango: db, config })
+  await di.injectFile(__dirname + '/../seed/edge_comments.js', { orango: db, config })
 
   return db
 }

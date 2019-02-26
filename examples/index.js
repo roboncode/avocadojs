@@ -1,6 +1,7 @@
 const fs = require('fs')
 const inquirer = require('inquirer')
 const di = require('./helpers/di')
+const setup = require('./helpers/setup')
 const config = require('./config')
 
 require('colors')
@@ -13,12 +14,7 @@ function humanize(str) {
   return frags.join(' ')
 }
 
-// TODO: ArangoDB URL? (http://localhost:8529)
-// TODO: Are you running ArangoDB with credentials? Y/n
-// TODO: Root username? (root)
-// TODO: Root password? (orango)
-// TODO: Remember these settings? Y/n
-// You can change these settings anytime in examples/examples.config.js
+console.log('🍊  Welcome to Orango examples!')
 
 inquirer
   .prompt([
@@ -45,7 +41,6 @@ inquirer
       const orango = require('../lib')
       di.injectFile(__dirname + '/snippets/' + snippet, { orango, config })
     } else {
-      const setup = require('./helpers/setup')
       const orango = await setup(config)
       di.injectFile(__dirname + '/snippets/' + snippet, { orango, config })
     }
