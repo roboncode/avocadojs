@@ -6,7 +6,8 @@ services:
     ports: 
       - 8529:8529
     environment: 
-      ARANGO_NO_AUTH: 1
+      # ARANGO_NO_AUTH: 1
+      ARANGO_ROOT_PASSWORD: orango
     volumes:
-      - ./docker/orango/db:/var/lib/arangodb3
-      - ./docker/orango/apps:/var/lib/arangodb3-apps
+      - ./orango/db:/var/lib/arangodb3
+      - ./orango/apps:/var/lib/arangodb3-apps

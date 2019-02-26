@@ -35,7 +35,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-docker/
+docker/orango
 dist/
 tmp/
 web-services/
