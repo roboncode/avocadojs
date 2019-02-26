@@ -7,6 +7,9 @@ publish:
 	bump --prompt --tag --push --all
 	npm publish
 
+dbs:
+	cd docker && docker-compose up -d
+
 tests:
 	npm run test
 

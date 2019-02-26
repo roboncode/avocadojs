@@ -1,6 +1,9 @@
 const fs = require('fs')
 const inquirer = require('inquirer')
 const di = require('./helpers/di')
+const setup = require('./setup')
+const config = require('./config')
+
 require('colors')
 
 function humanize(str) {
@@ -10,6 +13,8 @@ function humanize(str) {
   }
   return frags.join(' ')
 }
+
+console.log('🍊  Welcome to Orango examples!')
 
 inquirer
   .prompt([
@@ -34,10 +39,9 @@ inquirer
   .then(async ({ snippet }) => {
     if (snippet.match(/connect/gi)) {
       const orango = require('../lib')
-      di.injectFile(__dirname + '/snippets/' + snippet, { orango })
+      di.injectFile(__dirname + '/snippets/' + snippet, { orango, config })
     } else {
-      const setup = require('./helpers/setup')
-      const orango = await setup()
-      di.injectFile(__dirname + '/snippets/' + snippet, { orango })
+      const orango = await setup(config)
+      di.injectFile(__dirname + '/snippets/' + snippet, { orango, config })
     }
   })

@@ -35,10 +35,10 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-docker/
+docker/orango-auth
+docker/orango-noauth
 dist/
 tmp/
-web-services/
 
 # TypeScript v1 declaration files
 typings/

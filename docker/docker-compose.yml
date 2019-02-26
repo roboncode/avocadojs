@@ -1,0 +1,22 @@
+version: '3.7'
+services: 
+  noauth:
+    container_name: orango-noauth
+    image: arangodb:3.4.2
+    ports: 
+      - 15100:8529
+    environment: 
+      ARANGO_NO_AUTH: 1
+    volumes:
+      - ./orango-noauth/db:/var/lib/arangodb3
+      - ./orango-noauth/apps:/var/lib/arangodb3-apps
+  auth:
+    container_name: orango-auth
+    image: arangodb:3.4.2
+    ports: 
+      - 15101:8529
+    environment: 
+      ARANGO_ROOT_PASSWORD: orango
+    volumes:
+      - ./orango-auth/db:/var/lib/arangodb3
+      - ./orango-auth/apps:/var/lib/arangodb3-apps
