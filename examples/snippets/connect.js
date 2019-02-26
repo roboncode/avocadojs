@@ -3,31 +3,14 @@ module.exports = async ({ orango, config }) => {
   const { EVENTS } = orango.consts
 
   const cfg = {
-    db: 'examples_conn',
-    name: 'Admin',
-    credentials: {
-      username: 'admin',
-      password: 'secretpass'
-    }
+    db: 'examples_noauth'
   }
 
   async function initDatabase() {
-    await system_db.connect(config.credentials)
+      // since we are not using the default url http://localhost:8529, we pass it in
+    await system_db.connect(config.default)
     await system_db.dropDatabase(cfg.db)
-    await system_db.createDatabase(cfg.db, [
-      {
-        username: cfg.credentials.username,
-        password: cfg.credentials.password,
-        extra: {
-          name: cfg.name
-          // TODO: Not supported by ArangoDB JS Driver
-          // grant: 'rw' // administrate
-          // grant: 'ro' // access
-          // grant: 'none' // no access
-          // grant: undefined // use default
-        }
-      }
-    ])
+    await system_db.createDatabase(cfg.db)
     await system_db.disconnect()
   }
 
@@ -43,8 +26,6 @@ module.exports = async ({ orango, config }) => {
     console.log('🍊  Orango is ready!'.green)
   })
 
-  // TODO: Using system config until support for granting rights is supported by ArangoDB JS Driver
-  // await app_db.connect(cfg.credentials) 
-  await app_db.connect(config.credentials)
+  await app_db.connect(config.default)
 }
 

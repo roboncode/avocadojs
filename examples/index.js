@@ -1,7 +1,7 @@
 const fs = require('fs')
 const inquirer = require('inquirer')
 const di = require('./helpers/di')
-const setup = require('./helpers/setup')
+const setup = require('./setup')
 const config = require('./config')
 
 require('colors')
