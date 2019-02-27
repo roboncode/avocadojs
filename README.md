@@ -8,6 +8,7 @@ ArangoDB Object Modeling for Node.js, Foxx and Modern Web Browsers
   <a href="https://www.npmjs.com/package/orango"><img src="https://img.shields.io/npm/l/orango.svg" alt="License"></a>
 [![Build Status](https://travis-ci.com/roboncode/orango.svg?branch=master)](https://travis-ci.com/roboncode/orango)
 [![Coverage Status](https://coveralls.io/repos/github/roboncode/orango/badge.svg?branch=master)](https://coveralls.io/github/roboncode/orango?branch=master)
+[![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 **Orango** is an **ODM** (Object Data Modeler), an **ORM** (Object Relational Mapper) and an **OGM** (Object Graphical Mapper) in one that provides the following features:
 
@@ -230,6 +231,8 @@ Setup your config like the example below. You can launch any number of the snipp
 }
 ```
 
-#### MIT License
+#### License
 
-This library is under the MIT license. [See LICENSE](LICENSE)
+[MIT](LICENSE)
+
+Copyright (c) 2018-present, Rob Taylor

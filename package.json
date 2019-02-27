@@ -4,11 +4,12 @@
   "description": "ArangoDB Object Modeler for Node.js, Foxx and Web Browsers",
   "main": "./index.js",
   "scripts": {
+    "commit": "git-cz",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
     "examples": "node examples",
     "test": "jest --coverage",
-    "test-no-coverage": "jest",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "test-no-coverage": "jest"
   },
   "author": "Rob Taylor <roboncode@gmail.com> (https://www.linkedin.com/in/roboncode/)",
   "license": "MIT",
@@ -22,6 +23,8 @@
     "winston": "^3.1.0"
   },
   "devDependencies": {
+    "commitizen": "^3.0.7",
+    "cz-conventional-changelog": "2.1.0",
     "jest": "^23.6.0",
     "vuepress": "0.14.8"
   },
@@ -56,5 +59,10 @@
   "bugs": {
     "url": "https://github.com/roboncode/orango/issues"
   },
-  "homepage": "https://orango.js.org"
+  "homepage": "https://orango.js.org",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }

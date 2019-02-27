@@ -1,5 +1,8 @@
 default: tests-only
 
+commit:
+	npm run commit
+
 publish-docs:
 	./publish-docs.sh
 
