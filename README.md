@@ -79,11 +79,11 @@ const orango = require('orango')
 const { EVENTS } = orango.consts
 
 orango.events.once(EVENTS.CONNECTED, conn => {
-   console.log('🥑  Connected to ArangoDB:'.green, conn.url + '/' + conn.name)
+   console.log('🥑  Connected to ArangoDB:', conn.url + '/' + conn.name)
 })
 
 orango.events.once(EVENTS.READY, () => {
-   console.log('🍊  Orango is ready!'.green)
+   console.log('🍊  Orango is ready!')
 })
 
 async function main() {
