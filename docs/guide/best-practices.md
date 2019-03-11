@@ -1,31 +1,29 @@
-# Best Practices
+# Tips and Tricks
 
 These are some common patterns that you may want to consider using when developing
 with Orango.
 
-## Referencing Orango
+## Referencing orango instance
 
-Rather than using referencing `orango` directly, pass it into each controller or model
+Rather than referencing `orango` directly, pass it into each controller or model
 via injection. Here is very simple example.
 
-```js
-// models/User.js
-module.exports = orango => {
-  class User extends orango.Model {
-    constructor(data) {
-      super(data, User.schema)
-    }
-  }
+**models/User.js**
 
-  User.schema = orango.schema({
+```js
+module.exports = orango => {
+  let schema = new orango.Schema({
     firstName: String,
     lastName: String
   })
 
-  orango.model('User', User)
+  return orango.model('User', schema)
 }
+```
 
-// controllers/my_controller.js
+**controllers/my_controller.js**
+
+```js
 module.exports = (app, orango) => {
 
   const User = orango.model('User')
@@ -34,27 +32,31 @@ module.exports = (app, orango) => {
     return await User.find()
   })
 }
+```
 
-// server.js
-(async main() {
-  const orango = require('orango')
-  const db = orango.get('myapp')
-  const app = require('express')
+**server.js**
+```js
+const orango = require('orango')
+const db = orango.get('myapp')
+const app = require('express')
 
+async main() {
   require('./models/User')(db)
 
   await db.connect()
 
   require('./controllers/my_controller')(app, db)
-})()
+}
+
+main()
 ```
 
-## AQL vs Orango
+## Performing raw AQL queries
 
 If you have a query that cannot be constructed via Orango, don't let that stop you. Build it
-as AQL and you can still use Orango for parts. For example, Orango cannot construct the
-following query. So here I built it up as AQL and then convert the results to User
-models after receiving the query results.
+as AQL and you can still use Orango for parts. For example, Orango cannot currently construct the
+following query, so the query is passed in directly as AQL. The results are then converted to models
+after getting the results from the database.
 
 ```js
 async function findMatches(userId) {
@@ -70,8 +72,9 @@ async function findMatches(userId) {
   
   const cursor = await orango.query(aql)
   let results = cursor.all()
-  let users = User.fromJSON(results)
-  return users
+  // convert results from JSON to models
+  return User.fromJSON(results)
 }
 ```
-> If you find something that Orango cannot do, submit an issue.
+
+<o-tip type="👍">If you find something that Orango cannot do, submit an feature request.</o-tip>

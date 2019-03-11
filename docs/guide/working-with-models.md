@@ -18,19 +18,64 @@ documents and data types, models can handle the definition of:
 * JSON to model structures
 * Joi definitions
 
+<!-- **Using a model**
+
+```js
+let Post = orango.model("Post")
+
+let post = new Post({
+  author: "Rob Taylor",
+  title: "My first post"
+  body: "This is my first post."
+  tags: ["orango", "example"]
+})
+
+post.save()
+``` -->
+
 ## Defining a model
 
+Models take a name and schema. A schema is used to define the data structure that makes up the document.
+
+Once Orango has successfully connected to the database, each model will point to a collection.
+If the collection does not exist, tbe collection will be created. Orango uses [pluralize](https://github.com/blakeembrey/pluralize) to determine the collection's name. 
+The pluralized name of the model converted to `snake_case`. For example, the model `AccountSystem`
+would be represented in the database as the `account_systems` collection. However, the name `Person` is converted to `people` using pluralize. The last parameter passed into `model()` will override the default collection name.
+
+You can define a model using a `name` and `schema`:
+
 ```js
-orango.model(name: String, classRef:OrangoModel [, collectionName:String])
+orango.model(name: String, schema:Schema [, collectionName:String])
 ```
 
-Models are JavaScript classes. A model's class should extend `orango.Model`. You register your class as a model
-using `orango.model()`.
+Or you an define a model with a `class`:
 
 ```js
-class User extends orango.Model {}
+orango.model(model: OrangoModel [, collectionName:String])
+```
 
-orango.model('User', User)
+<o-tip type="note">Defining a model with a class will be covered in more detail in another section.</o-tip>
+
+### Usage
+
+```js
+const schema = new orango.Schema({
+  author: { type: String, required: true },
+  title: { type: String, required: true },
+  body: { type: String, required: true },
+  tags: [String],
+  settings: {
+    scope: {
+      type: String, 
+      allow: ["draft", "private", "public"],
+      default: "draft"
+    }
+  },
+  created: { type: Date, default: Date.now },
+  released: Date,
+})
+
+orango.model('Post', schema)
 ```
 
 ## Retrieving a model
@@ -41,208 +86,236 @@ To reference a model, use the same `model()` function as a getter.
 const User = orango.model('User')
 ```
 
-Once Orango is connected to ArangoDB, a collection for the model will be created. By default, Orango will
-create the collection as a pluralized name of the class. The collection for our model `User` would be
-`users`.
-
-You can override the default name with the last parameter.
-
-```js
-orango.model('User', User, 'my_users')
-```
-
 ## Prevent collection creation
 
-If you do not wish your model to have a collection created, pass `false` as the last parameter.
+If you have a model that does not represent a collection, you can
+prevent Orango from creating a one by passing `false` as the last parameter.
 
 ```js
-orango.model('User', User, false)
+orango.model('User', schema, false)
 ```
 
-## Adding a schema
+## Defining a schema
 
-Models can use a schema to validate and filter properties. The schema must be added as a static property on the
-class. It also must be passed into the `super(data, schema)`. These two references are used internally during
-validation and connectivity to the database.
+Models use schemas to validate, filter and define default properties. Orango uses the [Joi
+validation library](https://github.com/hapijs/joi) using JSON syntax. Orango also extends Joi
+with some additional features, like `default` and `required` properties on `inserts` and `updates`.
+
+### Usage
 
 ```js
-class User extends orango.Model { 
-  constructor(data) {
-    super(data, User.schema)
-  }
-}
-
-User.schema = orango.schema({
+let schema = new orango.Schema({
   firstName: String,
-  lastName: String,
-  email: { type: String, email: {} }
+  lastName: String
+  role: { type: String, allow: ['user', 'admin', 'owner'], default: 'user' },
+  // email: { type: String, email: {}, requiredOnInsert: true, requiredOnUpdate: true }
+  email: { type: String, email: {}, required: 'insert' }
   age: { type: Number, min: 18 },
+  tags: [String],
   bio: { type: String, regex: /[a-z]/ },
-  created: Date,
-  updated: Date
+  created: { type: Date, default: Date.now },
+  updated: { type: Date, defaultOnUpdate: Date.now }
 })
 
-orango.model('User', User)
+orango.model('User', schema)
 ```
 
-### Schema strict mode
+## Hooks
+
+There are two hooks you can define to intercept models prior to an `insert` or `update`
+into the database. The correct hook will also be invoked when performing an `upsert`. The
+model instance is passed in as the first parameter.
+
+<o-tip type="note">Hooks also support asynchronous tasks by returning a <code>Promise</code> or declaring the handler as <code>async</code>.</o-tip>
+
+```js
+const { EVENTS }  orango.consts
+let schema = new orango.Schema({...})
+let User = orango('User', schema)
+
+User.on(EVENTS.INSERT, model => {
+  // synchronous example
+})
+
+User.on(EVENTS.UPDATE, async model => {
+  // asynchronous example
+})
+```
+
+## Using Joi in the schema
+
+In most cases, the JSON syntax meet the schema requirements. If you find the need to use
+a more complex feature of Joi,
+you can use Joi directly in the schema. 
+
+Below is an condensed version of `Query` model used internally by Orango to validate queries. In
+the example below, the model needed to support a circular reference to itself and support alternative
+types for the `return` value.
+
+```js
+const Joi = require('Joi')
+
+const schema = new orango.Schema({
+    model: { type: String, required: true },
+    method: { type: String, default: 'find' },
+    queries: [
+      {
+        let: String,
+        query: Joi.lazy(() => schema._validator.joi).description(
+          'Query schema'
+        )
+      }
+    ],
+    sort: Joi.any(),
+    return: Joi.alternatives().try(
+      Joi.boolean(),
+      Joi.object().keys({
+        value: Joi.any(),
+        actions: Joi.array().items(
+          Joi.object().keys({
+            action: Joi.string(),
+            target: Joi.string(),
+            as: Joi.string()
+          })
+        ),
+        distinct: Joi.boolean()
+      })
+    )
+  })
+```
+
+<o-tip type="note">Once you start using Joi for a property, all child properties must use Joi syntax.</o-tip>
+
+## Using Joi as the schema
+
+If you choose to use Joi for the schema, you will lose having Orango's extended `required` and `default`
+properties on `insert` and `update`. You can still achieve the same effect using hooks.
+
+```js
+const Joi = require('Joi')
+
+// this was taken straight from Joi's example...
+const schema = new orango.Schema(Joi.object().keys({
+    username: Joi.string().alphanum().min(3).max(30),
+    password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
+    role: Joi.string(),
+    access_token: [Joi.string(), Joi.number()],
+    birthyear: Joi.number().integer().min(1900).max(2013),
+    email: Joi.string().email({ minDomainAtoms: 2 })
+}).with('username', 'birthyear').without('password', 'access_token'))
+
+MyModel.on(EVENTS.INSERT, model => {
+  // simulating a required
+  if(!model.username) {
+    throw Error(`Missing required property "username"`)
+  }
+  if(!model.password) {
+    throw Error(`Missing required property "password"`)
+  }
+  // simulating a default
+  if(!model.role) {
+    model.role = 'user'
+  }
+})
+```
+
+## Schema strict mode
 
 A schema is `strict` by default. Strict schemas filter out any properties that
 have not been defined in the schema. To relax this restriction, you can set `strict`
 to `false` in the schema options. In the example, the schema will still validate
-against known properties but will not do anything with unknown properties.
+against known properties but no will no longer do anything with unknown properties.
 
 ```js
-class User extends orango.Model { 
-  constructor(data) {
-    super(data, User.schema)
-  }
-}
-
-User.schema = orango.schema({
+let schema = new orango.Schema({
   firstName: String,
   lastName: String
 }, {
   strict: false
 })
 
-orango.model('User', User)
+orango.model('User', schema)
 
 
-// in code somewhere
-
-await User.insert({
+// ...somewhere in code...
+User.insert({
   firstName: 'John',
   lastName: 'Smith',
   role: 'admin' // will be inserted without any validation
 })
 ```
 
-## Adding a struct
+## Defining a model with a class
 
-Structs are used to link models with other models. Structs define how to
-convert JSON into a fully instantiated set of models. 
-Structs can go any level deep in their definition. Structs do not have to 
-match the schema because its possible that you are merging data from 
-different collections into a single result.
+You can extend a model's functionality either by attaching methods directly on the class or the class's prototype chain...
 
 ```js
-class User extends orango.Model {}
-
-User.struct = {
-  settings: 'Settings' // references another model
+let User = orango.model('User', schema)
+User.newUser = function(firstName, lastName) {
+  return new User({ firstName, lastName })
 }
-```
-> Structs do not filter data, they only convert.
 
-## Adding hooks
+Object.defineProperty(User, "name", {
+    get: function() {
+      return this.firstName + ' ' + lastName
+    }
+})
 
-Hooks can be used to insert default data or make changes to data prior to it being inserted
-in the database. There are two hooks you can define to intercept models prior to an `insert` or `update`
-into the database. These hooks will also be invoked when performing an `upsert`. The
-model instance is passed in as the first parameter.
-
-```js
-User.hooks = {
-  insert(model) {
-    model.created = Date.now()
-  },
-  update(model) {
-    model.updated = Date.now()
+User.prototype.toJSON = function() {
+  return {
+    firstName: this.firstName,
+    lastName: this.lastName,
+    name: this.name
   }
 }
 ```
 
-> Hooks also support `async` tasks by returning a promise or declaring the hook `async`.
-
-## Tips and tricks
-
-### Custom static methods
-
-Since the model is a class you can create static methods. Those static methods can
-use the static methods that are on the `Model` class. For example...
+<o-tip type="👍">Or you can use the prefered method of using a <code>class</code>.</o-tip>
 
 ```js
-class User extends orango.Model {
-  constructor(data) {
-    super(data, User.schema)
-  }
-
-  static async findByEmail(email) {
-    return await this.find().one().where({ email })
-  }
-}
-```
-
-### Computed properties
-
-You can add additional data through getters that is returned as part of your results by
-overriding the `toJSON()` method.
-
-```js
-class User extends orango.Model {
-  constructor(data) {
-    super(data, User.schema)
-  }
-
-  toJSON() {
-    return Object.assign({}, this, {
-      fullName: (this.firstName + ' ' + this.lastName).trim()
-    })
-  }
-}
-```
-
-### Putting it all together
-
-Here is an example defining a model with a schema and struct.
-
-```js
-class User extends orango.Model {
-  constructor(data) {
-    super(data, User.schema)
-  }
-
-  static async findByEmail(email) {
-    return await this.find().one().where({ email })
-  }
-
-  toJSON() {
-    return Object.assign({}, this, {
-      fullName: (this.firstName + ' ' + this.lastName).trim()
-    })
-  }
-}
-
-User.schema = orango.schema({
-  email: String,
+const schema = new orango.Schema({
   firstName: String,
   lastName: String
 })
 
-User.struct = {
-  settings: 'Settings'
-}
+const OrangoModel = orango.createModel(schema)
 
-User.hooks = {
-  insert(model) {
-    model.created = Date.now()
-  },
-  update(model) {
-    model.updated = Date.now()
+class Person extends OrangoModel {
+  get name() {
+    return this.firstName + ' ' + this.lastName
+  }
+
+  static newPerson(firstName, lastName) {
+    return new Person({
+      firstName,
+      lastName
+    })
+  }
+
+  toJSON() {
+    return {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      name: this.name
+    }
   }
 }
 
-User.model('User', User)
+orango.model(Person)
 ```
 
-## Using the Model's API
+<o-tip type="code"><a href="https://github.com/roboncode/orango/blob/master/examples/snippets/register_model_with_a_class.js">Click here to see an code example</a></o-tip>
 
-Orango's Model class has a query builder which daisy-chains methods. It uses this
-approach to construct a query object to invoke AQL calls to the database.
+
+## Interacting with a model
+
+Models contain a set of methods used to manipulate database documents. These 
+methods can be chained together by the internal query builder. The last method called will return a `Promise`.
+
+<o-tip>The best way to consume this promise is by using `async / await`.</o-tip>
 
 Let's say you wanted to fetch users from the `users` collection in the database. To
-fetch documents, you would call the `find()` method.
+fetch documents, you would call the `find()` method on your `User` model.
 
 ```js 
 let results = await User.find()
@@ -261,8 +334,8 @@ let results = await User.find().where({ active: true }).limit(50)
 ```
 
 When `inserting`, `updating` or `deleting`, the affected documents are not returned by default.
-You need to request them. Use `return()` to get back the affected documents. You will receive the results in an array,
-since more than one document could be affacted.
+You need to request them. Use `return()` to get back the affected documents. By default, you will receive the results as an array,
+since more than one document could be affected.
 
 ```js
 let results = await User.update({ active: false })
@@ -279,22 +352,18 @@ let result = await User.update({ active: false })
 ```
 
 The query will return the object as JSON to avoid unnecessary computations. If you want to have the results
-cast as models, use `fromJSON()`. 
-
-> `fromJSON()` accepts an array or single object.
+cast as models, use `model()` in the return statement.
 
 ```js
-let result = await User.update({ active: false })
+let user = await User.update({ active: false })
   .where({ email: 'john@gmail.com' }).limit(1)
-  .return(orango.return.one())
-
-let user = User.fromJSON(result)
+  .return(orango.return.one().model())
 ```
 
 ## Querying without `await`
 
 If you want to perform a query without waiting for a response use `exec()`.  Even though
-`exec()` returns a promise the query will be executed, even if there are no subscribers.
+`exec()` returns a promise the query will be executed, even if there are no handlers.
 This can be useful if you are building your query around conditions.
 
 ```js
@@ -326,6 +395,7 @@ You can create other symbols using special `$` properties.
 
 * **$or** (or)
 * **$eq** (equals to)
+* **$ne** (not equal to)
 * **$gt** (greater than)
 * **$gte** (greater than or equal to)
 * **$lt** (less than)

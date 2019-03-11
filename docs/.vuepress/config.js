@@ -80,9 +80,9 @@ module.exports = {
           '/api/orango',
           '/api/connection',
           '/api/consts',
-          '/api/schema',
-          '/api/model',
-          '/api/orm',
+          // '/api/schema',
+          // '/api/model',
+          // '/api/orm',
         ]
       },
     ],

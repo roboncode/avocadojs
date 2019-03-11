@@ -26,7 +26,7 @@
 * Required and default values
 * and more...
 
-> The goal of this library is to perform common tasks while still leaving the developer in control of their data.
+<o-tip type="note">The goal of this library is to perform common tasks while still leaving the developer in control of their data.</o-tip>
 
 ### Official Documentation
 
@@ -64,9 +64,9 @@ orango.get().connect():Promise
 orango.get('my_database').connect():Promise
 ```
 
-#### Usage
+#### Full usage example
 
-<o-tip /> The best way to use `connect()` is by using `async / await`.
+<o-tip>The best way to use `connect()` is by using `async / await`.</o-tip>
 
 ```js
 const orango = require('orango')
@@ -84,41 +84,7 @@ db.events.once(EVENTS.READY, () => {
 })
 
 function registerModels(orango) {
-  // ... register models somewhere ...
-}
-
-async function main() {
-  try {
-    registerModels(db)
-
-    await db.connect({
-      username: 'root',
-      password: 'orango'
-  })
-    // everything is initialized and we are ready to go
-    console.log('Are we connected?', db.connection.connected) // true
-  } catch(e) {
-    console.log('Error:', e.message)
-  }
-}
-
-main()
-```
-
-> Orango buffers model definitions, so they can be defined before or after a connection is established.
-
-### Defining a Model
-
-Model allows you to define your data and interact with ArangoDB using a simple API.
-
-**Defining a model**
-
-<o-tip /> Orango uses the Joi library to define and validate data.
-
-```js
-module.exports = orango => {
-
-  const schema = new orango.Schema({
+  let PostSchema = new orango.Schema({
     author: { type: String, required: true },
     title: { type: String, required: true },,
     body: { type: String, required: true },,
@@ -134,21 +100,23 @@ module.exports = orango => {
     released: Date,
   })
 
-  return orango.model('Post', schema)
+  orango.model('Post', PostSchema)
 }
+
+async function main() {
+  try {
+    registerModels(db)
+
+    await db.connect({ username: 'root', password: 'orango' })
+    // everything is initialized and we are ready to go
+    console.log('Are we connected?', db.connection.connected) // true
+  } catch(e) {
+    console.log('Error:', e.message)
+  }
+}
+
+main()
 ```
 
-**Using a model**
+<o-tip type="note">Orango buffers model definitions, so they can be defined before or after a connection is established.</o-tip>
 
-```js
-let Post = orango.model("Post")
-
-let post = new Post({
-  author: "Rob Taylor",
-  title: "My first post"
-  body: "This is my first post."
-  tags: ["orango", "example"]
-})
-
-post.save()
-```
