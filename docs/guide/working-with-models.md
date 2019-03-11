@@ -278,9 +278,9 @@ const schema = new orango.Schema({
   lastName: String
 })
 
-const OrangoModel = orango.createModel(schema)
+const Model = orango.createModel(schema)
 
-class Person extends OrangoModel {
+class Person extends Model {
   get name() {
     return this.firstName + ' ' + this.lastName
   }
@@ -301,7 +301,7 @@ class Person extends OrangoModel {
   }
 }
 
-orango.model(Person)
+orango.model('Person', Person)
 ```
 
 <o-tip type="code"><a href="https://github.com/roboncode/orango/blob/master/examples/snippets/register_model_with_a_class.js">Click here to see an code example</a></o-tip>

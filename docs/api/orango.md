@@ -12,19 +12,19 @@ sidebarDepth: 3
 ```js
 orango.connect() // connects to "_system"
 ...
-orango.model('User', User)
+orango.model('User')
 ```
 
-**Using orango with reference**
+**Using an orango instance**
 ```js
-const myapp = orango.get('myapp')
+const db = orango.get('myapp')
 ...
-myapp.model('User, User)
+db.model('User')
 ```
 
 ### get()
 
-Returns an instance of Orango under the database name.
+Returns an instance of orango with reference to that database.
 
 ``` js
 orango.get(database: String = '_system'): Orango
@@ -32,13 +32,13 @@ orango.get(database: String = '_system'): Orango
 
 ## Properties
 
-### connection
+<!-- ### connection
 
 References the connection instance used to connect to ArangoDB [Connection](./connection.md)
 
 ``` js
 orango.connection: Connection
-```
+``` -->
 
 ### consts
 
@@ -50,7 +50,7 @@ References an instance of `EventDispatcher`. Orango uses this to dispatch events
 
 ### funcs
 
-References Arango functions
+References Arango [functions](https://docs.arangodb.com/devel/AQL/Functions/)
 
 **Example**
 
@@ -61,9 +61,13 @@ append({ foo: 1 }, { bar: 2 })
 // AQL => APPEND({ foo: 1 }, { bar: 2 })
 ```
 
+### isConnected
+
+Returns a boolean based on connection status.
+
 ### logger
 
-References an Winston logger instance
+References a [Winston logger](https://github.com/winstonjs/winston) instance
 
 To enable logging, change the level on the logger
 
@@ -71,29 +75,23 @@ To enable logging, change the level on the logger
 orango.logger.level = 'info'
 ```
 
-### Model
-
-References `OrangoModel`. Models extend from `orango.Model` in their definition.
-
-```js
-class User extends orango.Model {
-  ...
-}
-```
-
 ### return
 
-Returns a new instance of `Return` class.
+Returns a new instance of [Return](return.md) class.
 
-### Types
+### Schema
 
-Returns a hashmap of types for reference. There are only a few cases where you need to reference this.
+Reference to the [Schema](schema.md) class.
+
+### types
+
+Returns a hashmap of [types](types.md) for reference. There are only a few cases where you need to reference this.
 
 ## Methods
 
 ### checkConnected()
 
-Checks if there is an active connection. If there is not, an error *"Not connected to database"* will be thrown.
+Checks if there is an active connection. If there is no connection, an error *"Not connected to database"* will be thrown.
 
 ### connect() <Badge text="async"/>
 
@@ -119,7 +117,7 @@ await orango.disconnect()
 
 Shortcut to Winston logger.log(). See [WinsontJS](https://github.com/winstonjs/winston#readme) for details.
 
-### schema()
+<!-- ### schema()
 
 Returns an instance of [Schema](./schema.md)
 
@@ -135,7 +133,8 @@ orango.schema(json: Object, options: Object = {
     ...
   ],
 }): OrangoSchema
-```
+``` 
+
 #### options
 
 ##### strict: Boolean (default = true)
@@ -149,10 +148,11 @@ If `type` is `edge`, the model will generate a edge collection when defined
 ##### indexes: []
 
 Defines the indexes that will be created in the collection
+-->
 
 ### model()
 
-Registers a model with a `class`. The `name` of the model should be capitalized. The collection name will automatically be created as a pluralized lowercase version of the name. The optional `collectionName` can be provided to override the default name.
+Registers a model to a `class`. The `name` of the model should be capitalized. The collection name will automatically be created as a pluralized lowercase version of the name. The optional `collectionName` can be provided to override the default name.
 
 ``` js
 orango.model(name:String, class, [, collectionName: String ]): class
