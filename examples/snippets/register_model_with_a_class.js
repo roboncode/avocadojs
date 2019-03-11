@@ -2,12 +2,13 @@ module.exports = async ({ orango }) => {
 
   const schema = new orango.Schema({
     firstName: String,
-    lastName: String
+    lastName: String,
+    created: { type: Date, default: Date.now }
   })
 
-  const OrangoModel = orango.createModel(schema)
+  const Model = orango.createModel(schema)
 
-  class Person extends OrangoModel {
+  class Person extends Model {
     get name() {
       return this.firstName + ' ' + this.lastName
     }
@@ -28,11 +29,11 @@ module.exports = async ({ orango }) => {
     }
   }
 
-  orango.model(Person)
+  orango.model('Person', Person)
   await Person.ready()
 
   let person = Person.newPerson('John', 'Smith')
-  person.save()
+  await person.save()
 
   console.log('person:'.green, person)
   console.log('person as string:'.green, JSON.stringify(person))
