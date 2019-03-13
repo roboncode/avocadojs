@@ -5,7 +5,7 @@ sidebarDepth: 3
 
 # orango
 
-> The default instance is used in the API documentation below but you can optionally replace `orango` with your own instance name like so...
+The default instance is used in the API documentation below but you can optionally replace `orango` with your own instance name like so...
 
 **Using the default instance**
 
@@ -24,11 +24,13 @@ db.model('User')
 
 ### get()
 
-Returns an instance of orango with reference to that database.
+Returns an instance of orango with represents to that Arango database.
 
 ``` js
 orango.get(database: String = '_system'): Orango
 ```
+
+See [Referencing orango instance](/guide/best-practices.md#referencing-orango-instance) for more details.
 
 ## Properties
 
@@ -42,7 +44,7 @@ orango.connection: Connection
 
 ### consts
 
-References a hashmap of constants available in Orango. [Click here for a full list.](./consts.md)
+References a hashmap of constants available in <o-orango />. [Click here for a full list.](./consts.md)
 
 ### events
 

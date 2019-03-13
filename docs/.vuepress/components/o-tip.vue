@@ -46,7 +46,12 @@
 .note
   background #f37220  
 
-.👍
+.thumbs_down
+  font-size 18px
+  padding 0 12px
+  background #D32F2F
+
+.thumbs_up
   font-size 18px
   padding 0 12px
   background #02a6ed
@@ -72,6 +77,10 @@ export default {
     prefix() {
       if(this.type === 'code') {
         return '{}'
+      } else if(this.type === 'thumbs_down') {
+        return '👎'
+      } else if(this.type === 'thumbs_up') {
+        return "👍"
       }
       return this.type[0].toUpperCase() + this.type.substr(1)
     }

@@ -51,6 +51,16 @@ async main() {
 main()
 ```
 
+## Viewing AQL
+
+You can have the raw AQL returned by appending `toAQL()` to a query.
+
+```js
+let query = User.find()
+let aql = await query.toAQL()
+console.log(aql)
+```
+
 ## Performing raw AQL queries
 
 If you have a query that cannot be constructed via Orango, don't let that stop you. Build it

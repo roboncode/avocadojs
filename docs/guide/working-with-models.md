@@ -35,12 +35,18 @@ post.save()
 
 ## Defining a model
 
-Models take a name and schema. A schema is used to define the data structure that makes up the document.
+Models take a name and (schema or model). 
 
-Once Orango has successfully connected to the database, each model will point to a collection.
-If the collection does not exist, tbe collection will be created. Orango uses [pluralize](https://github.com/blakeembrey/pluralize) to determine the collection's name. 
-The pluralized name of the model converted to `snake_case`. For example, the model `AccountSystem`
-would be represented in the database as the `account_systems` collection. However, the name `Person` is converted to `people` using pluralize. The last parameter passed into `model()` will override the default collection name.
+Once orango has successfully connected to the database, each model will point to a collection.
+If the collection does not exist, one will be created. 
+
+Orango uses [pluralize](https://github.com/blakeembrey/pluralize) to determine the collection's name. 
+The pluralized name of the model is converted to `snake_case`. For example, the model `AccountSystem`
+would be represented in the database as the `account_systems` collection. However, the name `Person` is converted to `people` using [pluralize](https://github.com/blakeembrey/pluralize). The last parameter passed into `model()` will override the default collection name.
+
+A schema is used to define the data structure that makes up the document 
+
+<o-tip type="note">A <code>class</code> is created automatically and registered.</o-tip>
 
 You can define a model using a `name` and `schema`:
 
@@ -48,10 +54,10 @@ You can define a model using a `name` and `schema`:
 orango.model(name: String, schema:Schema [, collectionName:String])
 ```
 
-Or you an define a model with a `class`:
+You an define a model with a `class`:
 
 ```js
-orango.model(model: OrangoModel [, collectionName:String])
+orango.model(name: String, model: class, [, collectionName:String])
 ```
 
 <o-tip type="note">Defining a model with a class will be covered in more detail in another section.</o-tip>
@@ -89,7 +95,7 @@ const User = orango.model('User')
 ## Prevent collection creation
 
 If you have a model that does not represent a collection, you can
-prevent Orango from creating a one by passing `false` as the last parameter.
+prevent orango from creating a one by passing `false` as the last parameter.
 
 ```js
 orango.model('User', schema, false)
@@ -148,7 +154,7 @@ In most cases, the JSON syntax meet the schema requirements. If you find the nee
 a more complex feature of Joi,
 you can use Joi directly in the schema. 
 
-Below is an condensed version of `Query` model used internally by Orango to validate queries. In
+Below is an condensed version of `Query` model used internally by orango to validate queries. In
 the example below, the model needed to support a circular reference to itself and support alternative
 types for the `return` value.
 
@@ -188,7 +194,7 @@ const schema = new orango.Schema({
 
 ## Using Joi as the schema
 
-If you choose to use Joi for the schema, you will lose having Orango's extended `required` and `default`
+If you choose to use Joi for the schema, you will lose having orango's extended `required` and `default`
 properties on `insert` and `update`. You can still achieve the same effect using hooks.
 
 ```js
@@ -247,15 +253,18 @@ User.insert({
 
 ## Defining a model with a class
 
-You can extend a model's functionality either by attaching methods directly on the class or the class's prototype chain...
+The best way to add additional functionality to a model is by extending the class using `orango.createModel(schema:Schema)`.
+
+<o-tip type="thumbs_down">You could do it this way by adding to the class and its prototype chain.</o-tip>
 
 ```js
 let User = orango.model('User', schema)
+
 User.newUser = function(firstName, lastName) {
   return new User({ firstName, lastName })
 }
 
-Object.defineProperty(User, "name", {
+Object.defineProperty(User.prototype, "name", {
     get: function() {
       return this.firstName + ' ' + lastName
     }
@@ -270,7 +279,7 @@ User.prototype.toJSON = function() {
 }
 ```
 
-<o-tip type="👍">Or you can use the prefered method of using a <code>class</code>.</o-tip>
+<o-tip type="thumbs_up">The prefered method is to use a <code>class</code> that extends orango's Model.</o-tip>
 
 ```js
 const schema = new orango.Schema({
@@ -305,7 +314,6 @@ orango.model('Person', Person)
 ```
 
 <o-tip type="code"><a href="https://github.com/roboncode/orango/blob/master/examples/snippets/register_model_with_a_class.js">Click here to see an code example</a></o-tip>
-
 
 ## Interacting with a model
 
@@ -427,5 +435,41 @@ You can create other symbols using special `$` properties.
   count: { $lte: 1 }
 }
 ```
+
+## Converting JSON to models
+
+It is possible to convert JSON to models using the `fromJSON()`
+method on a Model class. It supports complex structures as well as arrays.
+
+**Models can reference other models**
+
+```js
+let settingsSchema = new orango.Schema({
+  language: String
+})
+orango.model('Settings', settingsSchema, false)
+
+let userSchema = new orango.Schema({
+  name: String,
+  settings: 'Settings' // reference to another model
+})
+orango.model('User', userSchema)
+```
+
+**Convert JSON to model**
+
+```js
+let u = {
+  name: "John Smith",
+  settings: {
+    language: "en_US",
+  }
+}
+
+let user = User.fromJSON(u) // can pass in single object or an array of objects
+console.log(user) // User { name: "John Smith", settings: Settings { language: "en_US" } }
+```
+
+<o-tip type="code"><a href="https://github.com/roboncode/orango/blob/master/examples/snippets/convert_to_model.js">See full example here</a></o-tip>
 
 Visit the [Model API documentation](/api/model.md) to learn more about models.

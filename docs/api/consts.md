@@ -14,27 +14,41 @@ const { DEFAULTS, EVENTS } orango.consts
 
 ...
 
-orango.on(EVENTS.CONNECTED, () => {
-  console.log('Connected to database!')
+orango.on(EVENTS.READY, () => {
+  console.log('🍊 Orango is ready!')
 })
 
 await orango.connect(DEFAULTS.DATABASE)
 ```
 
-## ACTIONS
-
-* INSERT
-* DOCUMENT
-* FIND
-* FIND_EDGE
-* UPDATE
-* DELETE
-* COUNT
-
 ## AQL
 
-* DIVIDER
-* MODIFIED
+AQL has a many function it provides to allow you to manipulate your data with ease on the backend. <o-orango /> maps 
+to the API verbatum with CamelCase. Functions can be used lke so...
+
+```js
+const User = orango.model('User')
+const { append } = orango.funcs
+
+let query = User.find()
+  .one()
+  // example of using AQL functions in query
+  .let('numbers', append([1, 2, 3], [3, 4, 5], true))
+  .return(orango.return.append('numbers'))
+
+// FOR DEMO ONLY - show the raw query data
+let queryData = JSON.stringify(query)
+console.log(queryData.green)
+
+// FOR DEMO ONLY - show the AQL
+let aql = await query.toAQL(true)
+console.log(aql.cyan)
+
+// exec query
+let result = await query.exec()
+console.log(result)
+
+```
 
 ## DEFAULTS
 
@@ -45,16 +59,10 @@ await orango.connect(DEFAULTS.DATABASE)
 
 ## ERRORS
 
-* ALREADY_CONNECTED
 * COLLECTION_NOT_FOUND
-* EDGE_MODEL_REQUIRED
-* ID_REQUIRED
-* INVALID_COLLECTION
-* INVALID_RETURN
 * MODEL_EXISTS
 * MODEL_NOT_FOUND
 * NOT_CONNECTED
-* USER_EXISTS
 
 ## EVENTS
 
@@ -63,33 +71,39 @@ await orango.connect(DEFAULTS.DATABASE)
 * CONNECTED
 * DISCONNECTED
 * READY
+
+## OPERATIONS
+
+* COUNT
+* FIND
 * IMPORT
-* IMPORTED
-* CREATE
-* CREATED
-* UPDATE
-* UPDATED
-* DELETE
-* DELETED
+* INSERT
 * LINK
-* LINKED
 * UNLINK
-* UNLINKED
+* REMOVE
+* REPLACE
+* RETURN
+* UPSERT
+* UPDATE
 
-## RETURN
+## SCHEMA.INDEX
 
-* DOC
-* DOCS
-* MODEL
-* MODELS
-* NEW_DOC
-* OLD_DOC
-* NEW_OLD_DOCS
-* NEW_MODEL
-* OLD_MODEL
-* NEW_OLD_MODELS
+Used when defining index types in schemas.
 
-## TANG
+```js
+const { SCHEMA } = orango.const
+let schema = new orango.Schmea({
+  firstName: String,
+  lastName: String,
+  created: { type: Date, insert: Date.now }
+})
 
-* STRIP
-* ALLOW
+schema.addIndex(SCHEMA.INDEX.SKIP_LIST, ['firstName', 'lastName'])
+schema.addIndex(SCHEMA.INDEX.HASH, 'created')
+```
+
+* HASH
+* SKIP_LIST
+* GEO
+* FULLTEXT
+* PERSISITENT
