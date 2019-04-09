@@ -11,6 +11,10 @@ class MockCursor {
   async next() {
     return MockCursor.returnVal[this.cIndex++]
   }
+
+  async hasNext() {
+    return this.cIndex > 0
+  }
 }
 
 module.exports = MockCursor
