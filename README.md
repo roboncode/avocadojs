@@ -124,7 +124,7 @@ The following example shows some of these features:
 
 ```js
 const Joi = require('joi')
-const { SCHEMA } = const.consts
+const { SCHEMA } = orango.consts
   
 class UserSchema extends orango.Schema {
   // computed properties
