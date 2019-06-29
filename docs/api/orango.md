@@ -5,23 +5,6 @@ sidebarDepth: 3
 
 # orango
 
-The default instance is used in the API documentation below but you can optionally replace `orango` with your own instance name like so...
-
-**Using the default instance**
-
-```js
-orango.connect() // connects to "_system"
-...
-orango.model('User')
-```
-
-**Using an orango instance**
-```js
-const db = orango.get('myapp')
-...
-db.model('User')
-```
-
 ### get()
 
 Returns an instance of orango with represents to that Arango database.
@@ -30,7 +13,28 @@ Returns an instance of orango with represents to that Arango database.
 orango.get(database: String = '_system'): Orango
 ```
 
-See [Referencing orango instance](/guide/best-practices.md#referencing-orango-instance) for more details.
+### Examples
+
+**Get a reference to "_system"**
+
+```js
+// connects to "_system"
+const systemDb = orango.get()
+...
+systemDb.model('User')
+```
+
+**Get a reference to a custom database**
+```js
+// connects to "examples" database
+const examplesDb = orango.get('examples') 
+...
+examplesDb.model('User')
+```
+
+<o-tip type="note">Models have to be registered with each instance of a database you plan to use them in.</o-tip>
+
+See [Referencing orango instance](/guide/best-practices.md#referencing-orango-instance) for tips & tricks.
 
 ## Properties
 
@@ -63,6 +67,8 @@ append({ foo: 1 }, { bar: 2 })
 // AQL => APPEND({ foo: 1 }, { bar: 2 })
 ```
 
+[Take a look at this example for a more complete solution.](https://github.com/orangojs/orango-examples/blob/master/snippets/functions.js)
+
 ### isConnected
 
 Returns a boolean based on connection status.
@@ -94,6 +100,14 @@ Returns a hashmap of [types](types.md) for reference. There are only a few cases
 ### checkConnected()
 
 Checks if there is an active connection. If there is no connection, an error *"Not connected to database"* will be thrown.
+
+```js
+try {
+  orango.checkConnected()
+} catch(e) {
+  console.log('Orango is not connected')
+}
+```
 
 ### connect() <Badge text="async"/>
 
