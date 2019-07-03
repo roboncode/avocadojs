@@ -1,6 +1,0 @@
----
-pageClass: api
----
-
-# Connection
-
