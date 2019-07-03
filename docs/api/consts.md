@@ -52,12 +52,25 @@ console.log(result)
 
 ## DEFAULTS
 
+Default configurations used by orango if overrides are not provided.
+
+```js
+orango.connect({
+  [database: DEFAULT.DATABASE,
+  url: DEFAULTS.URL,
+  username: DEFAULTS.USERNAME,
+  password: DEFAULTS.PASSWORD]
+})
+```
+
 * DATABASE = "_system"
 * URL = "http://localhost:8529"
 * USERNAME = "root"
 * PASSWORD = ""
 
 ## ERRORS
+
+Common errors that are dispatched by orango on failure.
 
 * COLLECTION_NOT_FOUND
 * MODEL_EXISTS
@@ -66,6 +79,16 @@ console.log(result)
 
 ## EVENTS
 
+Represent global events pertaining to the database.
+
+```js
+const { EVENTS } = orango.const
+
+orango.events.on(EVENTS.READY, () => {
+  console.log('🍊 Orango is ready!')
+})
+```
+
 * DATABASE_CREATED
 * DATABASE_DROPPED
 * CONNECTED
@@ -73,6 +96,16 @@ console.log(result)
 * READY
 
 ## OPERATIONS
+
+Operations are used to hook into events prior to calling the database.
+
+```js
+const { OPERATIONS } = orango.const
+
+User.on(OPERATIONS.INSERT, model => {
+  model.created = new Date()
+})
+```
 
 * COUNT
 * FIND
