@@ -1,11 +1,11 @@
 module.exports = async ({ orango }) => {
   const User = orango.model('User')
-  const { append } = orango.funcs
+  const { count, append } = orango.funcs
 
   let query = User.find()
     .one()
     // example of using AQL functions in query
-    .let('numbers', append([1, 2, 3], [3, 4, 5], true))
+    .let('numbers', count(append([1, 2, 3], [3, 4, 5], true)))
     .return(orango.return.append('numbers'))
 
   // FOR DEMO ONLY - show the raw query data
