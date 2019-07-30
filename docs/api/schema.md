@@ -13,11 +13,11 @@ Schemas define the structure, properties and rules for a model. They also define
 ```js
 class User extends orango.Model {
   constructor(data) {
-    super(data, User.schema)
+    super(data, User.Schema)
   }
 }
 
-User.schema = orango.schema({
+User.schema = orango.Schema({
   firstName: String,
   lastName: String
 }, {
@@ -45,19 +45,19 @@ Defining your schema can be done several different ways...
 
 ```js
 // Type definition only
-orango.schema({
+orango.Schema({
   firstName: String
 })
 
 // Type definition in object
-orango.schema({
+orango.Schema({
   firstName: {
     type: String
   }
 })
 
 // Joi definition
-orango.schema({
+orango.Schema({
   firstName: Joi.string()
 })
 ```
@@ -67,7 +67,7 @@ orango.schema({
 You can implement schemas with rules such as min, max, regex, etc. Once again look at Joi for options.
 
 ```js
-orango.schema({
+orango.Schema({
   firstName: { type: String, min: 1, max: 15 },
   lastName: { type: String, min: 1, max: 15 },
   email: { type: String, email: { minDomainAtoms: 2 } },
@@ -96,7 +96,7 @@ const schema = Joi.object()
   .with('username', 'birthyear')
   .without('password', 'access_token')
 
-User.schema = orango.schema(schema)
+User.schema = orango.Schema(schema)
 ```
 
 ### JSON sprinkled with Joi
@@ -113,7 +113,7 @@ const schema = {
   email: { type: String, email: { minDomainAtoms: 2 } }
 }
 
-const UserSchema = orango.schema(schema)
+const UserSchema = orango.Schema(schema)
 UserSchema.joi = UserSchema.joi
   .with('username', 'birthyear')
   .without('password', 'access_token')
@@ -134,7 +134,7 @@ const schema = {
   email: { type: String, email: { minDomainAtoms: 2 }, required: 'create' }
 }
 
-const UserSchema = orango.schema(schema)
+const UserSchema = orango.Schema(schema)
 UserSchema.joi = UserSchema.joi
   .with('username', 'birthyear')
   .without('password', 'access_token')
@@ -146,15 +146,15 @@ The JSON notation has some advantages Joi does not provide. You can create `scop
 Let's look at some examples with explanations.
 
 ```js
-User.schema = orango.schema({
+User.schema = orango.Schema({
   email: { type: String, required: true } // required on inserts and updates
 })
 
-User.schema = orango.schema({
+User.schema = orango.Schema({
   email: { type: String, required: 'insert' } // required only on inserts
 })
 
-User.schema = orango.schema({
+User.schema = orango.Schema({
   email: { type: String, required: 'update' } // required only on updates
 })
 ```
@@ -166,7 +166,7 @@ By default, Orango enables a strict mode which filters out undefined properties.
 ```js
 const { SCHEMA } = orango.consts
 
-User.schema = orango.schema({
+User.schema = orango.Schema({
   firstName: String,
   lastName: String,
   email: String
@@ -182,7 +182,7 @@ You can define indexes for your collections in the second parameter of the schem
 ```js
 const { SCHEMA } = orango.consts
 
-User.schema = orango.schema({
+User.schema = orango.Schema({
   firstName: String,
   lastName: String,
   email: String
@@ -277,3 +277,4 @@ You can provide an additional `opt` key in your index object, with a nested obje
   opts: { sparse: false, unique: true },
 }
 ```
+    
