@@ -135,7 +135,7 @@ model instance is passed in as the first parameter.
 <o-tip type="note">Hooks also support asynchronous tasks by returning a <code>Promise</code> or declaring the handler as <code>async</code>.</o-tip>
 
 ```js
-const { EVENTS }  orango.consts
+const { EVENTS } = orango.consts
 let schema = new orango.Schema({...})
 let User = orango('User', schema)
 
