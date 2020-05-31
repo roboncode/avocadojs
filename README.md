@@ -1,3 +1,5 @@
+# Deprecated: Orango is no longer being maintained
+
 # <img alt="orango" src="docs/images/orango_logo.png" width="400px">
 
 
